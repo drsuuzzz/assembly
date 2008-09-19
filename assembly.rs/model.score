@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:score="http://scoreabm.org/score" label="Assembly" ID="assembly" pluralLabel="Assemblys">
+  <attributes label="X Axis Size" ID="xAxisSize" pluralLabel="X Axis Sizes" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Y Axis Size" ID="yAxisSize" pluralLabel="Y Axis Sizes" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Z Axis Size" ID="zAxisSize" pluralLabel="Z Axis Sizes" sType="INTEGER" defaultValue="40"/>
+  <attributes label="number of VP1" ID="numberofVP1" pluralLabel="number of VP1s" sType="INTEGER" defaultValue="72"/>
+  <attributes label="number of VP2" ID="numberofVP2" pluralLabel="number of VP2s" sType="INTEGER" defaultValue="10"/>
+  <attributes label="number of VP3" ID="numberofVP3" pluralLabel="number of VP3s" sType="INTEGER" defaultValue="10"/>
+  <attributes label="number of Genomes" ID="numberofGenomes" pluralLabel="number of Genomess" sType="INTEGER" defaultValue="5"/>
+  <implementation package="assembly" className="Assembly" basePath="../assembly"/>
+  <agents label="vp1" ID="vp1" pluralLabel="vp1s">
+    <implementation className="VP1"/>
+    <styles xsi:type="score:SStyle3D" label="vp1Style3D" ID="vp1Style3D">
+      <implementation className="AgentStyle3D"/>
+    </styles>
+  </agents>
+  <agents label="vp2" ID="vp2" pluralLabel="vp2s">
+    <implementation className="VP2"/>
+    <styles xsi:type="score:SStyle3D" label="vp2Style3D" ID="vp2Style3D">
+      <implementation className="AgentStyle3D"/>
+    </styles>
+  </agents>
+  <agents label="vp3" ID="vp3" pluralLabel="vp3s">
+    <implementation className="VP3"/>
+    <styles xsi:type="score:SStyle3D" label="vp3Style3D" ID="vp3Style3D">
+      <implementation className="AgentStyle3D"/>
+    </styles>
+  </agents>
+  <agents label="genome" ID="genome" pluralLabel="genomes">
+    <implementation className="Genome"/>
+    <styles xsi:type="score:SStyle3D" label="genomeStyle3D" ID="genomeStyle3D">
+      <implementation className="AgentStyle3D"/>
+    </styles>
+  </agents>
+  <projections xsi:type="score:SContinuousSpace" label="nucleus" ID="nucleus" pluralLabel="nucleuss" borderRule="BOUNCY"/>
+  <projections xsi:type="score:SNetwork" label="Bonds" ID="bonds" pluralLabel="Bondss"/>
+</score:SContext>
