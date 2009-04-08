@@ -6,7 +6,16 @@
   <attributes label="number of VP1" ID="numberofVP1" pluralLabel="number of VP1s" sType="INTEGER" defaultValue="72"/>
   <attributes label="number of VP2" ID="numberofVP2" pluralLabel="number of VP2s" sType="INTEGER" defaultValue="10"/>
   <attributes label="number of VP3" ID="numberofVP3" pluralLabel="number of VP3s" sType="INTEGER" defaultValue="10"/>
-  <attributes label="number of Genomes" ID="numberofGenomes" pluralLabel="number of Genomess" sType="INTEGER" defaultValue="5"/>
+  <attributes label="number of Genomes" ID="numberofGenomes" pluralLabel="number of Genomess" sType="INTEGER" defaultValue="1"/>
+  <attributes label="AssembleType" ID="assembleType" pluralLabel="AssembleTypes" sType="INTEGER" defaultValue="1"/>
+  <attributes label="Radius" ID="radius" pluralLabel="Radiuss" sType="FLOAT" defaultValue="3.8"/>
+  <attributes label="Distance" ID="distance" pluralLabel="Distances" sType="FLOAT" defaultValue="4"/>
+  <attributes label="ErrorThreshold" ID="errorThreshold" pluralLabel="ErrorThresholds" sType="FLOAT" defaultValue="0.1"/>
+  <attributes label="Radius Threshold" ID="radiusThreshold" pluralLabel="Radius Thresholds" sType="FLOAT" defaultValue="0.5"/>
+  <attributes label="Distance Threshold" ID="distanceThreshold" pluralLabel="Distance Thresholds" sType="FLOAT" defaultValue="0.5"/>
+  <attributes label="Rule Separation" ID="ruleSeparation" pluralLabel="Rule Separations" defaultValue="true"/>
+  <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>
+  <attributes label="Rule Cohesion" ID="ruleCohesion" pluralLabel="Rule Cohesions" defaultValue="true"/>
   <implementation package="assembly" className="Assembly" basePath="../assembly"/>
   <agents label="vp1" ID="vp1" pluralLabel="vp1s">
     <implementation className="VP1"/>

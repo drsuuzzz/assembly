@@ -9,6 +9,9 @@ import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
 import repast.simphony.context.space.graph.NetworkFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.BouncyBorders;
@@ -19,9 +22,9 @@ import repast.simphony.space.continuous.WrapAroundBorders;
 import repast.simphony.space.graph.Network;
 
 //public class Assembly extends DefaultContext {
-public class Assembly implements ContextBuilder {
+public class Assembly implements ContextBuilder<AgentExtendCont> {
 	
-	public Context build(Context context) {
+	public Context build(Context<AgentExtendCont> context) {
 	//public Assembly() {
 		//super("Assembly");
 		
@@ -29,39 +32,41 @@ public class Assembly implements ContextBuilder {
 		int x = (Integer)parm.getValue("xAxisSize");
 		int y = (Integer)parm.getValue("yAxisSize");
 		int z = (Integer)parm.getValue("zAxisSize");
+		int asstype = (Integer)parm.getValue("assembleType");
 		
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double start = RepastEssentials.GetTickCount() <=0 ? 1 : RepastEssentials.GetTickCount();
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 1);
 		//create space, make sure dimensions set in model.score
-		/*int size[]={0,0,0};
-		size[0]=x;
-		size[1]=y;
-		size[2]=z;*/
+
 		Network<AgentExtendCont> network = NetworkFactoryFinder.createNetworkFactory(null).createNetwork(
 				"Bonds", context, false);
 		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
-		ContinuousSpace space = factory.createContinuousSpace("nucleus",context/*this*/,
-				new RandomCartesianAdder(), /*new WrapAroundBorders()*/new BouncyBorders(x,y,z), x,y,z);
-		//Dimensions dim = space.getDimensions();
-		//System.out.println("Dimensions: x"+dim.getWidth()+" y "+dim.getHeight()+" z "+dim.getDepth());
+		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("nucleus",context/*this*/,
+				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
-		ContinuousSpace space2 = (ContinuousSpace)context/*this*/.getProjection("nucleus");
+		//ContinuousSpace space2 = (ContinuousSpace)context/*this*/.getProjection("nucleus");
 		//add agents
 		double pos[] = {20.0,20.0,20.0};
 		int numg = (Integer)parm.getValue("numberofGenomes");
-//		for (int i = 0; i < numg; i++) {
+		for (int i = 0; i < numg; i++) {
 			Genome g = new Genome();
 			g.setTheContext(context/*this*/);
 			g.setSpace(space);
 			g.setNetwork(network);
-			//g.setStop(true);
 			context/*this*/.add(g);
-			boolean result = space.moveTo(g,pos);
+			if (asstype == 3) {
+				g.setStop(true);
+				space.moveTo(g,pos);
+			}
+			schedule.schedule(sparams, g, "move2");
 		//	boolean res2 = space2.moveTo(g, pos);
 		//	NdPoint loc = space.getLocation(g);
 		//	if (!result)
 		//		System.out.println("Move failed");
 
-	//	}
+		}
 	
 	
 	int numvp1 = (Integer)parm.getValue("numberofVP1");
@@ -70,6 +75,8 @@ public class Assembly implements ContextBuilder {
 			vp1.setTheContext(context/*this*/);
 			vp1.setSpace(space);
 			context/*this*/.add(vp1);
+			schedule.schedule(sparams, vp1, "move2");
+			
 		}
 		
 	/*	int numvp2 = (Integer)parm.getValue("numberofVP2");

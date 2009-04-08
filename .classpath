@@ -3,51 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/libs.bsf"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/libs.piccolo"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.batch.eclipse"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.batch.eclipse.edit"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.batch.eclipse.editor"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.bin_and_src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.chart"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.data"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.data.bsf"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.data.ui"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.dataLoader"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.dataLoader.ui"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.deployment"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.essentials"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.freezedry"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.gis"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.groovy"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.gui"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.integration"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.integration.eclipse"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.integration.eclipse.edit"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.integration.eclipse.editor"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.iReport"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.jasperreports"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.jdbcfreezedryer"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.jung"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.matlab"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.ora"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.pajek"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.plugin.util"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.R"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.runtime"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.score"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.score.agents"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.score.edit"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.score.ide"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.score.runtime"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.spreadsheet"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.sql"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.systemsdynamics"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.terracotta"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.visad"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.visualization"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.weka"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/saf.core.ui"/>
+	<classpathentry kind="con" path="REPAST_SIMPHONY_SUPPORT"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

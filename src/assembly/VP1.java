@@ -1,25 +1,28 @@
 package assembly;
 
 //import repast.simphony.context.Context;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.essentials.RepastEssentials;
 //import repast.simphony.essentials.RepastEssentials;
 //import repast.simphony.space.SpatialMath;
+import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 //import repast.simphony.space.grid.GridPoint;
 import repast.simphony.parameter.Parameter;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.query.space.continuous.ContinuousWithin;
 //import repast.simphony.util.ContextUtils;
 
 public class VP1 extends AgentExtendCont{
-
-	//private static final int hexangles[] = {0,60,119,175,231,287};//{0,60,123,179,235,291};//{60,63,56,56,56,59};
 	
-	//private static final int pentangles[] = {0,69,138,207,276};
-	
-	private static final int HEXA = 6;
-	private static final int PENTA = 5;
+	//private static final int HEXA = 6;
+	//private static final int PENTA = 5;
 	private static final int BETA = 1;
 	private static final int BETAP = 0;
 	private static final int GAMMA = 5;
@@ -36,36 +39,68 @@ public class VP1 extends AgentExtendCont{
 	private static boolean nucleating = false;
 	
 	private int nSides = 6;
-	private VP1 sides[] = new VP1[6];
-	private int type;
-	private boolean complete;
-	private boolean nucleate;
+	public enum State {PENT, HEX};
+	public enum Bound {BOUND, UNBOUND};
+	private State state;
+	private Bound bound;
+	
+	//angles
+	private double defectPent; //60 degrees + pi/2
+	private double defectHex;
+	private double normal[] = {0f, 0f, 1f};
+	private ArrayList<NdPoint> ptList;
+	
+	//
+	//private boolean complete;
+	//private boolean nucleate;
 	
 	//private double rotatetheta;
 	//private double rotatephi;
-	private double angles[] = {0,60,119,175,231,287};
-	private double phi0;
+	//private double angles[] = {0,60,119,175,231,287};
+	//private double phi0;
 	
 	private double golden;
 	
+	//neighbors
 	private Genome genome;
+	private VP1 sides[] = new VP1[6];
 
+	private boolean flock;
+	
+	private double moveTick;
+	private double move2Tick;
+	private double neighborTick;
+	private static int id = 0;
+	private int myid;
 	
 	public VP1() {
 		super();
-		type = HEXA;
+		state = State.PENT;
+		bound = Bound.UNBOUND;
+		defectPent = 60*Math.PI/180;
+		//ptList = null;
+		//defectPent = ;  
+		double dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+		ptList = AgentGeometry.calcPentPts(defectPent, dist);
 		for (int i = 0; i < nSides; i++) {
 			sides[i] = null;
 		}
-		complete = false;
-		nucleate = false;
+		//complete = false;
+		//nucleate = false;
 		//rotatetheta = 0;
 		//rotatephi = 0;
-		phi0 = 90;
+		//phi0 = 90;
 		genome = null;
+		//flock=false;
+		moveTick = 0;
+		move2Tick = 0;
+		neighborTick = 0;
+		setName("VP1");
+		myid=id++;
+		this.genXYZ();
 	}
 	
-	@Parameter(usageName="complete",displayName="Sides completed")
+/*	@Parameter(usageName="complete",displayName="Sides completed")
 	public boolean isComplete() {
 		return complete;
 	}
@@ -74,14 +109,6 @@ public class VP1 extends AgentExtendCont{
 		this.complete = complete;
 	}
 	
-	@Parameter(usageName="nucleate",displayName="Nucleating")
-	public boolean isNucleate() {
-		return nucleate;
-	}
-
-	public void setNucleate(boolean nucleate) {
-		this.nucleate = nucleate;
-	}
 	@Parameter(usageName="type",displayName="Sides")
 	public int getType() {
 		return type;
@@ -90,404 +117,19 @@ public class VP1 extends AgentExtendCont{
 	public void setType(int type) {
 		this.type = type;
 	}
-
-	public void setSides(int index, VP1 neighbor) {
-		sides[index] = neighbor;
-	}
 	
-	public VP1 getSides(int index) {
-		return sides[index];
-	}
-	
-	public Genome getGenome() {
-		return genome;
+	@Parameter(usageName="flock",displayName = "Flock")
+	public boolean isFlock() {
+		return flock;
 	}
 
-	public void setGenome(Genome genome) {
-		this.genome = genome;
+	public void setFlock(boolean flock) {
+		this.flock = flock;
 	}
 
-	public int getSidesBound() {
-		int retval=0;
 
-		for (int i = 0; i < type; i++) {
-			if (sides[i] != null) {
-				retval++;
-			}
-		}
-		return retval;
-	}
-	
-	public double getPhi() {
-		return phi0;
-	}
-
-	public void setOtherSides(int index, VP1 center) {
-		VP1 neighbor = null;
-		if (center.getType() == HEXA) {
-			switch(index) {
-			case BETA:
-				sides[BETAP] = center;
-				neighbor = center.getSides(ALPHAPP);
-				if (neighbor != null) {
-					neighbor.setSides(GAMMA, this);
-					sides[GAMMA] = neighbor;
-				}
-				neighbor = center.getSides(BETAP);
-				if (neighbor != null) {
-					neighbor.setSides(BETAP, this);
-					sides[BETA] = neighbor;
-				}
-				break;
-			case BETAP:
-				sides[BETA] = center;
-				neighbor = center.getSides(BETA);
-				if (neighbor != null) {
-					neighbor.setSides(BETA,this);
-					sides[BETAP] = neighbor;
-				}
-				neighbor = center.getSides(GAMMA);
-				if (neighbor != null) {
-					neighbor.setSides(ALPHAP, this);
-					sides[ALPHAPP] = neighbor;
-				}
-				break;
-			case GAMMA:
-				sides[GAMMA] = center;
-				neighbor = center.getSides(BETAP);
-				if (neighbor != null) {
-					neighbor.setSides(ALPHAPP, this);
-					sides[ALPHAP] = neighbor;
-				}
-				neighbor = center.getSides(ALPHAP);
-				if (neighbor != null) {
-					neighbor.setSides(BETA,this);
-					sides[BETAP] = neighbor;
-				}
-				break;
-			case ALPHAP:
-				sides[ALPHAPP] = center;
-				neighbor = center.getSides(GAMMA);
-				if (neighbor != null) {
-					neighbor.setSides(BETAP, this);
-					sides[BETA] = neighbor;
-				}
-				neighbor = center.getSides(ALPHA);
-				if (neighbor != null) {
-					neighbor.setSides(ALPHA2,this);
-					sides[ALPHA] = neighbor;
-				}
-				break;
-			case ALPHA:
-				sides[ALPHA1] = center;
-				neighbor = center.getSides(ALPHAP);
-				if (neighbor != null) {
-					sides[ALPHA0] = neighbor;
-					neighbor.setSides(ALPHA, this);
-				}
-				neighbor = center.getSides(ALPHAPP);
-				if (neighbor != null) {
-					neighbor.setSides(ALPHA, this);
-					sides[ALPHA2] = neighbor;
-				}
-				break;
-			case ALPHAPP:
-				sides[ALPHAP] = center;
-				if (center.getSides(ALPHA) != null) {
-					(center.getSides(ALPHA)).setSides(ALPHA0, this);
-					sides[ALPHA] = center.getSides(ALPHA);
-				}
-				if (center.getSides(BETA) != null) {
-					(center.getSides(BETA)).setSides(GAMMA, this);
-					sides[GAMMA] = center.getSides(BETA);
-				}
-				break;
-			}
-		} else { //PENT
-			switch(index) {
-			case ALPHA0:
-				System.out.println("Pent 0 shouldn't be here");
-				break;
-			case ALPHA1:
-				System.out.println("Pent 1 shouldn't be here");
-				break;
-			case ALPHA2:
-				System.out.println("Pent 2 shouldn't be here");
-				break;
-			case ALPHA3:
-				sides[ALPHA] = center;
-				neighbor = center.getSides(ALPHA2);
-				if (neighbor != null) {
-					sides[ALPHAP] = neighbor;
-					neighbor.setSides(ALPHAPP, this);
-				}
-				neighbor = center.getSides(ALPHA4);
-				if (neighbor != null) {
-					sides[ALPHAPP] = neighbor;
-					neighbor.setSides(ALPHAP, this);
-				}
-				break;
-			case ALPHA4:
-				sides[ALPHA] = center;
-				neighbor = center.getSides(ALPHA3);
-				if (neighbor != null) {
-					sides[ALPHAP] = neighbor;
-					neighbor.setSides(ALPHAPP, this);
-				}
-				neighbor = center.getSides(ALPHA0);
-				if (neighbor != null) {
-					sides[ALPHAPP] = neighbor;
-					neighbor.setSides(ALPHAP, this);
-				}
-				break;
-			}			
-		}
-	}
-	
-	public int getFreeSpot() {
-		
-		int result = -1;
-		int N = type == HEXA ? HEXA : PENTA;
-		for (int i = 0; i < N; i++) {
-			if (sides[i] == null) {
-				result = i;
-				break;
-			}
-		}
-		
-		return result;
-	}
-
-	public int boundWith(int index, int type) {
-	
-		int result = 0;
-		if (type == HEXA) {
-			switch (index) {
-				case BETA:
-					result = BETAP;
-					break;
-				case BETAP:
-					result = BETA;
-					break;
-				case GAMMA:
-					result = GAMMA;
-					break;
-				case ALPHAPP:
-					result = ALPHAP;
-					break;
-				case ALPHA:  //probably dead
-					result = ALPHA1;
-					break;
-				case ALPHAP:
-					result = ALPHAPP;
-					break;
-			}
-		} else {
-			result = ALPHA;
-		}
-		return result;
-	}
-	
-	public void setAngles(VP1 vp1, int index) {
-		
-		//translate vp1 to origin (this) 
-		int hexang[] = {60,59,56,56,56,63};
-		int pentang[] = {69,69,69,69,69};
-		NdPoint locvp1 = this.getSpace().getLocation(vp1);
-		NdPoint locthis = this.getSpace().getLocation(this);
-		double x = locvp1.getX()-locthis.getX();
-		double z = locvp1.getZ()-locthis.getZ();
-		
-		//find theta 0 to vp1--new rotation angle
-		//double coord = x/z;
-		double thetanew = Math.toDegrees(Math.atan2(x,z));
-		
-		//set the new angles
-		int start = boundWith(index,vp1.type);
-		int N = type == HEXA ? HEXA : PENTA;
-		int j = (start+1)%N;
-		int angle = type == HEXA ? hexang[start] : pentang[start];
-		angles[j]=angle+thetanew;
-		for (int i = 0; i < N-1; i++) {
-			j = (j+1)%N;
-			int prev = (j-1) < 0 ? N-1 : (j-1)%N;
-			angle = (type == HEXA) ? hexang[prev] : pentang[prev];
-			angles[j] = angles[prev] + angle;
-		}
-	}
-	
-	public double getAngles(int index) {
-		return angles[index];
-	}
-
-	public double[] getMoveToPosition(double length, double theta, double phi, VP1 vp1) {
-		
-		//double d[] = getDisplacement(3,1,length,theta,phi);
-		//System.out.println("from getdisplacement "+d[0]+", "+d[1]+", "+d[2]);
-		double coord[] = {0.0,0.0,0.0};
-		/*coord[0] = length*Math.cos(phi);
-		coord[1] = length*Math.cos(theta)*Math.sin(phi);
-		coord[2] = length*Math.sin(theta)*Math.sin(phi);*/
-		
-		//find point from 0,0,0 origin
-		coord[0] = length*Math.sin(theta)*Math.sin(phi); //x
-		coord[1] = length*Math.cos(phi);                 //y
-		coord[2] = length*Math.cos(theta)*Math.sin(phi); //z
-		ContinuousSpace space = getSpace();//(ContinuousSpace)getTheContext().getProjection("nucleus");
-		NdPoint locvp1 = space.getLocation(vp1);
-		NdPoint locthis = space.getLocation(this);
-		//translate point in relation to origin of center protein
-		coord[0] += locvp1.getX()-locthis.getX();
-		coord[1] += locvp1.getY()-locthis.getY();
-		coord[2] += locvp1.getZ()-locthis.getZ();
-		System.out.println("Old="+locthis.getX()+", "+locthis.getY()+", "+locthis.getZ());
-		System.out.println("New="+coord[0]+", "+coord[1]+", "+coord[2]);
-		//NdPoint disp = new NdPoint(coord);
-		//return displacement
-		return coord;
-	}
-	
-/*	private  double[] rotate(double[] plane, double angle) {
-		double x = plane[0];
-		double y = plane[1];
-		plane[0] = x * Math.cos(angle) - y * Math.sin(angle);
-		plane[1] = y * Math.cos(angle) + x * Math.sin(angle);
-		return plane;
-	}
-
-	public double[] getDisplacement (int dimCount, int unitDimension, double scale,
-			double... anglesInRadians) {
-		
-		double[] displacement = new double[dimCount];
-		displacement[unitDimension] = 1;
-		double[] tmp = new double[2];
-		int c = 0;
-		for (int i = 0; i < dimCount; i++) {
-			if (i == unitDimension) {
-				continue;
-			} else if (i > unitDimension) {
-				tmp[0] = displacement[unitDimension];
-				tmp[1] = displacement[i];
-				tmp = rotate(tmp, anglesInRadians[c]);
-				displacement[unitDimension] = tmp[0];
-				displacement[i] = tmp[1];
-			} else if (i < unitDimension) {
-				tmp[0] = displacement[i];
-				tmp[1] = displacement[unitDimension];
-				tmp = rotate(tmp, anglesInRadians[c]);
-				displacement[unitDimension] = tmp[1];
-				displacement[i] = tmp[0];
-			}
-			c++;
-		}
-		System.out.println("displacement bef="+displacement[0]);
-		SpatialMath.scale(displacement, scale);
-		System.out.println("displacement aft="+displacement[1]);
-
-		return displacement;
-	}*/
-
-//	@Override
-	//public void checkNeighbors() {
-//		if (!getStop()) {
-	//		ContinuousSpace space = getSpace();//(ContinuousSpace)getTheContext().getProjection("nucleus");
-		//	ContinuousWithin contlist = new ContinuousWithin(space,this,1);
-			//Iterable list = contlist.query();
-//			for (Object obj:list) {
-	//			if (obj instanceof Genome) {
-		//			Genome g = (Genome)obj;
-			//		if (!g.getStop() && !nucleate) {
-				//		this.setStop(true);
-					//	((Genome)obj).setStop(true);
-						//nucleating = true;
-//						nucleate = true;
-	//					type = HEXA;
-		//				break;
-			//		}
-				//} else if (obj instanceof VP1) {
-//					VP1 vp1 = (VP1)obj;
-	//				if (vp1.getStop()) {
-		//				if (!vp1.isComplete() && vp1.isNucleate()) {
-			//				int index = vp1.getFreeSpot();
-				//			if (index > -1 && index < nSides) {
-					//			setStop(true);
-						//		if (vp1.getType() == PENTA) {
-							//		phi0=vp1.getPhi()-15;
-								//} if (index == GAMMA) {
-									//phi0=vp1.getPhi()-10;
-//								} else if (index == ALPHA || index == ALPHAP || index == ALPHAPP) {
-	//								phi0=vp1.getPhi()-15;
-		//						} else {
-			//						phi0=vp1.getPhi();
-				//				}
-					//			double phi = Math.toRadians(phi0/*vp1.getPhi()*/);
-						//		double theta = Math.toRadians(vp1.getAngles(index));
-							//	double pos[] = getMoveToPosition(2,theta,phi,vp1);
-								//space.moveByDisplacement(this, pos);
-//								System.out.println("Side "+index+" bound.");
-	//							if (index == ALPHA && vp1.type != PENTA) {
-		//							setType(PENTA);
-			//						//phi0 = vp1.getPhi()-15;
-				//				} else {
-					//				setType(HEXA);
-						//			//phi0 = vp1.getPhi()-10;
-							//	}
-								//if (index == GAMMA && vp1.type!=PENTA) {
-									//phi0 = vp1.getPhi()-10;
-								//}
-//								NdPoint temp = space.getLocation(this);
-	//							vp1.setSides(index,this);
-		//						this.setOtherSides(index,vp1);
-			//					this.setAngles(vp1, index);
-				//				
-					//			if (index == (vp1.getType()-1)) {
-						//			vp1.setComplete(true);
-							//		nucleating=false;
-								//}
-//								break;
-	//						}
-		//				} else if (!vp1.isComplete() && !nucleating && vp1.getSidesBound() >=3) {
-			//				int index = vp1.getFreeSpot();
-				//			if (index > -1 && index < vp1.getType()) {
-					//			setStop(true);
-//
-	//							double theta;
-		//						double phi;
-			//					if (vp1.getType() == HEXA) {
-				//					phi = Math.toRadians(vp1.getPhi());
-					//				theta = Math.toRadians(vp1.getAngles(index));
-						//		} else {
-							//		phi = Math.toRadians(vp1.getPhi());
-								//	theta = Math.toRadians(vp1.getAngles(index));
-//								}
-	//							double pos[] = getMoveToPosition(2,theta,phi,vp1);
-		//						space.moveByDisplacement(this, pos);
-			//					
-				//				if (index == ALPHA && (vp1.getType() != PENTA)) {
-					//				setType(PENTA);
-						//			phi0 = vp1.getPhi()-15;
-							//	} else {
-								//	setType(HEXA);
-									//phi0 = vp1.getPhi()-10;
-//								}		
-	//							vp1.setSides(index, this);
-		//						this.setOtherSides(index,vp1);
-			//					this.setAngles(vp1,index);
-				//				if (vp1.getFreeSpot() == -1) {
-					//				vp1.setComplete(true);
-						//		}
-							//	break;
-//							}
-	//					}
-		//			}
-			//	}
-
-//			}
-	//	}
-
-//	}
-	
 	public void moveMolecule() {
+		//for assembly type 2
 		if (genome != null) {
 			double phi = genome.getPhi();
 			double theta = genome.getTheta();
@@ -499,12 +141,656 @@ public class VP1 extends AgentExtendCont{
 			ContinuousSpace space = this.getSpace();
 			space.moveByDisplacement(this, coord);
 		}
+	}*/
+	
+	public VP1 getSides(int index) {
+		return sides[index];
+	}
+
+	public void setSides(int index, VP1 neighbor) {
+		this.sides[index] = neighbor;
+	}
+	public Genome getGenome() {
+		return genome;
+	}
+
+	public void setGenome(Genome genome) {
+		this.genome = genome;
 	}
 	
-	@Override
+	@Parameter(usageName="state",displayName="State", converter = "assembly.StateConverter")
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	@Parameter(usageName="bound",displayName="Bound State", converter = "assembly.BoundConverter")
+	public Bound getBound() {
+		return bound;
+	}
+
+	public void setBound(Bound bound) {
+		this.bound = bound;
+	}
+
+	public void move2() {
+		//cohesion
+		//center of mass around genome or otherwise
+		
+		double tick = (double) RepastEssentials.GetTickCount();
+		if (tick > move2Tick) {
+		double retpt[] = {0.0,0.0,0.0};
+		double cohesiong[]={0,0,0};
+		double cohesionv[]={0,0,0};
+		double separationg[]={0,0,0};
+		double separationv[]={0,0,0};
+		double alignmentg[]={0,0,0};
+		double alignmentv[]={0,0,0};
+
+		NdPoint tmp = this.getSpace().getLocation(this);
+		
+		boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
+		boolean aln = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
+		boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
+		if (!coh)
+			return;
+		ContinuousSpace space = getSpace();
+		double radius;
+		double vpradius;
+		double err;
+		double rerr;
+		double vperr;
+		if (RunEnvironment.getInstance().isBatch()){
+			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			err = (Float)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		} else {
+			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			err = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		}
+		ContinuousWithin list = new ContinuousWithin(space,this,(radius+rerr));
+		Iterator l = list.query().iterator();
+		boolean gFound = false;
+		NdPoint ptg=null;
+		while (l.hasNext()) {
+			Object obj = l.next();
+			if (obj instanceof Genome) {
+				gFound = true;
+				genome = (Genome)obj;
+				ptg = space.getLocation(genome);
+				NdPoint ptv = space.getLocation(this);
+				if (coh) {
+					cohesiong[0] = (ptg.getX()-ptv.getX())/100;
+					cohesiong[1] = (ptg.getY()-ptv.getY())/100;
+					cohesiong[2] = (ptg.getZ()-ptv.getZ())/100;
+					//AgentGeometry.trim(cohesiong,rerr);
+				}
+				if (sep) {
+					if (AgentGeometry.calcDistanceNdPoints(ptg, ptv) < (radius-rerr)) {
+						separationg[0] = (ptv.getX()-ptg.getX())/2;
+						separationg[1] = (ptv.getY()-ptg.getY())/2;
+						separationg[2] = (ptv.getZ()-ptg.getZ())/2;
+					}
+				}
+				if (aln) {
+					alignmentg[0] = (genome.getX()-this.getX())/8;
+					alignmentg[1] = (genome.getY()-this.getY())/8;
+					alignmentg[2] = (genome.getZ()-this.getZ())/8;
+				}
+				break;
+			}
+		}
+
+		if (gFound) {
+			list = new ContinuousWithin(space,this,(vpradius+vperr));
+			l = list.query().iterator();
+			int count=0;
+			int counta = 0;
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					VP1 vp = (VP1) obj;
+					NdPoint vpt = space.getLocation(vp);
+					if (coh) {
+						cohesionv[0] += vpt.getX();
+						cohesionv[1] += vpt.getY();
+						cohesionv[2] += vpt.getZ();
+						count++;
+					}
+					if (sep) {
+						NdPoint tvp = space.getLocation(this);
+						if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-rerr)) {
+							separationv[0] += (tvp.getX()-vpt.getX())/2;
+							separationv[1] += (tvp.getY()-vpt.getY())/2;
+							separationv[2] += (tvp.getZ()-vpt.getZ())/2;
+						}
+					}
+					if (aln) {
+						alignmentv[0] += vp.getX();
+						alignmentv[1] += vp.getY();
+						alignmentv[2] += vp.getZ();
+						counta++;
+					}
+				}
+			}
+			if (count > 0) {
+				if (coh) {
+					double mypt[] = space.getLocation(this).toDoubleArray(null);
+					cohesionv[0] = ((cohesionv[0]/count)-mypt[0])/100;
+					cohesionv[1] = ((cohesionv[1]/count)-mypt[1])/100;
+					cohesionv[2] = ((cohesionv[2]/count)-mypt[2])/100;
+				}
+			}
+			if (counta > 0) {
+				if (aln) {
+					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
+					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
+					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+				}
+			}
+		}
+		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
+					(separationg[0] + separationv[0])/2 + 
+					(alignmentg[0] + alignmentv[0])/2;
+		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
+					(separationg[1] + separationv[1])/2 + 
+					(alignmentg[1] + alignmentv[1])/2;
+		retpt[2] = (cohesiong[2] + cohesionv[2])/2 + 
+					(separationg[2] + separationv[2])/2 + 
+					(alignmentg[2] + alignmentv[2])/2;
+		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
+			this.genXYZ();
+			retpt[0] = this.getX();
+			retpt[1] = this.getY();
+			retpt[2] = this.getZ();
+		} else {
+			AgentGeometry.trim(retpt, rerr);
+			this.setX(retpt[0]);
+			this.setY(retpt[1]);
+			this.setZ(retpt[2]);
+		}
+		space.moveByDisplacement(this, retpt);
+		move2Tick = tick;
+		}
+		//return retpt;
+}
+		
+	public double[] center(double c[]) {
+		//cohesion
+		//center of mass around genome or otherwise
+		double retpt[] = {0.0,0.0,0.0};
+		boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
+		if (!coh)
+			return retpt;
+		ContinuousSpace space = getSpace();
+		double radius;
+		double vpradius;
+		double err;
+		double rerr;
+		double vperr;
+		if (RunEnvironment.getInstance().isBatch()){
+			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			err = (Float)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		} else {
+			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			err = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		}
+		
+		ArrayList list = AgentGeometry.objectsWithin(space, this, c,(radius+rerr));
+		boolean gFound = false;
+		NdPoint ptg=null;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) instanceof Genome) {
+				gFound = true;
+				genome = (Genome)list.get(i);
+				ptg = space.getLocation(genome);
+				NdPoint ptv = space.getLocation(this);
+				double dist = AgentGeometry.calcDistance(c,ptg);//space.getDistance(ptvp,ptg);
+				if (dist > radius) {
+				double v[] = {(ptg.getX()-ptv.getX()),(ptg.getY()-ptv.getY()),(ptg.getZ()-ptv.getZ())};
+
+					//double l = AgentGeometry.lengthOfVectorSquared(v);
+					//v = AgentGeometry.unit(v);
+					retpt[0] = retpt[0]+v[0]/radius;  
+					retpt[1] = retpt[1]+v[1]/radius;
+					retpt[2] = retpt[2]+v[2]/radius;
+				}
+				break;
+			}
+		}
+		double pt[] = {0f, 0f, 0f};
+		if (!gFound) {
+			int count=0;
+			genome = null;
+			list = AgentGeometry.objectsWithin(space, this, c, (vpradius+vperr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					NdPoint vpt = space.getLocation(vp);
+					pt[0] += vpt.getX();
+					pt[1] += vpt.getY();
+					pt[2] += vpt.getZ();
+					count++;
+				}
+			}
+			//find center of "mass"
+			if (count >0) {
+				ArrayList refpts = new ArrayList();
+				refpts.addAll(ptList);
+				pt[0] = pt[0]/count;
+				pt[1] = pt[1]/count;
+				pt[2] = pt[2]/count;
+				//rotate it to a point
+				//list = AgentGeometry.objectsWithin(space, this, c, (vpradius+vperr));
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) instanceof VP1) {
+						VP1 vp = (VP1) list.get(i);
+						if (vp.getBound() == Bound.BOUND) {
+							double fpt[] = space.getLocation(vp).toDoubleArray(null);
+							refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, fpt, c);
+							break;
+						}
+					}
+				}
+				//vector to center of mass from coordinate is the direction vector
+				list = AgentGeometry.objectsWithinPts(space,this,refpts,pt,c,vperr);
+				count=0;
+				pt[0]=pt[1]=pt[2]=0;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) instanceof VP1) {
+						this.setBound(Bound.BOUND);
+						VP1 vp = (VP1) list.get(i);
+						vp.setBound(Bound.BOUND);
+						NdPoint vpt = space.getLocation(vp);
+						pt[0] += vpt.getX();
+						pt[1] += vpt.getY();
+						pt[2] += vpt.getZ();
+						count++;
+					}
+				}
+				if (count > 0) {
+					pt[0] = ((pt[0]/count)-c[0])/vpradius;
+					pt[1] = ((pt[1]/count)-c[1])/vpradius;
+					pt[2] = ((pt[2]/count)-c[2])/vpradius;
+				} else {
+					this.setBound(Bound.UNBOUND);
+				}
+			}
+		} else {
+
+			ArrayList refpts = new ArrayList();
+			refpts.addAll(ptList);
+
+			list = AgentGeometry.objectsWithin(space, this, c, (vpradius+vperr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					//if (vp.getBound() == Bound.BOUND) {
+					//within vp1 distance
+						double l = AgentGeometry.calcDistanceNdPoints(space.getLocation(vp), space.getLocation(genome));
+					//within genome distance
+						if (l <= (radius+rerr)) {
+							double fpt[] = space.getLocation(vp).toDoubleArray(null);
+							refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, fpt, c);
+							//double[][] t = AgentGeometry.pointDisplacement(vp1, c);
+							//rotation = AgentGeometry.calcThetaPhiAngles(space.getLocation(vp), c);
+							break;
+						}
+					//}
+				}
+			}
+			list = AgentGeometry.objectsWithinPts(space,this,refpts,ptg.toDoubleArray(null),c,vperr);
+			int count=0;
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					this.setBound(Bound.BOUND);
+					VP1 vp = (VP1) list.get(i);
+					vp.setBound(Bound.BOUND);
+					NdPoint vpt = space.getLocation(vp);
+					pt[0] += vpt.getX();
+					pt[1] += vpt.getY();
+					pt[2] += vpt.getZ();
+					count++;
+				}
+			}
+			if (count > 0) {
+				pt[0] = ((pt[0]/count)-c[0])/vpradius;
+				pt[1] = ((pt[1]/count)-c[1])/vpradius;
+				pt[2] = ((pt[2]/count)-c[2])/vpradius;
+			} else {
+				this.setBound(Bound.UNBOUND);
+			}
+		}
+		retpt[0] = retpt[0] + pt[0];
+		retpt[1] = retpt[1] + pt[1];
+		retpt[2] = retpt[2] + pt[2];
+
+		return retpt;
+	}
+	
+	public double[] collision(double c[]) {
+		//separation
+		ContinuousSpace space = getSpace();
+		boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
+		double pt[] = {0.0,0.0,0.0};
+		if (!sep)
+			return pt;
+		//check genome collision
+		boolean closeToG = false;
+		double radius;
+		double vpradius;
+		double perr;
+		double rerr;
+		double vperr;
+		if (RunEnvironment.getInstance().isBatch()){
+			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			perr = (Float)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		} else {
+			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			perr = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		}
+		ArrayList list = AgentGeometry.objectsWithin(space, this, c, (radius-rerr)); 
+		NdPoint ptg = null;
+		double refpt[]={0,0,0};
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) instanceof Genome) {
+				closeToG = true;
+				genome = (Genome)list.get(i);
+				ptg = space.getLocation(list.get(i));
+				double v[][] = {{(ptg.getX()-c[0])},{(ptg.getY()-c[1])},{(ptg.getZ()-c[2])}};
+				double l = AgentGeometry.lengthOfVectorSquared(v);
+				v = AgentGeometry.unit(v);
+				refpt[0] = refpt[0] - v[0][0]/radius;
+				refpt[1] = refpt[1] - v[1][0]/radius;
+				refpt[2] = refpt[2] - v[2][0]/radius;
+				//pt[0] = pt[0] - (ptg.getX()-c[0])/radius;
+				//pt[1] = pt[1] - (ptg.getY()-c[1])/radius;
+				//pt[2] = pt[2] - (ptg.getZ()-c[2])/radius;
+				break;
+			}
+		}
+		//now find neighboring capsid proteins
+		if (closeToG) {
+			//double angles[] = AgentGeometry.calcThetaPhiAngles(ptg, c);
+			//double rotation[] = {0f, 0f};  //theta, phi
+			ArrayList refpts = new ArrayList();
+			refpts.addAll(ptList);
+			list = AgentGeometry.objectsWithin(space, this, c, (vpradius-vperr));
+			//list = AgentGeometry.objectsWithin2Objects (space, this, c, (vpradius+vperr), genome, (radius+rerr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					//if (vp.getBound() == Bound.BOUND) {
+						double l = AgentGeometry.calcDistanceNdPoints(space.getLocation(vp), space.getLocation(genome));
+						if (l <= radius) {
+							double fpt[] = space.getLocation(vp).toDoubleArray(null);
+							refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, fpt, c);
+							//rotation = AgentGeometry.calcThetaPhiAngles(space.getLocation(vp), c);
+							break;
+						}
+					//}
+				}
+			}
+			//ArrayList ptL = AgentGeometry.calcPentPts(defectPent, (vpradius-vperr), angles[0]+rotation[0], angles[1], c);
+			list = AgentGeometry.objectsWithinPts(space,this,refpts,ptg.toDoubleArray(null),c,vperr);
+			//list = AgentGeometry.objectsWithinPts(space,this,ptL,c,perr);
+			int count = 0;
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					this.setBound(Bound.BOUND);
+					VP1 vp = (VP1) list.get(i);
+					vp.setBound(Bound.BOUND);
+					NdPoint vpt = space.getLocation(vp);
+					double v[][] = {{(c[0]-vpt.getX())},{(c[1]-vpt.getY())},{(c[2]-vpt.getZ())}};
+					double l = AgentGeometry.lengthOfVectorSquared(v);
+					v = AgentGeometry.unit(v);
+					pt[0] += v[0][0];
+					pt[1] += v[1][0];
+					pt[2] += v[2][0];
+					count++;
+					//pt[0] = pt[0]-(vpt.getX()-c[0])/vpradius;  //fix
+					//pt[1] = pt[1]-(vpt.getY()-c[1])/vpradius;
+					//pt[2] = pt[2]-(vpt.getZ()-c[2])/vpradius;
+				}
+			}
+			if (count == 0) {
+				this.setBound(Bound.UNBOUND);
+			} else {
+				pt[0] = pt[0]/vpradius;
+				pt[1] = pt[1]/vpradius;
+				pt[2] = pt[2]/vpradius;
+			}
+			
+		} else {
+			//check vp1 collisions
+			int count=0;
+			genome = null;
+			list = AgentGeometry.objectsWithin(space, this, c, (vpradius+vperr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					NdPoint vpt = space.getLocation(vp);
+					pt[0] += vpt.getX();
+					pt[1] += vpt.getY();
+					pt[2] += vpt.getZ();
+					count++;
+				}
+			}
+			//find center of "mass"
+			if (count >0) {
+				ArrayList refpts = new ArrayList();
+				refpts.addAll(ptList);
+				pt[0] = pt[0]/count;
+				pt[1] = pt[1]/count;
+				pt[2] = pt[2]/count;
+				//rotate it to a point
+				//list = AgentGeometry.objectsWithin(space, this, c, (vpradius+vperr));
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) instanceof VP1) {
+						VP1 vp = (VP1) list.get(i);
+						if (vp.getBound() == Bound.BOUND) {
+							double fpt[] = space.getLocation(vp).toDoubleArray(null);
+							refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, fpt, c);
+							break;
+						}
+					}
+				}
+				//vector to center of mass from coordinate is the direction vector
+				list = AgentGeometry.objectsWithinPts(space,this,refpts,pt,c,vperr);
+				count=0;
+				pt[0]=pt[1]=pt[2]=0;
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i) instanceof VP1) {
+						this.setBound(Bound.BOUND);
+						VP1 vp = (VP1) list.get(i);
+						vp.setBound(Bound.BOUND);
+						NdPoint vpt = space.getLocation(vp);
+						pt[0] = pt[0]+(c[0]-vpt.getX());
+						pt[1] = pt[1]+(c[1]-vpt.getY());
+						pt[2] = pt[2]+(c[2]-vpt.getZ());
+						count++;
+					}
+				}
+				if (count > 0) {
+					pt[0] = (pt[0]/vpradius);
+					pt[1] = (pt[1]/vpradius);
+					pt[2] = (pt[2]/vpradius);
+				} else {
+					this.setBound(Bound.UNBOUND);
+				}
+			}
+		}
+		
+		pt[0] = pt[0]+refpt[0];
+		pt[1] = pt[1]+refpt[1];
+		pt[2] = pt[2]+refpt[2];
+
+		return pt;
+	}
+	
+	public double[] align(double[] pos) {
+		//alignment
+		//only the heading (the angles) information not the distance traveled.
+		
+		ContinuousSpace space = getSpace();
+		double radius;
+		double dist;
+		double perr;
+		double rerr;
+		double vperr;
+		if (RunEnvironment.getInstance().isBatch()){
+			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			dist = (Float)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			perr = (Float)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		} else {
+			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			perr = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+		}
+		ArrayList list = AgentGeometry.objectsWithin(space, this, pos,(radius+rerr));
+		double pt[]={0.0,0.0,0.0};
+		boolean align = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
+		if (!align)
+			return pt;
+		int count=0;
+		boolean gfound = false;
+		NdPoint ptg = null;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) instanceof Genome) {
+				gfound = true;
+				genome = (Genome)list.get(i);
+				ptg = space.getLocation(genome);
+				pt[0] += Math.sin(genome.getTheta())*Math.sin(genome.getPhi());
+				pt[1] += Math.cos(genome.getPhi());
+				pt[2] += Math.cos(genome.getTheta())*Math.sin(genome.getPhi());
+				count++;
+				break;
+			}
+		}
+		if (gfound) {
+			//double angles[] = AgentGeometry.calcThetaPhiAngles(space.getLocation(genome), pos);
+			//double rotation[] = {0f, 0f};  //theta, phi
+			ArrayList refpts = new ArrayList();
+			refpts.addAll(ptList);
+			list = AgentGeometry.objectsWithin(space, this, pos, (dist+vperr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					//if (vp.getBound() == Bound.BOUND) {
+						double l = AgentGeometry.calcDistanceNdPoints(space.getLocation(vp), space.getLocation(genome));
+						if (l <= radius) {
+							double fpt[] = space.getLocation(vp).toDoubleArray(null);
+							refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, fpt, pos);
+							//rotation = AgentGeometry.calcThetaPhiAngles(space.getLocation(vp), pos);
+							break;
+						}
+					//}
+				}
+			}
+			//ArrayList ptL = AgentGeometry.calcPentPts(defectPent, (dist+vperr), angles[0]+rotation[0], angles[1], pos);
+			//list = AgentGeometry.objectsWithinPts(space,this,refpts,pos,perr);
+			list = AgentGeometry.objectsWithinPts(space,this,refpts,ptg.toDoubleArray(null),pos,vperr);
+
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					pt[0] += Math.sin(vp.getTheta())*Math.sin(vp.getPhi());
+					pt[1] += Math.cos(vp.getPhi());
+					pt[2] += Math.cos(vp.getTheta())*Math.sin(vp.getPhi());		
+					count++;
+				}
+			}
+		} else {
+			genome = null;
+			list = AgentGeometry.objectsWithin(space, this, pos,(dist+vperr));
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof VP1) {
+					VP1 vp = (VP1) list.get(i);
+					pt[0] += Math.sin(vp.getTheta())*Math.sin(vp.getPhi());
+					pt[1] += Math.cos(vp.getPhi());
+					pt[2] += Math.cos(vp.getTheta())*Math.sin(vp.getPhi());		
+					count++;
+				}
+			}
+		}
+		if (count > 0) {
+			pt[0] += Math.sin(this.getTheta())*Math.sin(this.getPhi());
+			pt[1] += Math.cos(this.getPhi());
+			pt[2] += Math.cos(this.getTheta())*Math.sin(this.getPhi());
+			count++;
+			pt[0]=pt[0]/count;
+			pt[1]=pt[1]/count;
+			pt[2]=pt[2]/count;
+		}
+		return pt;
+	}
+	
+	public void stability() {
+		
+	}
+		
 	public void move() {
-		if (genome == null) {
-			super.move();
+		double tick = (double) RepastEssentials.GetTickCount();
+		if (tick > moveTick) {
+			int asstype = (Integer)RunEnvironment.getInstance().getParameters().getValue("assembleType");
+
+			NdPoint pt = getSpace().getLocation(this);
+			if (genome == null) {
+				thetaPhiDistGen();
+			} else {
+				this.setDistance(genome.getDistance());
+				this.setTheta(genome.getTheta());
+				this.setPhi(genome.getPhi());
+			}
+			double coord[] = {0.0,0.0,0.0};
+			coord[0] = pt.getX()+this.getDistance()*Math.sin(this.getTheta())*Math.sin(this.getPhi()); //x
+			coord[1] = pt.getY()+this.getDistance()*Math.cos(this.getPhi());                 		//y
+			coord[2] = pt.getZ()+this.getDistance()*Math.cos(this.getTheta())*Math.sin(this.getPhi()); //z	
+				
+			double ptcol[] = collision(coord);
+			coord[0] = coord[0]+ptcol[0];
+			coord[1] = coord[1]+ptcol[1];
+			coord[2] = coord[2]+ptcol[2];
+			//double ptadh[] = /*{0,0,0};*/align(coord);
+			//coord[0] = coord[0]+ptadh[0];
+			//coord[1] = coord[1]+ptadh[1];
+			//coord[2] = coord[2]+ptadh[2];
+			double ptcent[] = center(coord);
+			coord[0] = coord[0] + ptcent[0] - pt.getX();
+			coord[1] = coord[1] + ptcent[1] - pt.getY();
+			coord[2] = coord[2] + ptcent[2] - pt.getZ();
+				
+			NdPoint p = getSpace().moveByDisplacement(this, coord);
+				
+			if (p == null) {
+				System.out.println("bad point");
+			}
+
+			moveTick = tick;
 		}
 	}
 
