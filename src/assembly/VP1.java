@@ -235,9 +235,9 @@ public class VP1 extends AgentExtendCont{
 				}
 				if (sep) {
 					if (AgentGeometry.calcDistanceNdPoints(ptg, ptv) < (radius-rerr)) {
-						separationg[0] = (ptv.getX()-ptg.getX())/2;
-						separationg[1] = (ptv.getY()-ptg.getY())/2;
-						separationg[2] = (ptv.getZ()-ptg.getZ())/2;
+						separationg[0] = (ptv.getX()-ptg.getX())/10;
+						separationg[1] = (ptv.getY()-ptg.getY())/10;
+						separationg[2] = (ptv.getZ()-ptg.getZ())/10;
 					}
 				}
 				if (aln) {
@@ -248,36 +248,39 @@ public class VP1 extends AgentExtendCont{
 				break;
 			}
 		}
-
+		int count=0;
+		int counta = 0;
 		if (gFound) {
 			list = new ContinuousWithin(space,this,(vpradius+vperr));
 			l = list.query().iterator();
-			int count=0;
-			int counta = 0;
+
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP1) {
 					VP1 vp = (VP1) obj;
 					NdPoint vpt = space.getLocation(vp);
-					if (coh) {
-						cohesionv[0] += vpt.getX();
-						cohesionv[1] += vpt.getY();
-						cohesionv[2] += vpt.getZ();
-						count++;
-					}
-					if (sep) {
-						NdPoint tvp = space.getLocation(this);
-						if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-rerr)) {
-							separationv[0] += (tvp.getX()-vpt.getX())/2;
-							separationv[1] += (tvp.getY()-vpt.getY())/2;
-							separationv[2] += (tvp.getZ()-vpt.getZ())/2;
+					NdPoint gpt = space.getLocation(genome);
+					if (AgentGeometry.calcDistanceNdPoints(vpt, gpt) < (radius+rerr)) {
+						/*if (coh) {
+							cohesionv[0] += vpt.getX();
+							cohesionv[1] += vpt.getY();
+							cohesionv[2] += vpt.getZ();
+							count++;
+						}*/
+						if (sep) {
+							NdPoint tvp = space.getLocation(this);
+							if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-rerr)) {
+								separationv[0] += (tvp.getX()-vpt.getX())/20;
+								separationv[1] += (tvp.getY()-vpt.getY())/20;
+								separationv[2] += (tvp.getZ()-vpt.getZ())/20;
+							}
 						}
-					}
-					if (aln) {
-						alignmentv[0] += vp.getX();
-						alignmentv[1] += vp.getY();
-						alignmentv[2] += vp.getZ();
-						counta++;
+						/*if (aln) {
+							alignmentv[0] += vp.getX();
+							alignmentv[1] += vp.getY();
+							alignmentv[2] += vp.getZ();
+							counta++;
+						}*/
 					}
 				}
 			}
@@ -296,6 +299,8 @@ public class VP1 extends AgentExtendCont{
 					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
 				}
 			}
+		} else {
+			
 		}
 		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
 					(separationg[0] + separationv[0])/2 + 
