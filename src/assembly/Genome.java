@@ -19,7 +19,7 @@ import repast.simphony.util.ContextUtils;
 public class Genome extends AgentExtendCont{
 	
 	//private String name;
-	private static final double golden = 1.618033988749895;
+/*	private static final double golden = 1.618033988749895;
 	private static final double coord[][]={{0,golden,1},
 		 {0,golden,-1},
 		 {-golden,1,0},
@@ -41,7 +41,7 @@ public class Genome extends AgentExtendCont{
 	private static double radius = 0.9510565163;
 	
 	private Network<VP1> network;
-	
+	*/
 	private double neighborTick;
 	private double lmoveTick;
 	private double moveTick;
@@ -50,7 +50,7 @@ public class Genome extends AgentExtendCont{
 	public Genome() {
 		super();
 		//name = "Genome";
-		network = null;
+		//network = null;
 		neighborTick = 0;
 		lmoveTick = 0;
 		moveTick = 0;
@@ -61,7 +61,7 @@ public class Genome extends AgentExtendCont{
 	
 	
 	
-	public Network getNetwork() {
+/*	public Network getNetwork() {
 		return network;
 	}
 
@@ -69,10 +69,10 @@ public class Genome extends AgentExtendCont{
 
 	public void setNetwork(Network network) {
 		this.network = network;
-	}
+	}*/
 
 
-	public void genomeMove(){
+	/*public void genomeMove(){
 		//not used yet
 		double coord[] = {0.0,0.0,0.0};
 		thetaPhiDistGen();
@@ -178,64 +178,92 @@ public class Genome extends AgentExtendCont{
 			pt[2]=(pt[2]+Math.cos(this.getTheta())*Math.sin(this.getPhi()))/2.0f;
 		}
 		return pt;
-	}
+	}*/
 	
 	//Scheduled methods
 	public void move2() {
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > move2Tick) {
-			//double disp[] = {this.getX(),this.getY(),this.getZ()};
-			//NdPoint pt = this.getSpace().getLocation(this);
-			//this.genXYZ();
+
 			double coord[] = {0,0,0};
 			NdPoint pt = this.getSpace().getLocation(this);
-			//double disp[] = {this.getX(),this.getY(),this.getZ()};
 
-			//alignment at least
 			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
 			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			boolean aln = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
+			//boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
+			boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
+			
 			ContinuousWithin list = new ContinuousWithin(this.getSpace(), this, (r+rerr));
 			Iterator neighbors = list.query().iterator();
-			/*if (neighbors.hasNext()) {
-				AgentGeometry.trim(disp, rerr);
-			}
-			coord[0] = (disp[0]+pt.getX());
-			coord[1] = (disp[1]+pt.getY());
-			coord[2] = (disp[2]+pt.getZ());*/
 			
 			double align[] = {0,0,0};
 			int count = 0;
 			while(neighbors.hasNext()){
 				AgentExtendCont aec = (AgentExtendCont)neighbors.next();
-				align[0] += aec.getX();
-				align[1] += aec.getY();
-				align[2] += aec.getZ();
-				count++;
+				if (aln) {
+					align[0] += aec.getX();
+					align[1] += aec.getY();
+					align[2] += aec.getZ();
+					count++;
+				}
 			}
+			double disp[] = {0,0,0};
 			if (count > 0) {
-				align[0] = (align[0]/count)/*+this.getX())/2*/;
-				align[1] = (align[1]/count)/*+this.getY())/2*/;
-				align[2] = (align[2]/count)/*+this.getZ())/2*/;
-				this.setX(align[0]);
-				this.setY(align[1]);
-				this.setZ(align[2]);
-				coord[0] = pt.getX() + align[0];
-				coord[1] = pt.getY() + align[1];
-				coord[2] = pt.getZ() + align[2];
-			} else {
-				this.genXYZ();
-				double disp[] = {this.getX(),this.getY(),this.getZ()};
-				coord[0] = (disp[0]+pt.getX());
-				coord[1] = (disp[1]+pt.getY());
-				coord[2] = (disp[2]+pt.getZ());
+				align[0] = (align[0]/count);
+				align[1] = (align[1]/count);
+				align[2] = (align[2]/count);
+				//this.setX(align[0]);
+				//this.setY(align[1]);
+				//this.setZ(align[2]);
+				//coord[0] = pt.getX() + align[0];
+				//coord[1] = pt.getY() + align[1];
+				//coord[2] = pt.getZ() + align[2];
+			//} else {
+				//this.genXYZ();
+				//disp[0] = this.getX();
+				//disp[1] = this.getY();
+				//disp[2] = this.getZ();
+				//coord[0] = (disp[0]+pt.getX());
+				//coord[1] = (disp[1]+pt.getY());
+				//coord[2] = (disp[2]+pt.getZ());
 			}
-			/*double tmp[] ={0,0,0};
-			tmp[0] = RepastEssentials.RandomDraw(-0.1, 0.1);
-			tmp[1] = RepastEssentials.RandomDraw(-0.1,0.1);
-			tmp[2] = RepastEssentials.RandomDraw(-0.1, 0.1);
-			coord[0] = pt.getX() + tmp[0];
-			coord[1] = pt.getY() + tmp[1];
-			coord[2] = pt.getZ() + tmp[2];*/
+			
+			//keep distance from other genomes
+			list = new ContinuousWithin(this.getSpace(), this, 2*(r+rerr));
+			neighbors = list.query().iterator();
+			double separ[] = {0.0,0.0,0.0};
+			while (neighbors.hasNext()) {
+				Object obj = neighbors.next();
+				if (obj instanceof Genome) {
+					if (sep) {
+						NdPoint other = this.getSpace().getLocation(obj);
+						if (AgentGeometry.calcDistanceNdPoints(other, pt) < 2*(r+rerr)) {
+							separ[0] += (pt.getX()-other.getX())/20;
+							separ[1] += (pt.getY()-other.getY())/20;
+							separ[2] += (pt.getZ()-other.getZ())/20;
+						}
+					}
+				}
+			}
+			
+			coord[0] = align[0] + separ[0];
+			coord[1] = align[1] + separ[1];
+			coord[2] = align[2] + separ[2];
+			if (coord[0]==0 && coord[1]==0 && coord[2]==0) {
+				this.genXYZ();
+				coord[0] = this.getX() + pt.getX();
+				coord[1] = this.getY() + pt.getY();
+				coord[2] = this.getZ() + pt.getZ();
+			} else {
+				AgentGeometry.trim(coord, rerr);
+				this.setX(coord[0]);
+				this.setY(coord[1]);
+				this.setZ(coord[2]);
+				coord[0] = coord[0] + pt.getX();
+				coord[1] = coord[1] + pt.getY();
+				coord[2] = coord[2] + pt.getZ();
+			}
 			coord = this.normPositionToBorder(coord, r);
 			boolean p = getSpace().moveTo(this, coord);
 			if (!p) {
@@ -245,7 +273,7 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
-	public void move() {
+/*	public void move() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
 			int asstype = (Integer)RunEnvironment.getInstance().getParameters().getValue("assembleType");
@@ -292,9 +320,9 @@ public class Genome extends AgentExtendCont{
 			}
 			moveTick=tick;
 		}
-	}
+	}*/
 	
-	public void lmMove() {
+/*	public void lmMove() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > lmoveTick) {
 		NdPoint loc = getSpace().getLocation(this);
@@ -304,12 +332,12 @@ public class Genome extends AgentExtendCont{
     		int asstype = (Integer)RunEnvironment.getInstance().getParameters().getValue("assembleType");
     		switch (asstype) {
 			case 2:
-				/*super.move();
-				for (int i = 0; i < 12; i++) {
-	    			if (vertices[i] != null) {
-	    				vertices[i].moveMolecule();
-	    			}
-	    		}	*/		
+				//super.move();
+				//for (int i = 0; i < 12; i++) {
+	    			//if (vertices[i] != null) {
+	    				//vertices[i].moveMolecule();
+	    			//}
+	    		//}			
 				break;
 			case 3:
 			case 1:
@@ -554,7 +582,7 @@ public class Genome extends AgentExtendCont{
 				break;
 				}
 		}
-	}
+	}*/
 
 	public void checkNeighbors() {
 		double tick = (double) RepastEssentials.GetTickCount();

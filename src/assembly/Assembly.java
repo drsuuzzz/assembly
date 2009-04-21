@@ -54,7 +54,7 @@ public class Assembly implements ContextBuilder<AgentExtendCont> {
 			Genome g = new Genome();
 			g.setTheContext(context/*this*/);
 			g.setSpace(space);
-			g.setNetwork(network);
+			//g.setNetwork(network);
 			context/*this*/.add(g);
 			if (asstype == 3) {
 				g.setStop(true);
@@ -75,7 +75,7 @@ public class Assembly implements ContextBuilder<AgentExtendCont> {
 			vp1.setTheContext(context/*this*/);
 			vp1.setSpace(space);
 			context/*this*/.add(vp1);
-			schedule.schedule(sparams, vp1, "move3");
+			schedule.schedule(sparams, vp1, "move4");
 			
 		}
 		

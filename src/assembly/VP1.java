@@ -175,9 +175,320 @@ public class VP1 extends AgentExtendCont{
 	public void setBound(Bound bound) {
 		this.bound = bound;
 	}
+	public double [] findCenter(Iterator l) {
+		double [] c={0.0,0.0,0.0};
+		int count=0;
+		while (l.hasNext()) {
+			Object obj = l.next();
+			if (obj instanceof VP1) {
+				NdPoint pt = this.getSpace().getLocation(obj);
+				c[0] += pt.getX();
+				c[1] += pt.getY();
+				c[2] += pt.getZ();
+				count++;
+			}
+		}
+		if (count > 0) {
+			NdPoint thispt = this.getSpace().getLocation(this);
+			c[0] = (c[0]+thispt.getX())/(count+1);
+			c[1] = (c[1]+thispt.getY())/(count+1);
+			c[2] = (c[2]+thispt.getZ())/(count+1);
+		}
+		return c;
+	}
+	
+	public void move4(){
+		double tick = (double) RepastEssentials.GetTickCount();
+		if (tick > move2Tick) {
+			double retpt[] = {0.0,0.0,0.0};
+			double cohesiong[]={0,0,0};
+			double cohesionv[]={0,0,0};
+			double separationg[]={0,0,0};
+			double separationv[]={0,0,0};
+			double alignmentg[]={0,0,0};
+			double alignmentv[]={0,0,0};
+
+			NdPoint thispt = this.getSpace().getLocation(this);
+			
+			boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
+			boolean aln = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
+			boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
+
+			ContinuousSpace space = getSpace();
+			double radius;
+			double vpradius;
+			double err;
+			double rerr;
+			double vperr;
+			if (RunEnvironment.getInstance().isBatch()){
+				radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+				vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distance");
+				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+				err = (Float)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+			} else {
+				radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+				err = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
+			}
+
+			int count=0;
+			int counta = 0;
+			ContinuousWithin list;
+			Iterator l;
+			
+			count=0;
+			counta=0;
+			
+			int i=1;  //list won't include self
+			/*while (l.hasNext()) {
+				l.next();
+				i++;
+			}
+			if (i > 2) {
+				//calculate center
+				double center[] = findCenter(list.query().iterator());
+				//adjust to center
+				double dist = AgentGeometry.calcDistance(center, thispt);
+				if (dist < (radius+rerr)) {
+					if (coh) {
+						cohesiong[0] = (center[0]-thispt.getX())/100;
+						cohesiong[1] = (center[1]-thispt.getY())/100;
+						cohesiong[2] = (center[2]-thispt.getZ())/100;
+					}
+					if (sep) {
+						if (AgentGeometry.calcDistance(center, thispt) < (radius-rerr)) {
+							separationg[0] = (thispt.getX()-center[0])/10;
+							separationg[1] = (thispt.getY()-center[1])/10;
+							separationg[2] = (thispt.getZ()-center[2])/10;
+						}
+					}
+					if (aln) {
+						double x = RepastEssentials.RandomDraw(-1,1);
+						double y = RepastEssentials.RandomDraw(-1,1);
+						double z = RepastEssentials.RandomDraw(-1,1);
+						alignmentg[0] = (x-this.getX())/8;
+						alignmentg[1] = (y-this.getY())/8;
+						alignmentg[2] = (z-this.getZ())/8;
+					}
+				}
+			}*/
+			list = new ContinuousWithin(space,this,2*(radius+rerr));
+			l = list.query().iterator();
+			count=0;
+			counta=0;
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					NdPoint pt = space.getLocation(obj);
+					if (coh) {
+						cohesiong[0] += pt.getX();
+						cohesiong[1] += pt.getY();
+						cohesiong[2] += pt.getZ();
+						count++;
+					}
+					if (sep) {
+						if (AgentGeometry.calcDistanceNdPoints(pt, thispt) < 2*(radius-rerr)) {
+							separationg[0] = (thispt.getX()-pt.getX())/10;
+							separationg[1] = (thispt.getY()-pt.getY())/10;
+							separationg[2] = (thispt.getZ()-pt.getZ())/10;
+						}
+					}
+					/*if (aln) {
+						//pseudo alignment values since center doesn't exist
+						//double x = RepastEssentials.RandomDraw(-1,1);
+						//double y = RepastEssentials.RandomDraw(-1,1);
+						//double z = RepastEssentials.RandomDraw(-1,1);
+						alignmentg[0] += pt.getX();
+						alignmentg[1] += pt.getY();
+						alignmentg[2] += pt.getZ();
+						counta++;
+					}*/
+				}
+			}
+			if (count > 0) {
+				if (coh) {
+					//double mypt[] = space.getLocation(this).toDoubleArray(null);
+					cohesiong[0] = ((cohesiong[0]/count)-thispt.getX())/100;
+					cohesiong[1] = ((cohesiong[1]/count)-thispt.getY())/100;
+					cohesiong[2] = ((cohesiong[2]/count)-thispt.getZ())/100;
+				}
+			}
+			//if (counta > 0) {
+				if (aln) {
+					double x = RepastEssentials.RandomDraw(-1,1);
+					double y = RepastEssentials.RandomDraw(-1,1);
+					double z = RepastEssentials.RandomDraw(-1,1);
+					alignmentg[0] = (x-this.getX())/8;
+					alignmentg[1] = (y-this.getY())/8;
+					alignmentg[2] = (z-this.getZ())/8;
+				}
+			//}
+			list = new ContinuousWithin(space,this,(vpradius+vperr));
+			l = list.query().iterator();
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					VP1 vp = (VP1) obj;
+					NdPoint vpt = space.getLocation(vp);
+					if (coh) {
+						cohesionv[0] += vpt.getX();
+						cohesionv[1] += vpt.getY();
+						cohesionv[2] += vpt.getZ();
+						count++;
+					}
+					if (sep) {
+						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
+							separationv[0] += (thispt.getX()-vpt.getX())/20;
+							separationv[1] += (thispt.getY()-vpt.getY())/20;
+							separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+						}
+					}
+					if (aln) {
+						alignmentv[0] += vp.getX();
+						alignmentv[1] += vp.getY();
+						alignmentv[2] += vp.getZ();
+						counta++;
+					}
+				}
+			}
+			if (count > 0) {
+				if (coh) {
+					double mypt[] = space.getLocation(this).toDoubleArray(null);
+					cohesionv[0] = ((cohesionv[0]/count)-mypt[0])/100;
+					cohesionv[1] = ((cohesionv[1]/count)-mypt[1])/100;
+					cohesionv[2] = ((cohesionv[2]/count)-mypt[2])/100;
+				}
+			}
+			if (counta > 0) {
+				if (counta <=2) {
+					alignmentv[0] += RepastEssentials.RandomDraw(-1,1);
+					alignmentv[1] += RepastEssentials.RandomDraw(-1,1);
+					alignmentv[2] += RepastEssentials.RandomDraw(-1,1);
+				}
+				if (aln) {
+					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
+					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
+					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+				}
+			}
+
+			retpt[0] = (cohesiong[0] + cohesionv[0]) + 
+						(separationg[0] + separationv[0]) + 
+						(alignmentg[0] + alignmentv[0]);
+			retpt[1] = (cohesiong[1] + cohesionv[1]) + 
+						(separationg[1] + separationv[1]) + 
+						(alignmentg[1] + alignmentv[1]);
+			retpt[2] = (cohesiong[2] + cohesionv[2]) + 
+						(separationg[2] + separationv[2]) + 
+						(alignmentg[2] + alignmentv[2]);
+			if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
+				this.genXYZ();
+				retpt[0] = this.getX();
+				retpt[1] = this.getY();
+				retpt[2] = this.getZ();
+			} else {
+				AgentGeometry.trim(retpt, rerr);
+				this.setX(retpt[0]);
+				this.setY(retpt[1]);
+				this.setZ(retpt[2]);
+			}
+			space.moveByDisplacement(this, retpt);
+			move2Tick = tick;
+		}
+	}
+	
+	public double[] findPseudoCenter() {
+		//as if there is a genome there
+		double radius;
+		double rerr;
+		if (RunEnvironment.getInstance().isBatch()){
+			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+		} else {
+			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
+			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+		}
+		NdPoint thispt = this.getSpace().getLocation(this);
+		//find all points within 2 times radius
+		ContinuousWithin list = new ContinuousWithin(this.getSpace(),this,2*(radius+rerr));
+		Iterator l = list.query().iterator();
+		double center[] = {thispt.getX(),thispt.getY(),thispt.getZ()};
+		int count=1;
+		while (l.hasNext()) {
+			Object obj = l.next();
+			if (obj instanceof VP1) {
+				VP1 vp = (VP1) obj;
+				NdPoint vpt = this.getSpace().getLocation(vp);
+				center[0] += vpt.getX();
+				center[1] += vpt.getY();
+				center[2] += vpt.getZ();
+				count++;
+			}
+		}
+		if (count > 1) {
+			center[0] = center[0]/count;
+			center[1] = center[1]/count;
+			center[2] = center[2]/count;
+			//calculate plane
+			double normal[] = {center[0]-thispt.getX(),center[1]-thispt.getY(),center[2]-thispt.getZ()};
+			double d = -(normal[0]*thispt.getX()+normal[1]*thispt.getY()+normal[2]*thispt.getZ());
+			l = list.query().iterator();
+			center[0]=thispt.getX();
+			center[1]=thispt.getY();
+			center[2]=thispt.getZ();
+			count=1;
+			//only objects in direction of pseudo center
+			while(l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					VP1 vp = (VP1) obj;
+					NdPoint vpt = this.getSpace().getLocation(vp);
+					double sign = normal[0]*vpt.getX()+normal[1]*vpt.getY()+normal[2]*vpt.getZ()+d;
+					if (sign >=0) {
+						center[0] += vpt.getX();
+						center[1] += vpt.getY();
+						center[2] += vpt.getZ();
+						count++;
+					}
+				}
+			}
+			//new center in direction of our capsid assembly
+			center[0] = center[0]/count;
+			center[1] = center[1]/count;
+			center[2] = center[2]/count;
+			/*double nc[] = {thispt.getX(),thispt.getY(),thispt.getZ()};
+			count=1;
+			l = list.query().iterator();
+			while(l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					NdPoint vpt = this.getSpace().getLocation(obj);
+					if (AgentGeometry.calcDistance(center, vpt) <= (radius+rerr)) {
+						nc[0] += vpt.getX();
+						nc[1] += vpt.getY();
+						nc[2] += vpt.getZ();
+						count++;
+					}
+				}
+			}
+			center[0] = nc[0]/count;
+			center[1] = nc[1]/count;
+			center[2] = nc[2]/count;*/
+		}
+		if (center[0] == thispt.getX() && center[1] == thispt.getY() && center[2] == thispt.getZ()) {
+			center[0] = 0.0;
+			center[1] = 0.0;
+			center[2] = 0.0;
+		}
+		return center;
+				
+	}
 
 	public void move3() {
-		//center of mass around genome or otherwise
+		//center of mass of group
 		
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > move2Tick) {
@@ -215,39 +526,10 @@ public class VP1 extends AgentExtendCont{
 			err = (Double)RunEnvironment.getInstance().getParameters().getValue("errorThreshold");
 		}
 
-		int count=0;
-		int counta = 0;
-		ContinuousWithin list = new ContinuousWithin(space,this,2*(radius+rerr));
-		Iterator l = list.query().iterator();
-		//find the center of mass
-		double center[] = {0,0,0};
-		while (l.hasNext()) {
-			Object obj = l.next();
-			if (obj instanceof VP1) {
-				VP1 vp = (VP1) obj;
-				NdPoint vpt = space.getLocation(vp);
-				if (coh) {
-					center[0] += vpt.getX();
-					center[1] += vpt.getY();
-					center[2] += vpt.getZ();
-					count++;
-				}
-			}
-		}
-		if (count > 1) {
-			center[0] = center[0]/count;
-			center[1] = center[1]/count;
-			center[2] = center[2]/count;
-			//adjust center so that it is genome distance
-			/*double mag[][] = {{center[0]-thispt.getX()},{center[1]-thispt.getY()},{center[2]-thispt.getZ()}};
-			mag = AgentGeometry.unit(mag);
-			mag[0][0] = mag[0][0]*radius;
-			mag[1][0] = mag[1][0]*radius;
-			mag[2][0] = mag[2][0]*radius;
-			center[0] = mag[0][0]+thispt.getX();
-			center[1] = mag[1][0]+thispt.getY();
-			center[2] = mag[2][0]+thispt.getZ();*/
-
+		//find the pseudo-center
+		double center[] = {0.0,0.0,0.0};
+		center = findPseudoCenter();
+		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			if (coh) {
 				cohesiong[0] = (center[0]-thispt.getX())/100;
 				cohesiong[1] = (center[1]-thispt.getY())/100;
@@ -261,6 +543,7 @@ public class VP1 extends AgentExtendCont{
 				}
 			}
 			if (aln) {
+				//pseudo alignment values since center doesn't exist
 				double x = RepastEssentials.RandomDraw(-1,1);
 				double y = RepastEssentials.RandomDraw(-1,1);
 				double z = RepastEssentials.RandomDraw(-1,1);
@@ -270,34 +553,36 @@ public class VP1 extends AgentExtendCont{
 			}
 		}
 
-		//adjust agents based on new center
-		count=0;
-		counta=0;
-		list = new ContinuousWithin(space,this,(vpradius+vperr));
-		l = list.query().iterator();
+		//adjust between VP1 agents
+		int count=0;
+		int counta=0;
+		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
+		Iterator l = list.query().iterator();
 		while (l.hasNext()) {
 			Object obj = l.next();
 			if (obj instanceof VP1) {
 				VP1 vp = (VP1) obj;
 				NdPoint vpt = space.getLocation(vp);
-				if (coh) {
-					cohesionv[0] += vpt.getX();
-					cohesionv[1] += vpt.getY();
-					cohesionv[2] += vpt.getZ();
-					count++;
-				}
-				if (sep) {
-					if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-rerr)) {
-						separationv[0] += (thispt.getX()-vpt.getX())/20;
-						separationv[1] += (thispt.getY()-vpt.getY())/20;
-						separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+				if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
+					if (coh) {
+						cohesionv[0] += vpt.getX();
+						cohesionv[1] += vpt.getY();
+						cohesionv[2] += vpt.getZ();
+						count++;
 					}
-				}
-				if (aln) {
-					alignmentv[0] += vp.getX();
-					alignmentv[1] += vp.getY();
-					alignmentv[2] += vp.getZ();
-					counta++;
+					if (sep) {
+						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
+							separationv[0] += (thispt.getX()-vpt.getX())/20;
+							separationv[1] += (thispt.getY()-vpt.getY())/20;
+							separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+						}
+					}
+					if (aln) {
+						alignmentv[0] += vp.getX();
+						alignmentv[1] += vp.getY();
+						alignmentv[2] += vp.getZ();
+						counta++;
+					}
 				}
 			}
 		}
@@ -417,10 +702,9 @@ public class VP1 extends AgentExtendCont{
 
 		int count=0;
 		int counta = 0;
+		list = new ContinuousWithin(space,this,(vpradius+vperr));
+		l = list.query().iterator();
 		if (gFound) {
-			list = new ContinuousWithin(space,this,(vpradius+vperr));
-			l = list.query().iterator();
-
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP1) {
@@ -428,12 +712,12 @@ public class VP1 extends AgentExtendCont{
 					NdPoint vpt = space.getLocation(vp);
 					NdPoint gpt = space.getLocation(genome);
 					if (AgentGeometry.calcDistanceNdPoints(vpt, gpt) < (radius+rerr)) {
-						/*if (coh) {
+						if (coh) {
 							cohesionv[0] += vpt.getX();
 							cohesionv[1] += vpt.getY();
 							cohesionv[2] += vpt.getZ();
 							count++;
-						}*/
+						}
 						if (sep) {
 							NdPoint tvp = space.getLocation(this);
 							if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-rerr)) {
@@ -442,12 +726,12 @@ public class VP1 extends AgentExtendCont{
 								separationv[2] += (tvp.getZ()-vpt.getZ())/20;
 							}
 						}
-						/*if (aln) {
+						if (aln) {
 							alignmentv[0] += vp.getX();
 							alignmentv[1] += vp.getY();
 							alignmentv[2] += vp.getZ();
 							counta++;
-						}*/
+						}
 					}
 				}
 			}
@@ -466,7 +750,22 @@ public class VP1 extends AgentExtendCont{
 					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
 				}
 			}
-		} 
+		} else {
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					if (sep) {
+						NdPoint tvp = space.getLocation(this);
+						NdPoint vpt = space.getLocation(obj);
+						if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-rerr)) {
+							separationv[0] += (tvp.getX()-vpt.getX())/20;
+							separationv[1] += (tvp.getY()-vpt.getY())/20;
+							separationv[2] += (tvp.getZ()-vpt.getZ())/20;
+						}
+					}
+				}
+			}
+		}
 		
 		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
 					(separationg[0] + separationv[0])/2 + 
