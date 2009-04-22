@@ -75,7 +75,7 @@ public class Assembly implements ContextBuilder<AgentExtendCont> {
 			vp1.setTheContext(context/*this*/);
 			vp1.setSpace(space);
 			context/*this*/.add(vp1);
-			schedule.schedule(sparams, vp1, "move4");
+			schedule.schedule(sparams, vp1, "move3");
 			
 		}
 		

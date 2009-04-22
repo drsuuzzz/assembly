@@ -436,6 +436,7 @@ public class VP1 extends AgentExtendCont{
 			double normal[] = {center[0]-thispt.getX(),center[1]-thispt.getY(),center[2]-thispt.getZ()};
 			double d = -(normal[0]*thispt.getX()+normal[1]*thispt.getY()+normal[2]*thispt.getZ());
 			l = list.query().iterator();
+			//re-initialize center to current agent
 			center[0]=thispt.getX();
 			center[1]=thispt.getY();
 			center[2]=thispt.getZ();
@@ -459,24 +460,32 @@ public class VP1 extends AgentExtendCont{
 			center[0] = center[0]/count;
 			center[1] = center[1]/count;
 			center[2] = center[2]/count;
-			/*double nc[] = {thispt.getX(),thispt.getY(),thispt.getZ()};
-			count=1;
-			l = list.query().iterator();
-			while(l.hasNext()) {
-				Object obj = l.next();
-				if (obj instanceof VP1) {
-					NdPoint vpt = this.getSpace().getLocation(obj);
-					if (AgentGeometry.calcDistance(center, vpt) <= (radius+rerr)) {
-						nc[0] += vpt.getX();
-						nc[1] += vpt.getY();
-						nc[2] += vpt.getZ();
-						count++;
+			//initialize to current agent
+			if (count > 12) {
+				double nc[] = {0,0,0};//{thispt.getX(),thispt.getY(),thispt.getZ()};
+				count=0;
+				l = list.query().iterator();
+				while(l.hasNext()) {
+					Object obj = l.next();
+					if (obj instanceof VP1) {
+						NdPoint vpt = this.getSpace().getLocation(obj);
+						if (AgentGeometry.calcDistance(center, vpt) <= (radius+rerr)) {
+							nc[0] += vpt.getX();
+							nc[1] += vpt.getY();
+							nc[2] += vpt.getZ();
+							count++;
+						}
 					}
 				}
+				center[0] = nc[0]/count;
+				center[1] = nc[1]/count;
+				center[2] = nc[2]/count;
+				if (AgentGeometry.calcDistance(center, thispt) > (radius+rerr)) {
+					center[0] = 0.0;
+					center[1] = 0.0;
+					center[2] = 0.0;
+				}
 			}
-			center[0] = nc[0]/count;
-			center[1] = nc[1]/count;
-			center[2] = nc[2]/count;*/
 		}
 		if (center[0] == thispt.getX() && center[1] == thispt.getY() && center[2] == thispt.getZ()) {
 			center[0] = 0.0;
@@ -554,54 +563,55 @@ public class VP1 extends AgentExtendCont{
 		}
 
 		//adjust between VP1 agents
-		int count=0;
-		int counta=0;
-		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
-		Iterator l = list.query().iterator();
-		while (l.hasNext()) {
-			Object obj = l.next();
-			if (obj instanceof VP1) {
-				VP1 vp = (VP1) obj;
-				NdPoint vpt = space.getLocation(vp);
-				if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
-					if (coh) {
-						cohesionv[0] += vpt.getX();
-						cohesionv[1] += vpt.getY();
-						cohesionv[2] += vpt.getZ();
-						count++;
-					}
-					if (sep) {
-						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
-							separationv[0] += (thispt.getX()-vpt.getX())/20;
-							separationv[1] += (thispt.getY()-vpt.getY())/20;
-							separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
+			int count=0;
+			int counta=0;
+			ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
+			Iterator l = list.query().iterator();
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					VP1 vp = (VP1) obj;
+					NdPoint vpt = space.getLocation(vp);
+					if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
+						if (coh) {
+							cohesionv[0] += vpt.getX();
+							cohesionv[1] += vpt.getY();
+							cohesionv[2] += vpt.getZ();
+							count++;
 						}
-					}
-					if (aln) {
-						alignmentv[0] += vp.getX();
-						alignmentv[1] += vp.getY();
-						alignmentv[2] += vp.getZ();
-						counta++;
+						if (sep) {
+							if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
+								separationv[0] += (thispt.getX()-vpt.getX())/20;
+								separationv[1] += (thispt.getY()-vpt.getY())/20;
+								separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+							}
+						}
+						if (aln) {
+							alignmentv[0] += vp.getX();
+							alignmentv[1] += vp.getY();
+							alignmentv[2] += vp.getZ();
+							counta++;
+						}
 					}
 				}
 			}
-		}
-		if (count > 0) {
-			if (coh) {
-				double mypt[] = space.getLocation(this).toDoubleArray(null);
-				cohesionv[0] = ((cohesionv[0]/count)-mypt[0])/100;
-				cohesionv[1] = ((cohesionv[1]/count)-mypt[1])/100;
-				cohesionv[2] = ((cohesionv[2]/count)-mypt[2])/100;
+			if (count > 0) {
+				if (coh) {
+					double mypt[] = space.getLocation(this).toDoubleArray(null);
+					cohesionv[0] = ((cohesionv[0]/count)-mypt[0])/100;
+					cohesionv[1] = ((cohesionv[1]/count)-mypt[1])/100;
+					cohesionv[2] = ((cohesionv[2]/count)-mypt[2])/100;
+				}
+			}
+			if (counta > 0) {
+				if (aln) {
+					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
+					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
+					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+				}
 			}
 		}
-		if (counta > 0) {
-			if (aln) {
-				alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
-				alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
-				alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
-			}
-		}
-
 		retpt[0] = (cohesiong[0] + cohesionv[0]) + 
 					(separationg[0] + separationv[0]) + 
 					(alignmentg[0] + alignmentv[0]);
