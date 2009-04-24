@@ -379,7 +379,7 @@ public class AgentGeometry {
 		return ret;
 	}
 	
-	public static ArrayList objectsWithinPts(ContinuousSpace space, AgentExtendCont agent, ArrayList pts, double[] g, double[] pt, double distance) {
+/*	public static ArrayList objectsWithinPts(ContinuousSpace space, AgentExtendCont agent, ArrayList pts, double[] g, double[] pt, double distance) {
 
 		//new reference set
 		ArrayList al = new ArrayList();
@@ -455,7 +455,7 @@ public class AgentGeometry {
 			}
 		}
 		return ret;
-	}
+	}*/
 	
 	public static ArrayList objectsWithinThetaAngle(ContinuousSpace space, AgentExtendCont agent, ArrayList pts, double c[],double distance, double[] angleOffset) {
 		//Iterator i = getSpace().getObjects().iterator();

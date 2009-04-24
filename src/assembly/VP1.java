@@ -49,6 +49,11 @@ public class VP1 extends AgentExtendCont{
 	private double defectHex;
 	private double normal[] = {0f, 0f, 1f};
 	private ArrayList<NdPoint> ptList;
+	/*private double ptList[][] = {{0.0,0.0,0.0,0.0,0.0},
+								 {0.0,0.0,0.0,0.0,0.0},
+								 {0.0,0.0,0.0,0.0,0.0},
+								 {0.0,0.0,0.0,0.0,0.0}
+	};*/
 	
 	//
 	//private boolean complete;
@@ -63,9 +68,9 @@ public class VP1 extends AgentExtendCont{
 	
 	//neighbors
 	private Genome genome;
-	private VP1 sides[] = new VP1[6];
+	//private VP1 sides[] = new VP1[6];
 
-	private boolean flock;
+	//private boolean flock;
 	
 	private double moveTick;
 	private double move2Tick;
@@ -82,9 +87,9 @@ public class VP1 extends AgentExtendCont{
 		//defectPent = ;  
 		double dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
 		ptList = AgentGeometry.calcPentPts(defectPent, dist);
-		for (int i = 0; i < nSides; i++) {
+		/*for (int i = 0; i < nSides; i++) {
 			sides[i] = null;
-		}
+		}*/
 		//complete = false;
 		//nucleate = false;
 		//rotatetheta = 0;
@@ -143,13 +148,14 @@ public class VP1 extends AgentExtendCont{
 		}
 	}*/
 	
-	public VP1 getSides(int index) {
+/*	public VP1 getSides(int index) {
 		return sides[index];
 	}
 
 	public void setSides(int index, VP1 neighbor) {
 		this.sides[index] = neighbor;
-	}
+	}*/
+	
 	public Genome getGenome() {
 		return genome;
 	}
@@ -197,6 +203,16 @@ public class VP1 extends AgentExtendCont{
 		return c;
 	}
 	
+	public int getSize (Iterator list) {
+		
+		int i =0;
+		while (list.hasNext()) {
+			list.next();
+			i++;
+		}
+		return i;
+	}
+	
 	public void move4(){
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > move2Tick) {
@@ -207,14 +223,14 @@ public class VP1 extends AgentExtendCont{
 			double separationv[]={0,0,0};
 			double alignmentg[]={0,0,0};
 			double alignmentv[]={0,0,0};
-
-			NdPoint thispt = this.getSpace().getLocation(this);
+			
+			ContinuousSpace space = getSpace();
+			NdPoint thispt = space.getLocation(this);
 			
 			boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
 			boolean aln = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
 			boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
 
-			ContinuousSpace space = getSpace();
 			double radius;
 			double vpradius;
 			double err;
@@ -243,40 +259,17 @@ public class VP1 extends AgentExtendCont{
 			counta=0;
 			
 			int i=1;  //list won't include self
-			/*while (l.hasNext()) {
-				l.next();
-				i++;
-			}
-			if (i > 2) {
-				//calculate center
-				double center[] = findCenter(list.query().iterator());
-				//adjust to center
-				double dist = AgentGeometry.calcDistance(center, thispt);
-				if (dist < (radius+rerr)) {
-					if (coh) {
-						cohesiong[0] = (center[0]-thispt.getX())/100;
-						cohesiong[1] = (center[1]-thispt.getY())/100;
-						cohesiong[2] = (center[2]-thispt.getZ())/100;
-					}
-					if (sep) {
-						if (AgentGeometry.calcDistance(center, thispt) < (radius-rerr)) {
-							separationg[0] = (thispt.getX()-center[0])/10;
-							separationg[1] = (thispt.getY()-center[1])/10;
-							separationg[2] = (thispt.getZ()-center[2])/10;
-						}
-					}
-					if (aln) {
-						double x = RepastEssentials.RandomDraw(-1,1);
-						double y = RepastEssentials.RandomDraw(-1,1);
-						double z = RepastEssentials.RandomDraw(-1,1);
-						alignmentg[0] = (x-this.getX())/8;
-						alignmentg[1] = (y-this.getY())/8;
-						alignmentg[2] = (z-this.getZ())/8;
-					}
-				}
-			}*/
-			list = new ContinuousWithin(space,this,2*(radius+rerr));
+
+			list = new ContinuousWithin(space,this,(vpradius+vperr));
 			l = list.query().iterator();
+			int size = getSize(l);
+			ArrayList refpts = null;
+			if (size >= 2) {
+				double cent[] = findCenter(list.query().iterator());  //including this point
+				//guess based on neighbors where this guy should be and move there
+				refpts = AgentGeometry.rotateRefPtsAroundZAxis(ptList, thispt.toDoubleArray(null), cent);
+				//double loc[][]=AgentGeometry.objectsWithin();
+			}
 			count=0;
 			counta=0;
 			while (l.hasNext()) {
@@ -461,7 +454,7 @@ public class VP1 extends AgentExtendCont{
 			center[1] = center[1]/count;
 			center[2] = center[2]/count;
 			//initialize to current agent
-			if (count > 12) {
+			if (count > 8) {
 				double nc[] = {0,0,0};//{thispt.getX(),thispt.getY(),thispt.getZ()};
 				count=0;
 				l = list.query().iterator();
@@ -480,13 +473,12 @@ public class VP1 extends AgentExtendCont{
 				center[0] = nc[0]/count;
 				center[1] = nc[1]/count;
 				center[2] = nc[2]/count;
-				if (AgentGeometry.calcDistance(center, thispt) > (radius+rerr)) {
-					center[0] = 0.0;
-					center[1] = 0.0;
-					center[2] = 0.0;
-				}
+				
+			} else {
+				//less then 12
+				//System.out.println("Count: "+count);
 			}
-		}
+		} 
 		if (center[0] == thispt.getX() && center[1] == thispt.getY() && center[2] == thispt.getZ()) {
 			center[0] = 0.0;
 			center[1] = 0.0;
@@ -538,6 +530,11 @@ public class VP1 extends AgentExtendCont{
 		//find the pseudo-center
 		double center[] = {0.0,0.0,0.0};
 		center = findPseudoCenter();
+		/*if (AgentGeometry.calcDistance(center, thispt) > (radius+rerr)) {
+			center[0] = 0.0;
+			center[1] = 0.0;
+			center[2] = 0.0;
+		}*/
 		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			if (coh) {
 				cohesiong[0] = (center[0]-thispt.getX())/100;
@@ -563,11 +560,11 @@ public class VP1 extends AgentExtendCont{
 		}
 
 		//adjust between VP1 agents
+		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
+		Iterator l = list.query().iterator();
 		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			int count=0;
 			int counta=0;
-			ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
-			Iterator l = list.query().iterator();
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP1) {
@@ -609,6 +606,20 @@ public class VP1 extends AgentExtendCont{
 					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
 					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
 					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+				}
+			}
+		} else {
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP1) {
+					if (sep) {
+						NdPoint vpt = this.getSpace().getLocation(obj);
+						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
+							separationv[0] += (thispt.getX()-vpt.getX())/20;
+							separationv[1] += (thispt.getY()-vpt.getY())/20;
+							separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+						}
+					}
 				}
 			}
 		}
@@ -802,7 +813,7 @@ public class VP1 extends AgentExtendCont{
 		}
 	}
 		
-	public double[] center(double c[]) {
+/*	public double[] center(double c[]) {
 		//cohesion
 		//center of mass around genome or otherwise
 		double retpt[] = {0.0,0.0,0.0};
@@ -959,9 +970,9 @@ public class VP1 extends AgentExtendCont{
 		retpt[2] = retpt[2] + pt[2];
 
 		return retpt;
-	}
+	}*/
 	
-	public double[] collision(double c[]) {
+/*	public double[] collision(double c[]) {
 		//separation
 		ContinuousSpace space = getSpace();
 		boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
@@ -1125,9 +1136,9 @@ public class VP1 extends AgentExtendCont{
 		pt[2] = pt[2]+refpt[2];
 
 		return pt;
-	}
+	}*/
 	
-	public double[] align(double[] pos) {
+/*	public double[] align(double[] pos) {
 		//alignment
 		//only the heading (the angles) information not the distance traveled.
 		
@@ -1226,13 +1237,13 @@ public class VP1 extends AgentExtendCont{
 			pt[2]=pt[2]/count;
 		}
 		return pt;
-	}
+	}*/
 	
 	public void stability() {
 		
 	}
 		
-	public void move() {
+/*	public void move() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
 			int asstype = (Integer)RunEnvironment.getInstance().getParameters().getValue("assembleType");
@@ -1254,7 +1265,7 @@ public class VP1 extends AgentExtendCont{
 			coord[0] = coord[0]+ptcol[0];
 			coord[1] = coord[1]+ptcol[1];
 			coord[2] = coord[2]+ptcol[2];
-			//double ptadh[] = /*{0,0,0};*/align(coord);
+			//double ptadh[] = align(coord);
 			//coord[0] = coord[0]+ptadh[0];
 			//coord[1] = coord[1]+ptadh[1];
 			//coord[2] = coord[2]+ptadh[2];
@@ -1271,6 +1282,6 @@ public class VP1 extends AgentExtendCont{
 
 			moveTick = tick;
 		}
-	}
+	}*/
 
 }
