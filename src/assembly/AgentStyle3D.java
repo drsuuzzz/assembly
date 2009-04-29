@@ -2,6 +2,7 @@ package assembly;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Iterator;
 
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
@@ -13,6 +14,8 @@ import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
 import com.sun.j3d.utils.picking.PickTool;
 
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.query.space.continuous.ContinuousWithin;
 import repast.simphony.visualization.visualization3D.AppearanceFactory;
 import repast.simphony.visualization.visualization3D.ShapeFactory;
 import repast.simphony.visualization.visualization3D.AppearanceFactory.PolygonDraw;
@@ -30,11 +33,25 @@ public class AgentStyle3D implements Style3D {
 			appearance = new TaggedAppearance();
 		}
 		if (obj instanceof VP1) {
+			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
+			ContinuousWithin list = new ContinuousWithin(((VP1) obj).getSpace(),obj, (vpradius+vperr));
+			Iterator l = list.query().iterator();
+			int size=0;
+			while(l.hasNext()) {
+				l.next();
+				size++;
+			}
 			//PolygonAttributes polyatt = new PolygonAttributes();
 			//polyatt.setCullFace(PolygonAttributes.CULL_NONE);
 			//appearance.getAppearance().setPolygonAttributes(polyatt);
 			//AppearanceFactory.setPolygonAppearance(appearance.getAppearance(), PolygonDraw.FILL);
-			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
+			if (size == 5) {
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.magenta);
+
+			} else {
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
+			}
 		} else if (obj instanceof VP2) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.magenta);
 		} else if (obj instanceof VP3) {

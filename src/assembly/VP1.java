@@ -23,7 +23,7 @@ public class VP1 extends AgentExtendCont{
 	
 	//private static final int HEXA = 6;
 	//private static final int PENTA = 5;
-	private static final int BETA = 1;
+/*	private static final int BETA = 1;
 	private static final int BETAP = 0;
 	private static final int GAMMA = 5;
 	private static final int ALPHAP = 4;
@@ -36,9 +36,9 @@ public class VP1 extends AgentExtendCont{
 	private static final int ALPHA4 = 4;
 
 	
-	private static boolean nucleating = false;
+	private static boolean nucleating = false;*/
 	
-	private int nSides = 6;
+//	private int nSides = 6;
 	public enum State {PENT, HEX};
 	public enum Bound {BOUND, UNBOUND};
 	private State state;
@@ -82,11 +82,11 @@ public class VP1 extends AgentExtendCont{
 		super();
 		state = State.PENT;
 		bound = Bound.UNBOUND;
-		defectPent = 60*Math.PI/180;
+		//defectPent = 60*Math.PI/180;
 		//ptList = null;
 		//defectPent = ;  
-		double dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
-		ptList = AgentGeometry.calcPentPts(defectPent, dist);
+		//double dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
+		//ptList = AgentGeometry.calcPentPts(defectPent, dist);
 		/*for (int i = 0; i < nSides; i++) {
 			sides[i] = null;
 		}*/

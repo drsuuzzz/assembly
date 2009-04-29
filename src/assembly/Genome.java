@@ -227,6 +227,10 @@ public class Genome extends AgentExtendCont{
 				//coord[0] = (disp[0]+pt.getX());
 				//coord[1] = (disp[1]+pt.getY());
 				//coord[2] = (disp[2]+pt.getZ());
+				//if (count ==32) {
+					System.out.println("capsid count="+count);
+					//RepastEssentials.PauseSimulationRun();
+				//}
 			}
 			
 			//keep distance from other genomes
