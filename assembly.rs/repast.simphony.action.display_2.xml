@@ -1,63 +1,31 @@
 <repast.simphony.visualization.engine.DefaultDisplayDescriptor>
-  <name>Cytoplasm</name>
+  <name>Nucleus</name>
   <type>THREE_D</type>
   <styles>
     <entry>
-      <string>assembly.VP2</string>
+      <string>assembly.Genome</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.SmTAg</string>
-      <string>assembly.AgentStyle3D</string>
-    </entry>
-    <entry>
-      <string>assembly.Ribosome</string>
-      <string>assembly.AgentStyle3D</string>
-    </entry>
-    <entry>
-      <string>assembly.VP1</string>
+      <string>assembly.VP123</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
       <string>assembly.MRNA</string>
-      <string>assembly.AgentStyle3D</string>
-    </entry>
-    <entry>
-      <string>assembly.LgTAg</string>
-      <string>assembly.AgentStyle3D</string>
-    </entry>
-    <entry>
-      <string>assembly.VP3</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>assembly.VP2</string>
+      <string>assembly.Genome</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.SmTAg</string>
-      <null/>
-    </entry>
-    <entry>
-      <string>assembly.Ribosome</string>
-      <null/>
-    </entry>
-    <entry>
-      <string>assembly.VP1</string>
+      <string>assembly.VP123</string>
       <null/>
     </entry>
     <entry>
       <string>assembly.MRNA</string>
-      <null/>
-    </entry>
-    <entry>
-      <string>assembly.LgTAg</string>
-      <null/>
-    </entry>
-    <entry>
-      <string>assembly.VP3</string>
       <null/>
     </entry>
   </editedStyles>
@@ -72,41 +40,25 @@
     <frequency>REPEAT</frequency>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
-  <layoutProjection>Cytoplasm</layoutProjection>
+  <layoutProjection>Nucleus</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>assembly.VP2</string>
+      <string>assembly.Genome</string>
       <int>1</int>
     </entry>
     <entry>
-      <string>assembly.SmTAg</string>
-      <int>6</int>
-    </entry>
-    <entry>
-      <string>assembly.Ribosome</string>
-      <int>5</int>
-    </entry>
-    <entry>
-      <string>assembly.VP1</string>
+      <string>assembly.VP123</string>
       <int>0</int>
     </entry>
     <entry>
       <string>assembly.MRNA</string>
-      <int>3</int>
-    </entry>
-    <entry>
-      <string>assembly.LgTAg</string>
-      <int>4</int>
-    </entry>
-    <entry>
-      <string>assembly.VP3</string>
       <int>2</int>
     </entry>
   </layerOrder>
   <projections>
     <repast.score.impl.SContinuousSpaceImpl>
-      <name>Cytoplasm</name>
+      <name>Nucleus</name>
     </repast.score.impl.SContinuousSpaceImpl>
   </projections>
   <valueLayers/>
@@ -115,7 +67,7 @@
   </visualizationProperties>
   <projectionDescriptors>
     <entry>
-      <string>Cytoplasm</string>
+      <string>Nucleus</string>
       <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
         <proj class="repast.score.impl.SContinuousSpaceImpl" reference="../../../../projections/repast.score.impl.SContinuousSpaceImpl"/>
         <props>
