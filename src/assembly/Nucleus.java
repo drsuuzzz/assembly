@@ -21,12 +21,12 @@ import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.continuous.WrapAroundBorders;
 import repast.simphony.space.graph.Network;
 
-//public class Assembly extends DefaultContext {
-public class Nucleus implements ContextBuilder<AgentExtendCont> {
+public class Nucleus extends DefaultContext<AgentExtendCont> {
+//public class Nucleus implements ContextBuilder<AgentExtendCont> {
 	
-	public Context build(Context<AgentExtendCont> context) {
-	//public Assembly() {
-		//super("Assembly");
+	//public Context build(Context<AgentExtendCont> context) {
+	public Nucleus() {
+		super("Nucleus");
 		
 		Parameters parm = RunEnvironment.getInstance().getParameters();
 		int x = (Integer)parm.getValue("axisSizeX");
@@ -40,10 +40,10 @@ public class Nucleus implements ContextBuilder<AgentExtendCont> {
 		//create space, make sure dimensions set in model.score
 
 		Network<AgentExtendCont> network = NetworkFactoryFinder.createNetworkFactory(null).createNetwork(
-				"Bonds", context, false);
+				"Bonds", this/*context*/, false);
 		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
-		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("nucleus",context/*this*/,
+		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("Nucleus",/*context*/this,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
 		//ContinuousSpace space2 = (ContinuousSpace)context/*this*/.getProjection("nucleus");
@@ -52,10 +52,10 @@ public class Nucleus implements ContextBuilder<AgentExtendCont> {
 		int numg = (Integer)parm.getValue("numberofGenomes");
 		for (int i = 0; i < numg; i++) {
 			Genome g = new Genome();
-			g.setTheContext(context/*this*/);
+			g.setTheContext(/*context*/this);
 			g.setSpace(space);
 			//g.setNetwork(network);
-			context/*this*/.add(g);
+			/*context*/this.add(g);
 			if (asstype == 3) {
 				g.setStop(true);
 				space.moveTo(g,pos);
@@ -69,13 +69,13 @@ public class Nucleus implements ContextBuilder<AgentExtendCont> {
 		}
 	
 	
-	int numvp1 = (Integer)parm.getValue("numberofVP1");
+	int numvp1 = (Integer)parm.getValue("numberofVP123");
 		for (int i = 0; i < numvp1; i++) {
-			VP1 vp1 = new VP1();
-			vp1.setTheContext(context/*this*/);
-			vp1.setSpace(space);
-			context/*this*/.add(vp1);
-			schedule.schedule(sparams, vp1, "move2");
+			VP123 vp123 = new VP123();
+			vp123.setTheContext(/*context*/this);
+			vp123.setSpace(space);
+			/*context*/this.add(vp123);
+			schedule.schedule(sparams, vp123, "move2");
 			
 		}
 		
@@ -94,6 +94,6 @@ public class Nucleus implements ContextBuilder<AgentExtendCont> {
 			this.add(vp3);
 		}*/
 	//	loc = space.getLocation(g);
-		return context;
+		//return context;
 	}
 }

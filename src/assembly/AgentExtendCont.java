@@ -158,17 +158,30 @@ public class AgentExtendCont {
 	public void move() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-		if (!getStop()) {
+			if (!getStop()) {
+				double coord[] = {0.0,0.0,0.0};
+				/*thetaPhiDistGen();
+				coord[0] = distance*Math.sin(theta)*Math.sin(phi); //x
+				coord[1] = distance*Math.cos(phi);                 //y
+				coord[2] = distance*Math.cos(theta)*Math.sin(phi); //z*/
+				coord[0] = this.getX();
+				coord[1] = this.getY();
+				coord[2] = this.getZ();
+				space.moveByDisplacement(this, coord);
 
-			double coord[] = {0.0,0.0,0.0};
-			thetaPhiDistGen();
-			coord[0] = distance*Math.sin(theta)*Math.sin(phi); //x
-			coord[1] = distance*Math.cos(phi);                 //y
-			coord[2] = distance*Math.cos(theta)*Math.sin(phi); //z
-			space.moveByDisplacement(this, coord);
-
+			}
+			moveTick = tick;
 		}
-		moveTick = tick;
-		}
+	}
+	public void bind() {
+		
+	}
+	
+	public void transcription() {
+		
+	}
+	
+	public void translation() {
+		
 	}
 }

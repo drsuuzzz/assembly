@@ -32,10 +32,10 @@ public class AgentStyle3D implements Style3D {
 		if (appearance == null) {
 			appearance = new TaggedAppearance();
 		}
-		if (obj instanceof VP1) {
-			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
-			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceThreshold");
-			ContinuousWithin list = new ContinuousWithin(((VP1) obj).getSpace(),obj, (vpradius+vperr));
+		if (obj instanceof VP123) {
+			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
+			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
+			ContinuousWithin list = new ContinuousWithin(((VP123) obj).getSpace(),obj, (vpradius));
 			Iterator l = list.query().iterator();
 			int size=0;
 			while(l.hasNext()) {
@@ -158,7 +158,7 @@ public class AgentStyle3D implements Style3D {
 		if (group == null || group.getTag() == null) {
 			group = new TaggedBranchGroup("DEFAULT");
 			Shape3D shape = null;
-			if (obj instanceof VP1) {
+			if (obj instanceof VP123) {
 				//shape = createPentagon(0.03f,"DEFAULT");
 				shape = ShapeFactory.createSphere(0.03f, "DEFAULT");
 			} else if (obj instanceof VP2  || obj instanceof VP3) {

@@ -591,7 +591,7 @@ public class Misc extends AgentExtendCont{
 		ArrayList list = AgentGeometry.objectsWithin(space, this, c,2);
 		double pt[] = {0.0,0.0,0.0};
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i) instanceof VP1) {
+			if (list.get(i) instanceof VP123) {
 				//double theta1 = getTheta();
 				//double phi1 = getPhi();
 				//double dist = getDistance();
@@ -650,8 +650,8 @@ public class Misc extends AgentExtendCont{
 		double dist = (Double)RunEnvironment.getInstance().getParameters().getValue("distance");
 		ArrayList list2 = AgentGeometry.objectsWithin(space, this, pos,dist);
 		for (int i = 0; i < list2.size(); i++) {
-			if (list2.get(i) instanceof VP1) {
-				VP1 vp = (VP1) list2.get(i);
+			if (list2.get(i) instanceof VP123) {
+				VP123 vp = (VP123) list2.get(i);
 				pt[0] += Math.sin(vp.getTheta())*Math.sin(vp.getPhi());
 				pt[1] += Math.cos(vp.getPhi());
 				pt[2] += Math.cos(vp.getTheta())*Math.sin(vp.getPhi());		

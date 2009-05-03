@@ -188,8 +188,8 @@ public class Genome extends AgentExtendCont{
 			double coord[] = {0,0,0};
 			NdPoint pt = this.getSpace().getLocation(this);
 
-			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("radius");
-			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("radiusThreshold");
+			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			boolean aln = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleAlignment");
 			//boolean coh = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleCohesion");
 			boolean sep = (Boolean)RunEnvironment.getInstance().getParameters().getValue("ruleSeparation");
@@ -197,6 +197,8 @@ public class Genome extends AgentExtendCont{
 			ContinuousWithin list = new ContinuousWithin(this.getSpace(), this, (r+rerr));
 			Iterator neighbors = list.query().iterator();
 			
+			//this.genXYZ();
+
 			double align[] = {0,0,0};
 			int count = 0;
 			while(neighbors.hasNext()){
@@ -210,9 +212,9 @@ public class Genome extends AgentExtendCont{
 			}
 			double disp[] = {0,0,0};
 			if (count > 0) {
-				align[0] = (align[0]/count);
-				align[1] = (align[1]/count);
-				align[2] = (align[2]/count);
+				align[0] = ((align[0]/count)-this.getX())/8;
+				align[1] = ((align[1]/count)-this.getY())/8;
+				align[2] = ((align[2]/count)-this.getZ())/8;
 				//this.setX(align[0]);
 				//this.setY(align[1]);
 				//this.setZ(align[2]);
@@ -227,10 +229,11 @@ public class Genome extends AgentExtendCont{
 				//coord[0] = (disp[0]+pt.getX());
 				//coord[1] = (disp[1]+pt.getY());
 				//coord[2] = (disp[2]+pt.getZ());
-				//if (count ==32) {
-					System.out.println("capsid count="+count);
-					//RepastEssentials.PauseSimulationRun();
-				//}
+				if (count ==72) {
+					RepastEssentials.PauseSimulationRun();
+				}
+				System.out.println("capsid count="+count);
+
 			}
 			
 			//keep distance from other genomes

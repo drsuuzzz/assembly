@@ -1,6 +1,6 @@
 package assembly;
 
-import assembly.VP1.State;
+import assembly.VP123.State;
 import repast.simphony.parameter.StringConverter;
 
 public class StateConverter implements StringConverter<State> {

@@ -1,6 +1,6 @@
 package assembly;
 
-import assembly.VP1.Bound;
+import assembly.VP123.Bound;
 import repast.simphony.parameter.StringConverter;
 
 public class BoundConverter implements StringConverter<Bound> {
