@@ -52,6 +52,8 @@ public class AgentStyle3D implements Style3D {
 			} else {
 				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
 			}
+		} else if (obj instanceof VP1) {
+			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
 		} else if (obj instanceof VP2) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.magenta);
 		} else if (obj instanceof VP3) {
@@ -161,9 +163,9 @@ public class AgentStyle3D implements Style3D {
 			if (obj instanceof VP123) {
 				//shape = createPentagon(0.03f,"DEFAULT");
 				shape = ShapeFactory.createSphere(0.03f, "DEFAULT");
-			} else if (obj instanceof VP2  || obj instanceof VP3) {
+			} /*else if (obj instanceof VP2  || obj instanceof VP3) {
 				shape = ShapeFactory.createCone(0.03f, 0.06f, "DEFAULT");
-			}
+			}*/
 			else {
 				shape = ShapeFactory.createSphere(0.03f, "DEFAULT");
 			}

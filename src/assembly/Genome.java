@@ -197,7 +197,6 @@ public class Genome extends AgentExtendCont{
 			ContinuousWithin list = new ContinuousWithin(this.getSpace(), this, (r+rerr));
 			Iterator neighbors = list.query().iterator();
 			
-			//this.genXYZ();
 
 			double align[] = {0,0,0};
 			int count = 0;
@@ -212,29 +211,28 @@ public class Genome extends AgentExtendCont{
 			}
 			double disp[] = {0,0,0};
 			if (count > 0) {
-				align[0] = ((align[0]/count)-this.getX())/8;
-				align[1] = ((align[1]/count)-this.getY())/8;
-				align[2] = ((align[2]/count)-this.getZ())/8;
-				//this.setX(align[0]);
-				//this.setY(align[1]);
-				//this.setZ(align[2]);
-				//coord[0] = pt.getX() + align[0];
-				//coord[1] = pt.getY() + align[1];
-				//coord[2] = pt.getZ() + align[2];
-			//} else {
-				//this.genXYZ();
-				//disp[0] = this.getX();
-				//disp[1] = this.getY();
-				//disp[2] = this.getZ();
-				//coord[0] = (disp[0]+pt.getX());
-				//coord[1] = (disp[1]+pt.getY());
-				//coord[2] = (disp[2]+pt.getZ());
+				align[0] = (align[0]/count)/*-this.getX())/8*/;
+				align[1] = (align[1]/count)/*-this.getY())/8*/;
+				align[2] = (align[2]/count)/*-this.getZ())/8*/;
+				/*this.setX(align[0]);
+				this.setY(align[1]);
+				this.setZ(align[2]);
+				coord[0] = pt.getX() + align[0];
+				coord[1] = pt.getY() + align[1];
+				coord[2] = pt.getZ() + align[2];*/
 				if (count ==72) {
 					RepastEssentials.PauseSimulationRun();
 				}
 				System.out.println("capsid count="+count);
-
-			}
+			} /*else {
+				this.genXYZ();
+				disp[0] = this.getX();
+				disp[1] = this.getY();
+				disp[2] = this.getZ();
+				coord[0] = (disp[0]+pt.getX());
+				coord[1] = (disp[1]+pt.getY());
+				coord[2] = (disp[2]+pt.getZ());
+			}*/
 			
 			//keep distance from other genomes
 			list = new ContinuousWithin(this.getSpace(), this, 2*(r+rerr));

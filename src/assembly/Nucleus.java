@@ -32,21 +32,16 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		int x = (Integer)parm.getValue("axisSizeX");
 		int y = (Integer)parm.getValue("axisSizeY");
 		int z = (Integer)parm.getValue("axisSizeZ");
-		int asstype = (Integer)parm.getValue("assembleType");
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double start = RepastEssentials.GetTickCount() <=0 ? 1 : RepastEssentials.GetTickCount();
 		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 1);
 		//create space, make sure dimensions set in model.score
-
-		Network<AgentExtendCont> network = NetworkFactoryFinder.createNetworkFactory(null).createNetwork(
-				"Bonds", this/*context*/, false);
 		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
 		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("Nucleus",/*context*/this,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
-		//ContinuousSpace space2 = (ContinuousSpace)context/*this*/.getProjection("nucleus");
 		//add agents
 		double pos[] = {20.0,20.0,20.0};
 		int numg = (Integer)parm.getValue("numberofGenomes");
@@ -54,18 +49,8 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			Genome g = new Genome();
 			g.setTheContext(/*context*/this);
 			g.setSpace(space);
-			//g.setNetwork(network);
-			/*context*/this.add(g);
-			if (asstype == 3) {
-				g.setStop(true);
-				space.moveTo(g,pos);
-			}
+			this.add(g);
 			schedule.schedule(sparams, g, "move2");
-		//	boolean res2 = space2.moveTo(g, pos);
-		//	NdPoint loc = space.getLocation(g);
-		//	if (!result)
-		//		System.out.println("Move failed");
-
 		}
 	
 	

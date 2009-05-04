@@ -39,13 +39,13 @@ public class AgentExtendCont {
 		name=null;
 	}
 	//@Parameter(usageName="stop",displayName="Stopped")
-	public Boolean getStop() {
+/*	public Boolean getStop() {
 		return stop;
 	}
 
 	public void setStop(Boolean stop) {
 		this.stop = stop;
-	}
+	}*/
 
 	public Context getTheContext() {
 		return theContext;
@@ -63,7 +63,7 @@ public class AgentExtendCont {
 		this.space = space;
 	}
 	
-	public double getTheta() {
+/*	public double getTheta() {
 		return theta;
 	}
 	public void setTheta(double theta) {
@@ -81,7 +81,7 @@ public class AgentExtendCont {
 	}
 	public void setDistance(double distance) {
 		this.distance = distance;
-	}
+	}*/
 	
 	public double getX() {
 		return X;
@@ -158,18 +158,11 @@ public class AgentExtendCont {
 	public void move() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-			if (!getStop()) {
-				double coord[] = {0.0,0.0,0.0};
-				/*thetaPhiDistGen();
-				coord[0] = distance*Math.sin(theta)*Math.sin(phi); //x
-				coord[1] = distance*Math.cos(phi);                 //y
-				coord[2] = distance*Math.cos(theta)*Math.sin(phi); //z*/
-				coord[0] = this.getX();
-				coord[1] = this.getY();
-				coord[2] = this.getZ();
-				space.moveByDisplacement(this, coord);
-
-			}
+			double coord[] = {0.0,0.0,0.0};
+			coord[0] = this.getX();
+			coord[1] = this.getY();
+			coord[2] = this.getZ();
+			space.moveByDisplacement(this, coord);
 			moveTick = tick;
 		}
 	}

@@ -430,7 +430,7 @@ public class Misc extends AgentExtendCont{
 			break;
 		case 3:
 			
-		if (!getStop()) {
+		if (true/*!getStop()*/) {
 			ContinuousSpace space = getSpace();//(ContinuousSpace)getTheContext().getProjection("nucleus");
 			ContinuousWithin contlist = new ContinuousWithin(space,this,1);
 			Iterable list = contlist.query();
@@ -438,8 +438,8 @@ public class Misc extends AgentExtendCont{
 				if (obj instanceof Genome) {
 					Genome g = (Genome)obj;
 					if (/*!g.getStop() && */!nucleate) {
-						this.setStop(true);
-						((Genome)obj).setStop(true);
+						//this.setStop(true);
+						//((Genome)obj).setStop(true);
 						nucleating = true;
 						nucleate = true;
 						type = HEXA;
@@ -447,11 +447,11 @@ public class Misc extends AgentExtendCont{
 					}
 				} else if (obj instanceof Misc) {
 					Misc vp1 = (Misc)obj;
-					if (vp1.getStop()) {
+					if (true/*vp1.getStop()*/) {
 						if (!vp1.isComplete() && vp1.isNucleate()) {
 							int index = vp1.getFreeSpot();
 							if (index > -1 && index < nSides) {
-								setStop(true);
+								//setStop(true);
 								if (vp1.getType() == PENTA) {
 									phi0=vp1.getPhi0()-15;
 								} if (index == GAMMA) {
@@ -490,7 +490,7 @@ public class Misc extends AgentExtendCont{
 						} else if (!vp1.isComplete() && !nucleating && vp1.getSidesBound() >=3) {
 							int index = vp1.getFreeSpot();
 							if (index > -1 && index < vp1.getType()) {
-								setStop(true);
+								//setStop(true);
 
 								double theta;
 								double phi;
@@ -535,13 +535,13 @@ public class Misc extends AgentExtendCont{
 	public void moveMolecule() {
 		//for assembly type 2
 		if (genome != null) {
-			double phi = genome.getPhi();
-			double theta = genome.getTheta();
-			double dist = genome.getDistance();
+			//double phi = genome.getPhi();
+			//double theta = genome.getTheta();
+			//double dist = genome.getDistance();
 			double coord[] = {0.0,0.0,0.0};
-			coord[0] = dist*Math.sin(theta)*Math.sin(phi); //x
-			coord[1] = dist*Math.cos(phi);                 //y
-			coord[2] = dist*Math.cos(theta)*Math.sin(phi); //z
+			//coord[0] = dist*Math.sin(theta)*Math.sin(phi); //x
+			//coord[1] = dist*Math.cos(phi);                 //y
+			//coord[2] = dist*Math.cos(theta)*Math.sin(phi); //z
 			ContinuousSpace space = this.getSpace();
 			space.moveByDisplacement(this, coord);
 		}
@@ -641,9 +641,9 @@ public class Misc extends AgentExtendCont{
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i) instanceof Genome) {
 				Genome g = (Genome)list.get(i);
-				pt[0] += Math.sin(g.getTheta())*Math.sin(g.getPhi());
-				pt[1] += Math.cos(g.getPhi());
-				pt[2] += Math.cos(g.getTheta())*Math.sin(g.getPhi());
+				//pt[0] += Math.sin(g.getTheta())*Math.sin(g.getPhi());
+				//pt[1] += Math.cos(g.getPhi());
+				//pt[2] += Math.cos(g.getTheta())*Math.sin(g.getPhi());
 				count++;
 			}
 		}
@@ -652,9 +652,9 @@ public class Misc extends AgentExtendCont{
 		for (int i = 0; i < list2.size(); i++) {
 			if (list2.get(i) instanceof VP123) {
 				VP123 vp = (VP123) list2.get(i);
-				pt[0] += Math.sin(vp.getTheta())*Math.sin(vp.getPhi());
-				pt[1] += Math.cos(vp.getPhi());
-				pt[2] += Math.cos(vp.getTheta())*Math.sin(vp.getPhi());		
+				//pt[0] += Math.sin(vp.getTheta())*Math.sin(vp.getPhi());
+				//pt[1] += Math.cos(vp.getPhi());
+				//pt[2] += Math.cos(vp.getTheta())*Math.sin(vp.getPhi());		
 				count++;
 			}
 		}
@@ -662,9 +662,9 @@ public class Misc extends AgentExtendCont{
 			pt[0]=pt[0]/count;
 			pt[1]=pt[1]/count;
 			pt[2]=pt[2]/count;
-			pt[0]=(pt[0]+Math.sin(this.getTheta())*Math.sin(this.getPhi()))/2.0f;
-			pt[1]=(pt[1]+Math.cos(this.getPhi()))/2.0f;
-			pt[2]=(pt[2]+Math.cos(this.getTheta())*Math.sin(this.getPhi()))/2.0f;
+			//pt[0]=(pt[0]+Math.sin(this.getTheta())*Math.sin(this.getPhi()))/2.0f;
+			//pt[1]=(pt[1]+Math.cos(this.getPhi()))/2.0f;
+			//pt[2]=(pt[2]+Math.cos(this.getTheta())*Math.sin(this.getPhi()))/2.0f;
 		}
 		return pt;
 	}
@@ -687,9 +687,9 @@ public class Misc extends AgentExtendCont{
 				NdPoint pt = getSpace().getLocation(this);
 				thetaPhiDistGen();
 				double coord[] = {0.0,0.0,0.0};
-				coord[0] = pt.getX()+getDistance()*Math.sin(getTheta())*Math.sin(getPhi()); //x
-				coord[1] = pt.getY()+getDistance()*Math.cos(getPhi());                 		//y
-				coord[2] = pt.getZ()+getDistance()*Math.cos(getTheta())*Math.sin(getPhi()); //z	
+				//coord[0] = pt.getX()+getDistance()*Math.sin(getTheta())*Math.sin(getPhi()); //x
+				//coord[1] = pt.getY()+getDistance()*Math.cos(getPhi());                 		//y
+				//coord[2] = pt.getZ()+getDistance()*Math.cos(getTheta())*Math.sin(getPhi()); //z	
 				
 				double ptcol[] = collision(coord);
 				coord[0] = coord[0]+ptcol[0];

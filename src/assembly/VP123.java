@@ -100,7 +100,7 @@ public class VP123 extends AgentExtendCont{
 		moveTick = 0;
 		move2Tick = 0;
 		neighborTick = 0;
-		setName("VP1");
+		setName("VP123");
 		myid=id++;
 		this.genXYZ();
 	}
