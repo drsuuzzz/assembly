@@ -17,6 +17,10 @@
   <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>
   <attributes label="Rule Cohesion" ID="ruleCohesion" pluralLabel="Rule Cohesions" defaultValue="true"/>
   <attributes label="number of Ribosomes" ID="numberofRibosomes" pluralLabel="number of Ribosomess" sType="INTEGER" defaultValue="90"/>
+  <attributes label="Distance Bind" ID="distanceBind" pluralLabel="Distance Binds" sType="FLOAT" defaultValue="1.25"/>
+  <attributes label="Distance Bind Error" ID="distanceBindError" pluralLabel="Distance Bind Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
+  <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".1"/>
   <implementation package="assembly" className="" basePath="../assembly"/>
   <agents xsi:type="score:SContext" label="Cell" ID="cell" pluralLabel="Cells">
     <implementation className="Cell"/>
