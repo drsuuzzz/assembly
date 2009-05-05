@@ -1,6 +1,9 @@
 package assembly;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -13,6 +16,7 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.BouncyBorders;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -24,9 +28,21 @@ import repast.simphony.space.graph.Network;
 public class Nucleus extends DefaultContext<AgentExtendCont> {
 //public class Nucleus implements ContextBuilder<AgentExtendCont> {
 	
+	private ContinuousSpace<AgentExtendCont> space;
+	private Cell cell;
+	
+	private List<AgentExtendCont> addList;
+	
+	private double addTick;
+	private double infectTick;
 	//public Context build(Context<AgentExtendCont> context) {
 	public Nucleus() {
 		super("Nucleus");
+		
+		addList = new ArrayList<AgentExtendCont>();
+		
+		addTick = 0;
+		infectTick = 0;
 		
 		Parameters parm = RunEnvironment.getInstance().getParameters();
 		int x = (Integer)parm.getValue("axisSizeX");
@@ -34,16 +50,25 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		int z = (Integer)parm.getValue("axisSizeZ");
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double start = RepastEssentials.GetTickCount() <=0 ? 1 : RepastEssentials.GetTickCount();
-		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 1);
+		double startodd = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
+		double starteven;
+		if ((int)startodd%2==0) {
+			starteven = startodd;
+			startodd = startodd + 1;
+		} else {
+			starteven = startodd+1;
+		}
+		//odd tick
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(startodd, 2);
+		ScheduleParameters sparamseven = ScheduleParameters.createRepeating(starteven, 2);
+		ScheduleParameters sparams100 = ScheduleParameters.createRepeating(startodd, 100);
 		//create space, make sure dimensions set in model.score
 		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
-		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("Nucleus",/*context*/this,
+		space = factory.createContinuousSpace("Nucleus",/*context*/this,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
 		//add agents
-		double pos[] = {20.0,20.0,20.0};
 		int numg = (Integer)parm.getValue("numberofGenomes");
 		for (int i = 0; i < numg; i++) {
 			Genome g = new Genome();
@@ -51,10 +76,11 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			g.setSpace(space);
 			this.add(g);
 			schedule.schedule(sparams, g, "move2");
+			schedule.schedule(sparams,g,"transcription");
 		}
 	
 	
-	int numvp1 = (Integer)parm.getValue("numberofVP123");
+	int numvp1 = 0;//(Integer)parm.getValue("numberofVP123");
 		for (int i = 0; i < numvp1; i++) {
 			VP123 vp123 = new VP123();
 			vp123.setTheContext(/*context*/this);
@@ -63,22 +89,66 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, vp123, "move2");
 			
 		}
-		
-	/*	int numvp2 = (Integer)parm.getValue("numberofVP2");
-		for (int i = 0; i < numvp2; i++) {
-			VP2 vp2 = new VP2();
-			vp2.setTheContext(this);
-			vp2.setSpace(space);
-			this.add(vp2);
+
+		schedule.schedule(sparams100, this, "infect");
+		schedule.schedule(sparamseven, this, "addAgents");
+	}
+	
+	public Cell getCell() {
+		return cell;
+	}
+
+	public void setCell(Cell cell) {
+		this.cell = cell;
+	}
+	
+	public void addToAddList (AgentExtendCont aec) {
+		addList.add(aec);
+	}
+
+	//scheduled methods
+	//even tick
+	public void addAgents() {
+		double tick = RepastEssentials.GetTickCount();
+		if (tick > addTick) {
+			Iterator<AgentExtendCont> agents = addList.iterator();
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+			double start = RepastEssentials.GetTickCount();
+			if ((int)start %2 == 0) {
+				start = start +1.0f;
+			}
+			ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+			while (agents.hasNext()) {
+				AgentExtendCont aec = agents.next();
+				if (aec instanceof Genome) {
+					this.add(aec);
+					schedule.schedule(sparams,aec,"move2");
+					schedule.schedule(sparams,aec,"transcription");
+					addTick = tick;
+				} else if (aec instanceof MRNA) {
+					this.add(aec);
+					aec.setMove(schedule.schedule(sparams,aec,"move"));
+					aec.setExport(schedule.schedule(sparams,aec,"export"));
+				}
+				agents.remove();
+			}
+			addTick = tick;
 		}
-		int numvp3 = (Integer)parm.getValue("numberofVP3");
-		for (int i = 0; i < numvp3; i++) {
-			VP3 vp3 = new VP3();
-			vp3.setTheContext(this);
-			vp3.setSpace(space);
-			this.add(vp3);
-		}*/
-	//	loc = space.getLocation(g);
-		//return context;
+	}
+	
+	//100th tick
+	public void infect() {
+		double tick = RepastEssentials.GetTickCount();
+		if (tick > infectTick) {
+			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			if (rand < 0.6) {
+				Genome g = new Genome();
+				g.setTheContext(this);
+				g.setSpace(space);
+				addToAddList(g);
+			
+			}
+			infectTick = tick;
+		}
 	}
 }

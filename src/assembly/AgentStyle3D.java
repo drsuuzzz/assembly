@@ -60,6 +60,8 @@ public class AgentStyle3D implements Style3D {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.green);
 		} else if (obj instanceof Genome) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.yellow);
+		} else if (obj instanceof MRNA) {
+			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.red);
 		} else {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.white);
 		}

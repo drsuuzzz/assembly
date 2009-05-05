@@ -19,6 +19,8 @@ import repast.simphony.space.continuous.RandomCartesianAdder;
 //public class Cytoplasm implements ContextBuilder<AgentExtendCont> {
 public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 
+	private ContinuousSpace<AgentExtendCont> space;
+	private Cell cell;
 	//public Context build(Context<AgentExtendCont> context) {
 	public Cytoplasm() {
 		super("Cytoplasm");
@@ -28,11 +30,14 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 		int z = (Integer)parm.getValue("axisSizeZ");
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double start = RepastEssentials.GetTickCount() <=0 ? 1 : RepastEssentials.GetTickCount();
-		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 1);
+		double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
+		if ((int)start%2 == 0) {
+			start = start + 1.0f;
+		}
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
 		//create space, make sure dimensions set in model.score		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
-		ContinuousSpace<AgentExtendCont> space = factory.createContinuousSpace("Cytoplasm",this/*context*/,
+		space = factory.createContinuousSpace("Cytoplasm",this/*context*/,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
 		int numribo = (Integer)parm.getValue("numberofRibosomes");
@@ -67,6 +72,18 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams,vp3,"move");
 		}
 		//return context;
+	}
+	
+	public Cell getCell() {
+		return cell;
+	}
+
+	public void setCell(Cell cell) {
+		this.cell = cell;
+	}
+
+	public ContinuousSpace<AgentExtendCont> getSpace() {
+		return space;
 	}
 
 }

@@ -680,12 +680,12 @@ public class Misc extends AgentExtendCont{
 			switch (asstype) {
 			case 2:
 				if (genome == null) {
-					super.move();
+				//	super.move();
 				}			
 				break;
 			case 1:
 				NdPoint pt = getSpace().getLocation(this);
-				thetaPhiDistGen();
+			//	thetaPhiDistGen();
 				double coord[] = {0.0,0.0,0.0};
 				//coord[0] = pt.getX()+getDistance()*Math.sin(getTheta())*Math.sin(getPhi()); //x
 				//coord[1] = pt.getY()+getDistance()*Math.cos(getPhi());                 		//y
@@ -711,7 +711,7 @@ public class Misc extends AgentExtendCont{
 				}
 				break;
 			case 3:
-				super.move();
+			//	super.move();
 				break;
 			default:
 				break;

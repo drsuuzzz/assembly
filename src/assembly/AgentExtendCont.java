@@ -3,6 +3,9 @@ package assembly;
 import java.util.ArrayList;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedulableAction;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
@@ -28,6 +31,10 @@ public class AgentExtendCont {
 	private double moveTick;
 	private String name;
 	
+	private ISchedulableAction move;
+	private ISchedulableAction transcription;
+	private ISchedulableAction export;
+	
 	public AgentExtendCont() {
 		stop=false;
 		theContext=null;
@@ -37,6 +44,9 @@ public class AgentExtendCont {
 		//distance = RepastEssentials.RandomDraw(0, 2);
 		moveTick = 0;
 		name=null;
+		move = null;
+		transcription = null;
+		export = null;
 	}
 	//@Parameter(usageName="stop",displayName="Stopped")
 /*	public Boolean getStop() {
@@ -46,6 +56,25 @@ public class AgentExtendCont {
 	public void setStop(Boolean stop) {
 		this.stop = stop;
 	}*/
+	
+
+	public ISchedulableAction getExport() {
+		return export;
+	}
+
+	public ISchedulableAction getMove() {
+		return move;
+	}
+
+
+	public void setMove(ISchedulableAction move) {
+		this.move = move;
+	}
+
+
+	public void setExport(ISchedulableAction export) {
+		this.export = export;
+	}
 
 	public Context getTheContext() {
 		return theContext;
@@ -112,6 +141,14 @@ public class AgentExtendCont {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public void removeAnAction(ISchedulableAction action) {
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		if (action != null) {
+			schedule.removeAction(action);
+		}
+	}
+
 	public double[] normPositionToGrid(double x1, double y1, double z1) {
 		
 		Dimensions dim = getSpace().getDimensions();
@@ -142,12 +179,12 @@ public class AgentExtendCont {
 		return pt;
 	}
 	
-	public void thetaPhiDistGen() {
+/*	public void thetaPhiDistGen() {
 		theta = RepastEssentials.RandomDraw(0, 2*Math.PI);
 		phi = RepastEssentials.RandomDraw(0, Math.PI);
 		distance = RepastEssentials.RandomDraw(0, 1);
 		//System.out.println(name+","+theta+","+phi+","+distance);
-	}
+	}*/
 	
 	public void genXYZ() {
 		X=RepastEssentials.RandomDraw(-1,1);
@@ -155,10 +192,11 @@ public class AgentExtendCont {
 		Z=RepastEssentials.RandomDraw(-1,1);
 	}
 	
-	public void move() {
+	public void randomWalk() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
 			double coord[] = {0.0,0.0,0.0};
+			genXYZ();
 			coord[0] = this.getX();
 			coord[1] = this.getY();
 			coord[2] = this.getZ();

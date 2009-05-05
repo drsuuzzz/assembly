@@ -1,5 +1,7 @@
 package assembly;
 
+import assembly.MRNA.Loc;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -9,6 +11,7 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.query.space.continuous.ContinuousWithin;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -42,10 +45,13 @@ public class Genome extends AgentExtendCont{
 	
 	private Network<VP1> network;
 	*/
+	public enum MType {Tag, tag, vp1, vp2, vp3};
+	
 	private double neighborTick;
 	private double lmoveTick;
 	private double moveTick;
 	private double move2Tick;
+	private double xcriptTick;
 
 	public Genome() {
 		super();
@@ -55,6 +61,7 @@ public class Genome extends AgentExtendCont{
 		lmoveTick = 0;
 		moveTick = 0;
 		move2Tick = 0;
+		xcriptTick = 0;
 		setName("Genome");
 		this.genXYZ();
 	}
@@ -278,6 +285,21 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
+	public void transcription() {
+		double tick = RepastEssentials.GetTickCount();
+		if (xcriptTick < tick) {
+			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			if (rand < 0.001) {
+				MRNA mrna = new MRNA();
+				mrna.setType(MType.Tag);
+				mrna.setLocation(Loc.nucleus);
+				mrna.setTheContext(this.getTheContext());
+				mrna.setSpace(this.getSpace());
+				((Nucleus)getTheContext()).addToAddList(mrna);
+			}
+			xcriptTick = tick;
+		}
+	}
 /*	public void move() {
 		double tick = (double) RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
