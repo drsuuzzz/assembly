@@ -90,6 +90,12 @@
           <implementation className="AgentStyle3D"/>
         </styles>
       </agents>
+      <agents label="LgTAg" ID="lgTAg" pluralLabel="LgTAgs">
+        <implementation className="LgTAg"/>
+      </agents>
+      <agents label="SmTAg" ID="smTAg" pluralLabel="SmTAgs">
+        <implementation className="SmTAg"/>
+      </agents>
       <projections xsi:type="score:SContinuousSpace" label="Nucleus" ID="nucleus" pluralLabel="Nucleuss" borderRule="BOUNCY"/>
     </agents>
   </agents>
