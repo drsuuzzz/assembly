@@ -80,7 +80,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		}
 	
 	
-	int numvp1 = 0;//(Integer)parm.getValue("numberofVP123");
+		int numvp1 = 0;//(Integer)parm.getValue("numberofVP123");
 		for (int i = 0; i < numvp1; i++) {
 			VP123 vp123 = new VP123();
 			vp123.setTheContext(/*context*/this);
@@ -90,10 +90,14 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			
 		}
 
-		schedule.schedule(sparams100, this, "infect");
+		//schedule.schedule(sparams100, this, "infect");
 		schedule.schedule(sparamseven, this, "addAgents");
 	}
 	
+	public ContinuousSpace<AgentExtendCont> getSpace() {
+		return space;
+	}
+
 	public Cell getCell() {
 		return cell;
 	}
@@ -141,7 +145,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > infectTick) {
 			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-			if (rand < 0.6) {
+			if (rand < 0.1) {
 				Genome g = new Genome();
 				g.setTheContext(this);
 				g.setSpace(space);

@@ -1,6 +1,5 @@
 package assembly;
 
-import assembly.MRNA.Loc;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,7 +44,6 @@ public class Genome extends AgentExtendCont{
 	
 	private Network<VP1> network;
 	*/
-	public enum MType {Tag, tag, vp1, vp2, vp3};
 	
 	private double neighborTick;
 	private double lmoveTick;
@@ -209,11 +207,13 @@ public class Genome extends AgentExtendCont{
 			int count = 0;
 			while(neighbors.hasNext()){
 				AgentExtendCont aec = (AgentExtendCont)neighbors.next();
-				if (aln) {
-					align[0] += aec.getX();
-					align[1] += aec.getY();
-					align[2] += aec.getZ();
-					count++;
+				if (aec instanceof VP123) {
+					if (aln) {
+						align[0] += aec.getX();
+						align[1] += aec.getY();
+						align[2] += aec.getZ();
+						count++;
+					}
 				}
 			}
 			double disp[] = {0,0,0};
@@ -291,7 +291,7 @@ public class Genome extends AgentExtendCont{
 			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 			if (rand < 0.001) {
 				MRNA mrna = new MRNA();
-				mrna.setType(MType.Tag);
+				mrna.setMType(MType.Tag);
 				mrna.setLocation(Loc.nucleus);
 				mrna.setTheContext(this.getTheContext());
 				mrna.setSpace(this.getSpace());

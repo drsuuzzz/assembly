@@ -62,6 +62,8 @@ public class AgentStyle3D implements Style3D {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.yellow);
 		} else if (obj instanceof MRNA) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.red);
+		} else if (obj instanceof LgTAg) {
+			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.green);
 		} else {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.white);
 		}
