@@ -96,6 +96,18 @@
       <agents label="SmTAg" ID="smTAg" pluralLabel="SmTAgs">
         <implementation className="SmTAg"/>
       </agents>
+      <agents label="TranscriptionFactor" ID="transcriptionFactor" pluralLabel="TranscriptionFactors">
+        <implementation className="TranscriptionFactor"/>
+        <styles xsi:type="score:SStyle3D" label="TranscriptionFactorStyle3D" ID="transcriptionFactorStyle3D">
+          <implementation className="AgentStyle3D"/>
+        </styles>
+      </agents>
+      <agents label="DNAPol" ID="dNAPol" pluralLabel="DNAPols">
+        <implementation className="DNAPol"/>
+        <styles xsi:type="score:SStyle3D" label="DNAPolStyle3D" ID="dNAPolStyle3D">
+          <implementation className="AgentStyle3D"/>
+        </styles>
+      </agents>
       <projections xsi:type="score:SContinuousSpace" label="Nucleus" ID="nucleus" pluralLabel="Nucleuss" borderRule="BOUNCY"/>
     </agents>
   </agents>

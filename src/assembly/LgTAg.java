@@ -20,7 +20,16 @@ public class LgTAg extends AgentExtendCont {
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-			randomWalk();
+			if (getLocation() == Loc.cytoplasm) {
+				randomWalk();
+			} else {
+				double disp[] = this.calcDisplacement(Genome.class, Genome.class);
+				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
+					randomWalk();
+				} else {
+					getSpace().moveByDisplacement(this, disp);
+				}
+			}
 			moveTick = tick;
 		}
 	}

@@ -79,7 +79,9 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 				aec.setDeath(schedule.schedule(sparams,aec,"death"));
 				//remove the export rule;
 				aec.removeAnAction(aec.getExport());
+				aec.removeAnAction(aec.getSplice());
 				aec.setExport(null);
+				aec.setSplice(null);
 				aec.setMoving(false);
 			} else if (aec instanceof LgTAg) {
 				c.remove(aec);

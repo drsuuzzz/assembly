@@ -3,6 +3,10 @@
   <type>THREE_D</type>
   <styles>
     <entry>
+      <string>assembly.TranscriptionFactor</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
       <string>assembly.Genome</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
@@ -11,20 +15,28 @@
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
+      <string>assembly.DNAPol</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
       <string>assembly.VP123</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
+      <string>assembly.TranscriptionFactor</string>
+      <null/>
+    </entry>
+    <entry>
       <string>assembly.Genome</string>
       <null/>
     </entry>
@@ -33,15 +45,19 @@
       <null/>
     </entry>
     <entry>
+      <string>assembly.DNAPol</string>
+      <null/>
+    </entry>
+    <entry>
       <string>assembly.VP123</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <null/>
     </entry>
   </editedStyles>
@@ -60,24 +76,32 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
+      <string>assembly.TranscriptionFactor</string>
+      <int>1</int>
+    </entry>
+    <entry>
       <string>assembly.Genome</string>
-      <int>4</int>
+      <int>6</int>
     </entry>
     <entry>
       <string>assembly.SmTAg</string>
+      <int>5</int>
+    </entry>
+    <entry>
+      <string>assembly.DNAPol</string>
       <int>0</int>
     </entry>
     <entry>
       <string>assembly.VP123</string>
-      <int>3</int>
-    </entry>
-    <entry>
-      <string>assembly.LgTAg</string>
-      <int>1</int>
+      <int>4</int>
     </entry>
     <entry>
       <string>assembly.MRNA</string>
       <int>2</int>
+    </entry>
+    <entry>
+      <string>assembly.LgTAg</string>
+      <int>3</int>
     </entry>
   </layerOrder>
   <projections>

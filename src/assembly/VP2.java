@@ -30,7 +30,7 @@ public class VP2 extends AgentExtendCont{
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
 
-			double disp[] = this.calcDispIfCenter(VP1.class, VP2.class, VP3.class);
+			double disp[] = this.calcDispIfCenter(VP1.class, VP1.class, VP2.class, VP3.class);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {

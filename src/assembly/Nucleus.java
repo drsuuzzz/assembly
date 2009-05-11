@@ -24,6 +24,7 @@ import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.RandomCartesianAdder;
 import repast.simphony.space.continuous.WrapAroundBorders;
 import repast.simphony.space.graph.Network;
+import repast.simphony.util.collections.IndexedIterable;
 
 public class Nucleus extends DefaultContext<AgentExtendCont> {
 //public class Nucleus implements ContextBuilder<AgentExtendCont> {
@@ -61,7 +62,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		//odd tick
 		ScheduleParameters sparams = ScheduleParameters.createRepeating(startodd, 2);
 		ScheduleParameters sparamseven = ScheduleParameters.createRepeating(starteven, 2);
-		ScheduleParameters sparams100 = ScheduleParameters.createRepeating(startodd, 100);
+		//ScheduleParameters sparams100 = ScheduleParameters.createRepeating(startodd, 100);
 		//create space, make sure dimensions set in model.score
 		
 		ContinuousSpaceFactory factory = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(new HashMap());
@@ -75,7 +76,8 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			g.setTheContext(/*context*/this);
 			g.setSpace(space);
 			this.add(g);
-			schedule.schedule(sparams, g, "move2");
+			//schedule.schedule(sparams, g, "move2");
+			schedule.schedule(sparams, g, "move");
 			schedule.schedule(sparams,g,"transcription");
 		}
 	
@@ -90,7 +92,23 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			
 		}
 
-		//schedule.schedule(sparams100, this, "infect");
+		int numpol =0;
+		for (int i = 0; i < numpol; i++) {
+			DNAPol pol = new DNAPol();
+			pol.setTheContext(this);
+			pol.setSpace(space);
+			this.add(pol);
+			schedule.schedule(sparams, pol, "move");
+		}
+		
+		int numtf = 2;
+		for (int i = 0; i < numtf; i++) {
+			TranscriptionFactor tf = new TranscriptionFactor();
+			tf.setTheContext(this);
+			tf.setSpace(space);
+			this.add(tf);
+			schedule.schedule(sparams, tf, "move");
+		}
 		schedule.schedule(sparamseven, this, "addAgents");
 	}
 	
@@ -133,26 +151,11 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 					this.add(aec);
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
 					aec.setExport(schedule.schedule(sparams,aec,"export"));
+					aec.setSplice(schedule.schedule(sparams,aec,"splice"));
 				}
 				agents.remove();
 			}
 			addTick = tick;
-		}
-	}
-	
-	//100th tick
-	public void infect() {
-		double tick = RepastEssentials.GetTickCount();
-		if (tick > infectTick) {
-			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-			if (rand < 0.1) {
-				Genome g = new Genome();
-				g.setTheContext(this);
-				g.setSpace(space);
-				addToAddList(g);
-			
-			}
-			infectTick = tick;
 		}
 	}
 }

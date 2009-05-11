@@ -42,7 +42,7 @@ public class VP123 extends AgentExtendCont{
 	public enum State {PENT, HEX};
 	public enum Bound {BOUND, UNBOUND};
 	private State state;
-	private Bound bound;
+	private Bound boundG;
 	
 	//angles
 	private double defectPent; //60 degrees + pi/2
@@ -81,7 +81,7 @@ public class VP123 extends AgentExtendCont{
 	public VP123() {
 		super();
 		state = State.PENT;
-		bound = Bound.UNBOUND;
+		boundG = Bound.UNBOUND;
 		//defectPent = 60*Math.PI/180;
 		//ptList = null;
 		//defectPent = ;  
@@ -164,7 +164,7 @@ public class VP123 extends AgentExtendCont{
 		this.genome = genome;
 	}
 	
-	@Parameter(usageName="state",displayName="State", converter = "assembly.StateConverter")
+//	@Parameter(usageName="state",displayName="State", converter = "assembly.StateConverter")
 	public State getState() {
 		return state;
 	}
@@ -173,13 +173,13 @@ public class VP123 extends AgentExtendCont{
 		this.state = state;
 	}
 	
-	@Parameter(usageName="bound",displayName="Bound State", converter = "assembly.BoundConverter")
+//	@Parameter(usageName="bound",displayName="Bound State", converter = "assembly.BoundConverter")
 	public Bound getBound() {
-		return bound;
+		return boundG;
 	}
 
 	public void setBound(Bound bound) {
-		this.bound = bound;
+		this.boundG = bound;
 	}
 	public double [] findCenter(Iterator l) {
 		double [] c={0.0,0.0,0.0};

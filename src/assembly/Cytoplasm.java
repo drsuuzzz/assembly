@@ -58,7 +58,7 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 		space = factory.createContinuousSpace("Cytoplasm",this/*context*/,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
-		int numribo = 0;//(Integer)parm.getValue("numberofRibosomes");
+		int numribo = 6;//(Integer)parm.getValue("numberofRibosomes");
 		for (int i = 0; i < numribo; i++) {
 			Ribosome ribo = new Ribosome();
 			ribo.setTheContext(this);
@@ -67,16 +67,8 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, ribo, "move");
 			schedule.schedule(sparams, ribo, "translation");
 		}
-		for (int i =0; i < 0; i++) {
-			MRNA mrna = new MRNA();
-			mrna.setTheContext(this);
-			mrna.setSpace(space);
-			mrna.setLocation(Loc.cytoplasm);
-			this.add(mrna);
-			mrna.setMove(schedule.schedule(sparams, mrna, "move"));
-			mrna.setDeath(schedule.schedule(sparams, mrna, "death"));
-		}
-		int numvp1 = 10;//(Integer)parm.getValue("numberofVP1");
+
+		int numvp1 = 0;//(Integer)parm.getValue("numberofVP1");
 		for (int i = 0; i < numvp1; i++) {
 			VP1 vp1 = new VP1();
 			vp1.setTheContext(this);
@@ -84,7 +76,7 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 			this.add(vp1);
 			vp1.setMove(schedule.schedule(sparams,vp1,"move"));
 		}
-		int numvp2 = 1;//(Integer)parm.getValue("numberofVP2");
+		int numvp2 = 0;//(Integer)parm.getValue("numberofVP2");
 		for (int i = 0; i < numvp2; i++) {
 			VP2 vp2 = new VP2();
 			vp2.setTheContext(this);
@@ -93,7 +85,7 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 			vp2.setMove(schedule.schedule(sparams,vp2,"move"));
 			vp2.setExport(schedule.schedule(sparams,vp2,"export"));
 		}
-		int numvp3 = 1;//(Integer)parm.getValue("numberofVP3");
+		int numvp3 = 0;//(Integer)parm.getValue("numberofVP3");
 		for (int i = 0; i < numvp3; i++) {
 			VP3 vp3 = new VP3();
 			vp3.setTheContext(this);

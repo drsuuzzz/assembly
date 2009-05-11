@@ -2,6 +2,8 @@ package assembly;
 
 import java.util.Iterator;
 
+import assembly.MRNA.MType;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.query.space.continuous.ContinuousWithin;
@@ -45,28 +47,30 @@ public class Ribosome extends AgentExtendCont {
 			while (list.hasNext()) {
 				AgentExtendCont aec = list.next();
 				if (aec instanceof MRNA) {
-					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					if (rand < .5) {
-						AgentExtendCont T=null;
-						if (((MRNA) aec).getMType() == MType.Tag) {
-							T = new LgTAg();
-						} else if (((MRNA) aec).getMType() == MType.tag) {
-							T = new SmTAg();
-						} else if (((MRNA) aec).getMType() == MType.vp1) {
-							T = new VP1();
-						} else if (((MRNA) aec).getMType() == MType.vp2) {
-							T = new VP2();
-						} else if (((MRNA) aec).getMType() == MType.vp3) {
-							T = new VP3();
+					if (!((MRNA)aec).isDead()) {
+						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+						if (rand < .4) {
+							AgentExtendCont T=null;
+							if (((MRNA) aec).getMType() == MType.Tag) {
+								T = new LgTAg();
+							} else if (((MRNA) aec).getMType() == MType.tag) {
+								T = new SmTAg();
+							} else if (((MRNA) aec).getMType() == MType.vp1) {
+								T = new VP1();
+							} else if (((MRNA) aec).getMType() == MType.vp2) {
+								T = new VP2();
+							} else if (((MRNA) aec).getMType() == MType.vp3) {
+								T = new VP3();
+							}
+							if (T != null) {
+								T.setSpace(this.getSpace());
+								T.setTheContext(getTheContext());
+								((Cytoplasm)getTheContext()).addToAddList(T);
+								this.largeStepAwayFrom(aec);
+							}
 						}
-						if (T != null) {
-							T.setSpace(this.getSpace());
-							T.setTheContext(getTheContext());
-							((Cytoplasm)getTheContext()).addToAddList(T);
-							this.largeStepAwayFrom(aec);
-						}
+						break;
 					}
-					break;
 				}
 			}
 			tranTick = tick;

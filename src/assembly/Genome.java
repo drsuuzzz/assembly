@@ -4,6 +4,8 @@ package assembly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import assembly.MRNA.mState;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -44,12 +46,14 @@ public class Genome extends AgentExtendCont{
 	
 	private Network<VP1> network;
 	*/
-	
+	public enum GState {early, replicate, late};
+	private GState state;
 	private double neighborTick;
 	private double lmoveTick;
 	private double moveTick;
 	private double move2Tick;
 	private double xcriptTick;
+	private double repTick;
 
 	public Genome() {
 		super();
@@ -61,6 +65,7 @@ public class Genome extends AgentExtendCont{
 		move2Tick = 0;
 		xcriptTick = 0;
 		setName("Genome");
+		state = GState.early;
 		this.genXYZ();
 	}
 	
@@ -185,6 +190,18 @@ public class Genome extends AgentExtendCont{
 		return pt;
 	}*/
 	
+	public GState getState() {
+		return state;
+	}
+
+
+
+	public void setState(GState state) {
+		this.state = state;
+	}
+
+
+
 	//Scheduled methods
 	public void move2() {
 		double tick = (double)RepastEssentials.GetTickCount();
@@ -285,17 +302,101 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
+	public void move() {
+		double tick = RepastEssentials.GetTickCount();
+		if (tick > moveTick) {
+			double disp[] = {0.0,0.0,0.0};
+			if (state == GState.early) {
+				disp = this.calcDispIfCenter(TranscriptionFactor.class, TranscriptionFactor.class, Genome.class, Genome.class);
+				
+			} else if (state == GState.replicate) {
+				disp = this.calcDispIfCenter(LgTAg.class, DNAPol.class, Genome.class, Genome.class);
+				
+			} else if (state == GState.late) {
+				disp = this.calcDispIfCenter(LgTAg.class, LgTAg.class, Genome.class, Genome.class);
+				
+			}
+			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
+				randomWalk();
+			} else {
+				getSpace().moveByDisplacement(this, disp);
+			}
+			moveTick = tick;
+		}
+	}
+	
 	public void transcription() {
 		double tick = RepastEssentials.GetTickCount();
 		if (xcriptTick < tick) {
-			double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-			if (rand < 0.001) {
-				MRNA mrna = new MRNA();
-				mrna.setMType(MType.Tag);
-				mrna.setLocation(Loc.nucleus);
-				mrna.setTheContext(this.getTheContext());
-				mrna.setSpace(this.getSpace());
-				((Nucleus)getTheContext()).addToAddList(mrna);
+			double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+			double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+			ContinuousWithin<AgentExtendCont> list = new ContinuousWithin(getSpace(), this, (dist+err));
+			Iterator<AgentExtendCont> l = list.query().iterator();
+			if (state == GState.early) {
+				while (l.hasNext()) {
+					AgentExtendCont aec = l.next();
+					if (aec instanceof TranscriptionFactor) {
+						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+						if (rand < 0.1) {
+							MRNA mrna = new MRNA();
+							//mrna.setMType(MType.Tag);
+							mrna.setState(mState.early);
+							mrna.setLocation(Loc.nucleus);
+							mrna.setTheContext(this.getTheContext());
+							mrna.setSpace(this.getSpace());
+							((Nucleus)getTheContext()).addToAddList(mrna);
+							aec.largeStepAwayFrom(this);
+							aec.setBound(false);
+							this.setNoBound(0);
+							state = GState.replicate;
+							break;
+						}
+					} 
+				}
+			} else if (state == GState.replicate) {
+				boolean dfound = false;
+				boolean lfound = false;
+				AgentExtendCont daec = null;
+				AgentExtendCont laec = null;
+				while (l.hasNext()) {
+					AgentExtendCont aec = l.next();
+					if (aec instanceof DNAPol && !dfound) {
+						daec = aec;
+					} else if (aec instanceof LgTAg && !lfound) {
+						laec = aec;
+					}
+				}
+				if (dfound && lfound) {
+					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+					if (rand < .2) {
+						Genome g = new Genome();
+						g.setState(GState.early);
+						state = GState.late;
+						g.setSpace(this.getSpace());
+						g.setTheContext(this.getTheContext());
+						((Nucleus)getTheContext()).addToAddList(g);
+						daec.largeStepAwayFrom(this);
+						daec.setBound(false);
+						laec.largeStepAwayFrom(this);
+						laec.setBound(false);
+						this.setNoBound(0);
+					}
+				}
+			} else if (state == GState.late) {
+				while (l.hasNext()) {
+					AgentExtendCont aec = l.next();
+					if (aec instanceof LgTAg) {
+						MRNA m = new MRNA();
+						m.setState(mState.late);
+						m.setLocation(Loc.nucleus);
+						m.setSpace(this.getSpace());
+						m.setTheContext(this.getTheContext());
+						((Nucleus)getTheContext()).addToAddList(m);
+						aec.largeStepAwayFrom(this);
+						aec.setBound(false);
+						this.setNoBound(0);
+					}
+				}
 			}
 			xcriptTick = tick;
 		}

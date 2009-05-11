@@ -3,6 +3,8 @@ package assembly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import assembly.Genome.GState;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
@@ -21,8 +23,6 @@ import repast.simphony.util.ContextUtils;
 
 public class AgentExtendCont {
 	
-	public enum MType {Tag, tag, vp1, vp2, vp3};	
-	private MType mtype;
 	public enum Loc {nucleus, cytoplasm};
 	private Loc location;
 	
@@ -47,6 +47,7 @@ public class AgentExtendCont {
 	private ISchedulableAction transcription;
 	private ISchedulableAction export;
 	private ISchedulableAction death;
+	private ISchedulableAction splice;
 	
 	public AgentExtendCont() {
 		//stop = false;
@@ -65,6 +66,7 @@ public class AgentExtendCont {
 		transcription = null;
 		export = null;
 		death = null;
+		splice = null;
 	}
 	//@Parameter(usageName="stop",displayName="Stopped")
 /*	public Boolean getStop() {
@@ -93,13 +95,6 @@ public class AgentExtendCont {
 		this.noBound = noBound;
 	}
 
-	public MType getMType() {
-		return mtype;
-	}
-
-	public void setMType(MType type) {
-		this.mtype = type;
-	}
 
 	public Loc getLocation() {
 		return location;
@@ -150,6 +145,16 @@ public class AgentExtendCont {
 	public void setExport(ISchedulableAction export) {
 		this.export = export;
 	}
+
+	public ISchedulableAction getSplice() {
+		return splice;
+	}
+
+
+	public void setSplice(ISchedulableAction splice) {
+		this.splice = splice;
+	}
+
 
 	public Context getTheContext() {
 		return theContext;
@@ -298,6 +303,17 @@ public class AgentExtendCont {
 		disp[2] = vector[2][0]*4;
 		space.moveByDisplacement(this, disp);
 	}
+	public int calcMax(Class agentType1, Class agentType2) {
+		int x =0;
+		if (agentType1.getName().equals(VP2.class.getName()) || agentType2.getName().equals(VP3.class.getName())) {
+			x = 5;
+		} else if (agentType1.getName().equals(MRNA.class.getName())){
+			x = 20;
+		} else {
+			x = 1;
+		}
+		return x;
+	}
 	
 	public double[] calcDisplacement(Class agentType1, Class agentType2) {
 		double retpt[] = {0.0,0.0,0.0};
@@ -334,10 +350,18 @@ public class AgentExtendCont {
 		Iterator<AgentExtendCont> l = list.query().iterator();
 		boolean cAgent = false;
 		double center[] = {0,0,0};
+		int max = calcMax(agentType1,agentType2);
+		
 		while (l.hasNext()) {
 			AgentExtendCont obj = l.next();
+			
 			if (obj.getClass().getName().equals(agentType1.getName()) || obj.getClass().getName().equals(agentType2.getName())) {
-				if (obj.getNoBound() <=5) {
+				if (obj instanceof Genome) {
+					if (((Genome)obj).getState()==GState.replicate) {
+						max = 2;
+					}
+				}
+				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {
 					cAgent = true;
 					center[0] = space.getLocation(obj).getX();
 					center[1] = space.getLocation(obj).getY();
@@ -371,10 +395,10 @@ public class AgentExtendCont {
 		if (cAgent) {
 			setBound(true);
 			while (l.hasNext()) {
-				Object obj = l.next();
-				if (obj.getClass().getName().equals(this.getClass().getName())) {
-					VP1 vp = (VP1) obj;
-					NdPoint vpt = space.getLocation(vp);
+				AgentExtendCont obj = l.next();
+				if (obj.getClass().getName().equals(this.getClass().getName()) && obj.isBound()) {
+					//AgentExtendCont vp =  obj;
+					NdPoint vpt = space.getLocation(obj);
 					if (AgentGeometry.calcDistance(center,vpt) < (radius+rerr)) {
 						if (coh) {
 							cohesionv[0] += vpt.getX();
@@ -390,9 +414,9 @@ public class AgentExtendCont {
 							}
 						}
 						if (aln) {
-							alignmentv[0] += vp.getX();
-							alignmentv[1] += vp.getY();
-							alignmentv[2] += vp.getZ();
+							alignmentv[0] += obj.getX();
+							alignmentv[1] += obj.getY();
+							alignmentv[2] += obj.getZ();
 							counta++;
 						}
 					}
@@ -435,7 +459,7 @@ public class AgentExtendCont {
 		return retpt;
 	}
 	
-	public double[] calcDispIfCenter(Class centerType, Class agentType1,Class agentType2) {
+	public double[] calcDispIfCenter(Class centerType1, Class centerType2, Class agentType1,Class agentType2) {
 		double coord[] = {0,0,0};
 		NdPoint thispt = this.getSpace().getLocation(this);
 
@@ -450,15 +474,32 @@ public class AgentExtendCont {
 		
 		double align[] = {0,0,0};
 		int count = 0;
+		int max = 0;
+		if (this instanceof VP2 || this instanceof VP3) {
+			max = 5;
+		} else if (this instanceof MRNA){
+			max = 20;
+		} else if (this instanceof Genome) {
+			if (((Genome)this).getState()==GState.replicate) {
+				max = 2;
+			} else {
+				max = 1;
+			}
+		} else {
+			max = 1;
+		}
 		while(neighbors.hasNext()){
 			AgentExtendCont aec = (AgentExtendCont)neighbors.next();
-			if (aec.getClass().getName().equals(centerType.getName())) {
+
+			if (aec.getClass().getName().equals(centerType1.getName()) || aec.getClass().getName().equals(centerType2.getName())) {
 				if (aln) {
-					align[0] += aec.getX();
-					align[1] += aec.getY();
-					align[2] += aec.getZ();
-					setBound(true);
-					count++;
+					if (getNoBound() < max || (getNoBound() == max && aec.isBound())) {
+						align[0] += aec.getX();
+						align[1] += aec.getY();
+						align[2] += aec.getZ();
+						setBound(true);
+						count++;
+					}
 				}
 			}
 		}
@@ -469,9 +510,9 @@ public class AgentExtendCont {
 			align[0] = ((align[0]+x)/(count+1)-this.getX())/8;
 			align[1] = ((align[1]+y)/(count+1)-this.getY())/8;
 			align[2] = ((align[2]+z)/(count+1)-this.getZ())/8;
-			setNoBound(count);
 		}
-		
+		setNoBound(count);
+
 		//keep distance from other vp2 & vp3
 		list = new ContinuousWithin(this.getSpace(), this, 2*(r+rerr));
 		neighbors = list.query().iterator();
@@ -521,6 +562,10 @@ public class AgentExtendCont {
 		if (death != null) {
 			schedule.removeAction(death);
 			death = null;
+		}
+		if (splice != null) {
+			schedule.removeAction(splice);
+			splice = null;
 		}
 	}
 	
