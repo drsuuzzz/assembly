@@ -46,9 +46,9 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		infectTick = 0;
 		
 		Parameters parm = RunEnvironment.getInstance().getParameters();
-		int x = (Integer)parm.getValue("axisSizeX");
-		int y = (Integer)parm.getValue("axisSizeY");
-		int z = (Integer)parm.getValue("axisSizeZ");
+		int x = (Integer)parm.getValue("nucleusSizeX");
+		int y = (Integer)parm.getValue("nucleusSizeY");
+		int z = (Integer)parm.getValue("nucleusSizeZ");
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double startodd = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
@@ -80,28 +80,17 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, g, "move");
 			schedule.schedule(sparams,g,"transcription");
 		}
-	
-	
-		int numvp1 = 0;//(Integer)parm.getValue("numberofVP123");
-		for (int i = 0; i < numvp1; i++) {
-			VP123 vp123 = new VP123();
-			vp123.setTheContext(/*context*/this);
-			vp123.setSpace(space);
-			/*context*/this.add(vp123);
-			schedule.schedule(sparams, vp123, "move2");
-			
-		}
-
-		int numpol =0;
-		for (int i = 0; i < numpol; i++) {
-			DNAPol pol = new DNAPol();
-			pol.setTheContext(this);
-			pol.setSpace(space);
-			this.add(pol);
-			schedule.schedule(sparams, pol, "move");
+		
+		int numh = (Integer)parm.getValue("numberofHost");
+		for (int i = 0; i < numh; i++) {
+			HostGenome hg = new HostGenome();
+			hg.setTheContext(this);
+			hg.setSpace(space);
+			this.add(hg);
+			schedule.schedule(sparams, hg, "move");
 		}
 		
-		int numtf = 2;
+		int numtf = (Integer)parm.getValue("numberofTF");
 		for (int i = 0; i < numtf; i++) {
 			TranscriptionFactor tf = new TranscriptionFactor();
 			tf.setTheContext(this);

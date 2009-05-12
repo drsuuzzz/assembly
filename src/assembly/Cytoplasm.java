@@ -38,9 +38,9 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 		addList = new ArrayList<AgentExtendCont>();
 		
 		Parameters parm = RunEnvironment.getInstance().getParameters();
-		int x = (Integer)parm.getValue("axisSizeX");
-		int y = (Integer)parm.getValue("axisSizeY");
-		int z = (Integer)parm.getValue("axisSizeZ");
+		int x = (Integer)parm.getValue("cytoplasmSizeX");
+		int y = (Integer)parm.getValue("cytoplasmSizeY");
+		int z = (Integer)parm.getValue("cytoplasmSizeZ");
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double startodd = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
@@ -58,7 +58,7 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 		space = factory.createContinuousSpace("Cytoplasm",this/*context*/,
 				new RandomCartesianAdder<AgentExtendCont>(), new BouncyBorders(x,y,z), x,y,z);
 		
-		int numribo = 6;//(Integer)parm.getValue("numberofRibosomes");
+		int numribo = (Integer)parm.getValue("numberofRibosomes");
 		for (int i = 0; i < numribo; i++) {
 			Ribosome ribo = new Ribosome();
 			ribo.setTheContext(this);

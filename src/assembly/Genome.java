@@ -11,6 +11,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
+import repast.simphony.parameter.Parameter;
 import repast.simphony.query.space.continuous.ContinuousWithin;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
@@ -189,7 +190,7 @@ public class Genome extends AgentExtendCont{
 		}
 		return pt;
 	}*/
-	
+	@Parameter(usageName="state",displayName="Genome State", converter = "assembly.GStateConverter")
 	public GState getState() {
 		return state;
 	}
@@ -336,20 +337,22 @@ public class Genome extends AgentExtendCont{
 				while (l.hasNext()) {
 					AgentExtendCont aec = l.next();
 					if (aec instanceof TranscriptionFactor) {
-						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-						if (rand < 0.1) {
-							MRNA mrna = new MRNA();
-							//mrna.setMType(MType.Tag);
-							mrna.setState(mState.early);
-							mrna.setLocation(Loc.nucleus);
-							mrna.setTheContext(this.getTheContext());
-							mrna.setSpace(this.getSpace());
-							((Nucleus)getTheContext()).addToAddList(mrna);
-							aec.largeStepAwayFrom(this);
-							aec.setBound(false);
-							this.setNoBound(0);
-							state = GState.replicate;
-							break;
+						if (aec.isBound()) {
+							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+							if (rand < 0.1) {
+								MRNA mrna = new MRNA();
+								//mrna.setMType(MType.Tag);
+								mrna.setState(mState.early);
+								mrna.setLocation(Loc.nucleus);
+								mrna.setTheContext(this.getTheContext());
+								mrna.setSpace(this.getSpace());
+								((Nucleus)getTheContext()).addToAddList(mrna);
+								aec.largeStepAwayFrom(this);
+								aec.setBound(false);
+								this.setNoBound(0);
+								state = GState.replicate;
+								break;
+							}
 						}
 					} 
 				}
@@ -361,9 +364,15 @@ public class Genome extends AgentExtendCont{
 				while (l.hasNext()) {
 					AgentExtendCont aec = l.next();
 					if (aec instanceof DNAPol && !dfound) {
-						daec = aec;
+						if (aec.isBound()) {
+							daec = aec;
+							dfound = true;
+						}
 					} else if (aec instanceof LgTAg && !lfound) {
-						laec = aec;
+						if (aec.isBound()) {
+							laec = aec;
+							lfound = true;
+						}
 					}
 				}
 				if (dfound && lfound) {

@@ -68,6 +68,8 @@ public class AgentStyle3D implements Style3D {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.gray);
 		} else if (obj instanceof DNAPol || obj instanceof SmTAg) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.darkGray);
+		} else if (obj instanceof HostGenome) {
+			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.orange);
 		} else {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.white);
 		}

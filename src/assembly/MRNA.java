@@ -132,7 +132,7 @@ public class MRNA extends AgentExtendCont {
 			if (tick > deathTick) {
 				if (getLocation() == Loc.cytoplasm) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					if (rand < 0.001) {
+					if (rand < 0.0001) {
 						this.die();
 					}
 				}
