@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:score="http://scoreabm.org/score" label="Assembly" ID="assembly" pluralLabel="Assemblys">
-  <attributes label="Axis Size X" ID="axisSizeX" pluralLabel="Axis Size Xs" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Axis Size Y" ID="axisSizeY" pluralLabel="Axis Size Ys" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Axis Size Z" ID="axisSizeZ" pluralLabel="Axis Size Zs" sType="INTEGER" defaultValue="40"/>
-  <attributes label="number of VP123" ID="numberofVP123" pluralLabel="number of VP123s" sType="INTEGER" defaultValue="72"/>
-  <attributes label="number of VP2" ID="numberofVP2" pluralLabel="number of VP2s" sType="INTEGER" defaultValue="10"/>
-  <attributes label="number of VP3" ID="numberofVP3" pluralLabel="number of VP3s" sType="INTEGER" defaultValue="10"/>
-  <attributes label="number of Genomes" ID="numberofGenomes" pluralLabel="number of Genomess" sType="INTEGER" defaultValue="1"/>
-  <attributes label="AssembleType" ID="assembleType" pluralLabel="AssembleTypes" sType="INTEGER" defaultValue="1"/>
+  <attributes label="Cytoplasm Size X" ID="cytoplasmSizeX" pluralLabel="Cytoplasm Size Xs" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Cytoplasm Size Y" ID="cytoplasmSizeY" pluralLabel="Cytoplasm Size Ys" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Cytoplasm Size Z" ID="cytoplasmSizeZ" pluralLabel="Cytoplasm Size Zs" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Nucleus Size X" ID="nucleusSizeX" pluralLabel="Nucleus Size Xs" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Nucleus Size Y" ID="nucleusSizeY" pluralLabel="Nucleus Size Ys" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Nucleus Size Z" ID="nucleusSizeZ" pluralLabel="Nucleus Size Zs" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Number of Genomes" ID="numberofGenomes" pluralLabel="Number of Genomess" sType="INTEGER" defaultValue="1"/>
+  <attributes label="Number of Host" ID="numberofHost" pluralLabel="Number of Hosts" sType="INTEGER" defaultValue="2"/>
+  <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="90"/>
+  <attributes label="Number of TF" ID="numberofTF" pluralLabel="Number of TFs" sType="INTEGER" defaultValue="10"/>
   <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="3.8"/>
+  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue="0.5"/>
   <attributes label="Distance Capsid" ID="distanceCapsid" pluralLabel="Distance Capsids" sType="FLOAT" defaultValue="4"/>
   <attributes label="Distance Capsid Sep Error" ID="distanceCapsidSepError" pluralLabel="Distance Capsid Sep Errors" sType="FLOAT" defaultValue="0.5"/>
-  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue="0.5"/>
   <attributes label="Distance Capsid Look Error" ID="distanceCapsidLookError" pluralLabel="Distance Capsid Look Errors" sType="FLOAT" defaultValue="0.1"/>
   <attributes label="Rule Separation" ID="ruleSeparation" pluralLabel="Rule Separations" defaultValue="true"/>
   <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>
   <attributes label="Rule Cohesion" ID="ruleCohesion" pluralLabel="Rule Cohesions" defaultValue="true"/>
-  <attributes label="number of Ribosomes" ID="numberofRibosomes" pluralLabel="number of Ribosomess" sType="INTEGER" defaultValue="90"/>
   <attributes label="Distance Bind" ID="distanceBind" pluralLabel="Distance Binds" sType="FLOAT" defaultValue="1.25"/>
   <attributes label="Distance Bind Error" ID="distanceBindError" pluralLabel="Distance Bind Errors" sType="FLOAT" defaultValue=".1"/>
   <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
@@ -107,6 +108,9 @@
         <styles xsi:type="score:SStyle3D" label="DNAPolStyle3D" ID="dNAPolStyle3D">
           <implementation className="AgentStyle3D"/>
         </styles>
+      </agents>
+      <agents label="HostGenome" ID="hostGenome" pluralLabel="HostGenomes">
+        <implementation className="HostGenome"/>
       </agents>
       <projections xsi:type="score:SContinuousSpace" label="Nucleus" ID="nucleus" pluralLabel="Nucleuss" borderRule="BOUNCY"/>
     </agents>
