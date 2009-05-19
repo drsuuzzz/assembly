@@ -9,6 +9,8 @@ import javax.media.j3d.Shape3D;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 
+import assembly.VP123.VPType;
+
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.NormalGenerator;
 import com.sun.j3d.utils.geometry.Stripifier;
@@ -33,31 +35,33 @@ public class AgentStyle3D implements Style3D {
 			appearance = new TaggedAppearance();
 		}
 		if (obj instanceof VP123) {
-			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
-			ContinuousWithin list = new ContinuousWithin(((VP123) obj).getSpace(),obj, (vpradius));
-			Iterator l = list.query().iterator();
-			int size=0;
-			while(l.hasNext()) {
-				l.next();
-				size++;
-			}
+			//double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
+			//double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
+			//ContinuousWithin list = new ContinuousWithin(((VP123) obj).getSpace(),obj, (vpradius));
+			//Iterator l = list.query().iterator();
+			//int size=0;
+			//while(l.hasNext()) {
+				//l.next();
+			//	size++;
+			//}
 			//PolygonAttributes polyatt = new PolygonAttributes();
 			//polyatt.setCullFace(PolygonAttributes.CULL_NONE);
 			//appearance.getAppearance().setPolygonAttributes(polyatt);
 			//AppearanceFactory.setPolygonAppearance(appearance.getAppearance(), PolygonDraw.FILL);
-			if (size == 5) {
-				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.magenta);
+			if (((VP123)obj).getVptype() == VPType.VP12) {
+				Color c = new Color(80,0,80);
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c/*Color.magenta*/);
 
 			} else {
-				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
+				Color c = new Color(0,80,80);
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c/*Color.cyan*/);
 			}
 		} else if (obj instanceof VP1) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
 		} else if (obj instanceof VP2) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.magenta);
 		} else if (obj instanceof VP3) {
-			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.green);
+			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.cyan);
 		} else if (obj instanceof Genome) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.yellow);
 		} else if (obj instanceof MRNA) {
@@ -66,7 +70,7 @@ public class AgentStyle3D implements Style3D {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.green);
 		} else if (obj instanceof TranscriptionFactor) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.gray);
-		} else if (obj instanceof DNAPol || obj instanceof SmTAg) {
+		} else if (obj instanceof SmTAg) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.darkGray);
 		} else if (obj instanceof HostGenome) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.orange);

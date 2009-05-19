@@ -144,7 +144,7 @@ public class Cytoplasm extends DefaultContext<AgentExtendCont> {
 			AgentExtendCont aec = l.next();
 			this.add(aec);
 			aec.setMove(schedule.schedule(sparams, aec, "move"));
-			if (aec instanceof LgTAg) {
+			if (aec instanceof LgTAg || aec instanceof VP2 || aec instanceof VP3) {
 				aec.setExport(schedule.schedule(sparams, aec, "export"));
 			}
 			l.remove();

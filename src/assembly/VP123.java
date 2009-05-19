@@ -38,6 +38,8 @@ public class VP123 extends AgentExtendCont{
 	
 	private static boolean nucleating = false;*/
 	
+	public enum VPType {VP12, VP13};
+	private VPType vptype;
 //	private int nSides = 6;
 	public enum State {PENT, HEX};
 	public enum Bound {BOUND, UNBOUND};
@@ -156,6 +158,14 @@ public class VP123 extends AgentExtendCont{
 		this.sides[index] = neighbor;
 	}*/
 	
+	public VPType getVptype() {
+		return vptype;
+	}
+
+	public void setVptype(VPType vptype) {
+		this.vptype = vptype;
+	}
+
 	public Genome getGenome() {
 		return genome;
 	}
@@ -810,6 +820,34 @@ public class VP123 extends AgentExtendCont{
 		}
 		space.moveByDisplacement(this, retpt);
 		move2Tick = tick;
+		}
+	}
+	
+	public void move() {
+		double tick = RepastEssentials.GetTickCount();
+		if (tick > moveTick) {
+			double radius;
+			double vpradius;
+			double rerr;
+			double vperr;
+			if (RunEnvironment.getInstance().isBatch()){
+				radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
+				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			} else {
+				radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
+				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			}
+			double disp[] = this.calcDisplacement(Genome.class, Genome.class, radius,rerr,vpradius,vperr);
+			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
+				randomWalk();
+			} else {
+				getSpace().moveByDisplacement(this, disp);
+			}
+			moveTick = tick;
 		}
 	}
 		

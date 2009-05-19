@@ -2,6 +2,8 @@ package assembly;
 
 import java.util.Iterator;
 
+import assembly.VP123.VPType;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -29,12 +31,30 @@ public class VP3 extends AgentExtendCont{
 	public void move() {
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-
-			double disp[] = this.calcDispIfCenter(VP1.class, VP1.class, VP2.class, VP3.class);
+			double r = 0;
+			double rerr = 0;
+			if (RunEnvironment.getInstance().isBatch()){
+				r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+			} else {
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+			}
+			double disp[] = this.calcDispIfCenter(VP1.class, VP1.class, VP2.class, VP3.class, r, rerr);
 			if (disp[0]==0 && disp[1]==0 && disp[2]==0) {
 				randomWalk();
 			} else {
-				getSpace().moveByDisplacement(this, disp);
+				double tmp[] = new double[3];
+				NdPoint thispt = getSpace().getLocation(this);
+				tmp[0] = disp[0]+thispt.getX();
+				tmp[1] = disp[1]+thispt.getY();
+				tmp[2] = disp[2]+thispt.getZ();
+				this.normPositionToBorder(tmp, r);
+				getSpace().moveTo(this, tmp);
+				this.setX(tmp[0]-thispt.getX());
+				this.setY(tmp[1]-thispt.getY());
+				this.setZ(tmp[2]-thispt.getZ());
+				//getSpace().moveByDisplacement(this, disp);
 			}
 			
 			moveTick = tick;
@@ -46,7 +66,7 @@ public class VP3 extends AgentExtendCont{
 		if (tick > exTick) {
 
 			if (getNoBound() == 5) {
-				if (nearWall(getSpace().getLocation(this))) {
+				if (nearWallGroup()) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < 0.4) {
 						double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
@@ -55,7 +75,7 @@ public class VP3 extends AgentExtendCont{
 						Iterator<AgentExtendCont> l = list.query().iterator();
 						while (l.hasNext()) {
 							AgentExtendCont aec = l.next();
-							if (aec instanceof VP1) {
+							if (aec instanceof VP1 && aec.isBound()) {
 								aec.setMoving(true);
 								((Cytoplasm)getTheContext()).addToRemList(aec);
 							}
@@ -63,6 +83,7 @@ public class VP3 extends AgentExtendCont{
 						this.setMoving(true);
 						((Cytoplasm)getTheContext()).addToRemList(this);
 						VP123 vp = new VP123();
+						vp.setVptype(VPType.VP13);
 						((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
 					}
 				}

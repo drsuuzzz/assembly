@@ -47,7 +47,7 @@ public class Genome extends AgentExtendCont{
 	
 	private Network<VP1> network;
 	*/
-	public enum GState {early, replicate, late};
+	public enum GState {early, replicate, late, assembly};
 	private GState state;
 	private double neighborTick;
 	private double lmoveTick;
@@ -55,6 +55,9 @@ public class Genome extends AgentExtendCont{
 	private double move2Tick;
 	private double xcriptTick;
 	private double repTick;
+	
+	private AgentExtendCont bind1;
+	private AgentExtendCont bind2;
 
 	public Genome() {
 		super();
@@ -68,9 +71,55 @@ public class Genome extends AgentExtendCont{
 		setName("Genome");
 		state = GState.early;
 		this.genXYZ();
+		bind1 = null;
+		bind2 = null;
 	}
 	
+	public void setBoundProteins (AgentExtendCont agent) {
+		//routine only necessary for Tag recruitment of DNA Pol
+		if (bind1 == null) {
+			bind1 = agent;
+		} else if (bind1 instanceof LgTAg) {
+			if (agent instanceof DNAPol) {
+				bind2 = agent;
+			}
+		} else if (bind1 instanceof DNAPol) {
+			if (agent instanceof LgTAg) {
+				bind2 = agent;
+			}
+		}
+	}
 	
+	public void clearBoundProteins () {
+		bind1 = null;
+		bind2 = null;
+	}
+	
+	public boolean needAgent (AgentExtendCont agent) {
+		
+		boolean need = false;
+		if (bind1 != null) {
+			if (bind1 instanceof LgTAg && bind2 == null) {
+				if (agent instanceof DNAPol) {
+					need = true;
+				} else if (bind1.equals(agent)) {
+					need = true;
+				}
+			} else if (bind1 instanceof DNAPol && bind2 == null) {
+				if (agent instanceof LgTAg) {
+					need = true;
+				} else if (bind1.equals(agent)) {
+					need = true;
+				}
+			} else if (bind1.equals(agent) || bind2.equals(agent)) {
+				need = true;
+			}
+		} else if (agent instanceof DNAPol || agent instanceof LgTAg){
+			need = true;
+		}
+		
+		return need;
+	}
 	
 /*	public Network getNetwork() {
 		return network;
@@ -204,9 +253,9 @@ public class Genome extends AgentExtendCont{
 
 
 	//Scheduled methods
-	public void move2() {
-		double tick = (double)RepastEssentials.GetTickCount();
-		if (tick > move2Tick) {
+	public double[] move2() {
+		//double tick = (double)RepastEssentials.GetTickCount();
+		//if (tick > move2Tick) {
 
 			double coord[] = {0,0,0};
 			NdPoint pt = this.getSpace().getLocation(this);
@@ -281,46 +330,98 @@ public class Genome extends AgentExtendCont{
 			coord[1] = align[1] + separ[1];
 			coord[2] = align[2] + separ[2];
 			if (coord[0]==0 && coord[1]==0 && coord[2]==0) {
-				this.genXYZ();
+				/*this.genXYZ();
 				coord[0] = this.getX() + pt.getX();
 				coord[1] = this.getY() + pt.getY();
-				coord[2] = this.getZ() + pt.getZ();
+				coord[2] = this.getZ() + pt.getZ();*/
+				;
 			} else {
 				AgentGeometry.trim(coord, rerr);
 				this.setX(coord[0]);
 				this.setY(coord[1]);
 				this.setZ(coord[2]);
-				coord[0] = coord[0] + pt.getX();
-				coord[1] = coord[1] + pt.getY();
-				coord[2] = coord[2] + pt.getZ();
+				//coord[0] = coord[0] + pt.getX();
+				//coord[1] = coord[1] + pt.getY();
+				//coord[2] = coord[2] + pt.getZ();
 			}
-			coord = this.normPositionToBorder(coord, r);
-			boolean p = getSpace().moveTo(this, coord);
-			if (!p) {
-				System.out.println("bad point");
-			}
-			move2Tick = tick;
-		}
+			return coord;
+			//coord = this.normPositionToBorder(coord, r);
+		//	boolean p = getSpace().moveTo(this, coord);
+			//if (!p) {
+				//System.out.println("bad point");
+			//}
+			//move2Tick = tick;
+		//}
 	}
 	
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
 			double disp[] = {0.0,0.0,0.0};
+			double r=0;
+			double rerr=0;
+			
 			if (state == GState.early) {
-				disp = this.calcDispIfCenter(TranscriptionFactor.class, TranscriptionFactor.class, Genome.class, Genome.class);
+				if (RunEnvironment.getInstance().isBatch()){
+					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				} else {
+					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				}
+				disp = this.calcDispIfCenter(TranscriptionFactor.class, LgTAg.class, Genome.class, HostGenome.class,r,rerr);
 				
 			} else if (state == GState.replicate) {
-				disp = this.calcDispIfCenter(LgTAg.class, DNAPol.class, Genome.class, Genome.class);
+				if (RunEnvironment.getInstance().isBatch()){
+					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				} else {
+					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				}
+				disp = this.calcDispIfCenter(LgTAg.class, DNAPol.class, Genome.class, HostGenome.class,r,rerr);
 				
 			} else if (state == GState.late) {
-				disp = this.calcDispIfCenter(LgTAg.class, LgTAg.class, Genome.class, Genome.class);
+				if (RunEnvironment.getInstance().isBatch()){
+					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				} else {
+					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				}
+				disp = this.calcDispIfCenter(LgTAg.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
 				
+			} else if (state == GState.assembly) {
+				if (RunEnvironment.getInstance().isBatch()){
+					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				} else {
+					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				}
+				//disp = this.calcDispIfCenter(VP123.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
+				disp = move2();
 			}
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
+				clearBoundProteins();
 			} else {
-				getSpace().moveByDisplacement(this, disp);
+				double tmp[] = new double[3];
+				NdPoint thispt = getSpace().getLocation(this);
+				tmp[0] = disp[0]+thispt.getX();
+				tmp[1] = disp[1]+thispt.getY();
+				tmp[2] = disp[2]+thispt.getZ();
+				//NdPoint pt = getSpace().moveByDisplacement(this, disp);
+				//if (pt != null) {
+					//this.setX(pt.getX()-thispt.getX());
+					//this.setY(pt.getY()-thispt.getY());
+					//this.setZ(pt.getZ() - thispt.getZ());
+				//}
+				this.normPositionToBorder(tmp, r);
+				getSpace().moveTo(this, tmp);
+				this.setX(tmp[0]-thispt.getX());
+				this.setY(tmp[1]-thispt.getY());
+				this.setZ(tmp[2]-thispt.getZ());
 			}
 			moveTick = tick;
 		}
@@ -389,6 +490,8 @@ public class Genome extends AgentExtendCont{
 						laec.largeStepAwayFrom(this);
 						laec.setBound(false);
 						this.setNoBound(0);
+						this.clearBoundProteins();
+						state = GState.late;
 					}
 				}
 			} else if (state == GState.late) {

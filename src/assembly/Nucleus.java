@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import assembly.Genome.GState;
+import assembly.VP123.VPType;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactory;
@@ -75,10 +78,11 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			Genome g = new Genome();
 			g.setTheContext(/*context*/this);
 			g.setSpace(space);
+			g.setState(GState.assembly);
 			this.add(g);
 			//schedule.schedule(sparams, g, "move2");
 			schedule.schedule(sparams, g, "move");
-			schedule.schedule(sparams,g,"transcription");
+			//schedule.schedule(sparams,g,"transcription");
 		}
 		
 		int numh = (Integer)parm.getValue("numberofHost");
@@ -88,6 +92,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			hg.setSpace(space);
 			this.add(hg);
 			schedule.schedule(sparams, hg, "move");
+			schedule.schedule(sparams, hg, "transcription");
 		}
 		
 		int numtf = (Integer)parm.getValue("numberofTF");
@@ -97,6 +102,21 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			tf.setSpace(space);
 			this.add(tf);
 			schedule.schedule(sparams, tf, "move");
+		}
+		
+		int numvp123 =80;//72;
+		for (int i = 0; i < numvp123; i++) {
+			VP123 vp = new VP123();
+			vp.setTheContext(this);
+			vp.setSpace(space);
+			int rand = RandomHelper.nextIntFromTo(1, 2);
+			if (rand == 1) {
+				vp.setVptype(VPType.VP12);
+			} else {
+				vp.setVptype(VPType.VP13);
+			}
+			this.add(vp);
+			schedule.schedule(sparams,vp,"move2");
 		}
 		schedule.schedule(sparamseven, this, "addAgents");
 	}
@@ -133,14 +153,16 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 				AgentExtendCont aec = agents.next();
 				if (aec instanceof Genome) {
 					this.add(aec);
-					schedule.schedule(sparams,aec,"move2");
+					schedule.schedule(sparams,aec,"move");
 					schedule.schedule(sparams,aec,"transcription");
-					addTick = tick;
 				} else if (aec instanceof MRNA) {
 					this.add(aec);
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
 					aec.setExport(schedule.schedule(sparams,aec,"export"));
 					aec.setSplice(schedule.schedule(sparams,aec,"splice"));
+				} else if (aec instanceof DNAPol) {
+					this.add(aec);
+					schedule.schedule(sparams,aec,"move");
 				}
 				agents.remove();
 			}

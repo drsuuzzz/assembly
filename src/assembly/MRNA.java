@@ -62,12 +62,30 @@ public class MRNA extends AgentExtendCont {
 		if (!isDead()) {
 			double tick = RepastEssentials.GetTickCount();
 			if (tick > moveTick) {
-
-				double disp[] = calcDispIfCenter(Ribosome.class,Ribosome.class,MRNA.class,MRNA.class);
+				double r = 0;
+				double rerr = 0;
+				if (RunEnvironment.getInstance().isBatch()){
+					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				} else {
+					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				}
+				double disp[] = calcDispIfCenter(Ribosome.class,Ribosome.class,MRNA.class,MRNA.class,r,rerr);
 				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 					randomWalk();
 				} else {
-					getSpace().moveByDisplacement(this, disp);
+					double tmp[] = new double[3];
+					NdPoint thispt = getSpace().getLocation(this);
+					tmp[0] = disp[0]+thispt.getX();
+					tmp[1] = disp[1]+thispt.getY();
+					tmp[2] = disp[2]+thispt.getZ();
+					this.normPositionToBorder(tmp, r);
+					getSpace().moveTo(this, tmp);
+					this.setX(tmp[0]-thispt.getX());
+					this.setY(tmp[1]-thispt.getY());
+					this.setZ(tmp[2]-thispt.getZ());
+					//getSpace().moveByDisplacement(this, disp);
 				}
 				moveTick=tick;
 			}
@@ -91,8 +109,8 @@ public class MRNA extends AgentExtendCont {
 			} else if (state == mState.late) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				if (rand < .2) {
-					int rand2 = RandomHelper.nextIntFromTo(0, 1);
-					if (rand == 0) {
+					int rand2 = RandomHelper.nextIntFromTo(1, 2);
+					if (rand2 == 1) {
 						setMType(MType.vp2);
 					} else {
 						setMType(MType.vp3);

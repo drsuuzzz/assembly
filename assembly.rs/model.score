@@ -10,10 +10,10 @@
   <attributes label="Number of Host" ID="numberofHost" pluralLabel="Number of Hosts" sType="INTEGER" defaultValue="2"/>
   <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="90"/>
   <attributes label="Number of TF" ID="numberofTF" pluralLabel="Number of TFs" sType="INTEGER" defaultValue="10"/>
-  <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="3.8"/>
-  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue="0.5"/>
-  <attributes label="Distance Capsid" ID="distanceCapsid" pluralLabel="Distance Capsids" sType="FLOAT" defaultValue="4"/>
-  <attributes label="Distance Capsid Sep Error" ID="distanceCapsidSepError" pluralLabel="Distance Capsid Sep Errors" sType="FLOAT" defaultValue="0.5"/>
+  <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="4.4"/>
+  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance Capsid" ID="distanceCapsid" pluralLabel="Distance Capsids" sType="FLOAT" defaultValue="1.2"/>
+  <attributes label="Distance Capsid Sep Error" ID="distanceCapsidSepError" pluralLabel="Distance Capsid Sep Errors" sType="FLOAT" defaultValue=".1"/>
   <attributes label="Distance Capsid Look Error" ID="distanceCapsidLookError" pluralLabel="Distance Capsid Look Errors" sType="FLOAT" defaultValue="0.1"/>
   <attributes label="Rule Separation" ID="ruleSeparation" pluralLabel="Rule Separations" defaultValue="true"/>
   <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>

@@ -25,8 +25,22 @@ public class Ribosome extends AgentExtendCont {
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-
-			double disp[] = calcDisplacement(MRNA.class,MRNA.class);
+			double radius;
+			double vpradius;
+			double rerr;
+			double vperr;
+			if (RunEnvironment.getInstance().isBatch()){
+				radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceVP1");
+				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceVP1Error");
+			} else {
+				radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceVP1");
+				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceVP1Error");
+			}
+			double disp[] = calcDisplacement(MRNA.class,MRNA.class,radius,rerr,vpradius,vperr);
 		
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
@@ -47,7 +61,7 @@ public class Ribosome extends AgentExtendCont {
 			while (list.hasNext()) {
 				AgentExtendCont aec = list.next();
 				if (aec instanceof MRNA) {
-					if (!((MRNA)aec).isDead()) {
+					if (!((MRNA)aec).isDead() && this.isBound()) {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 						if (rand < .4) {
 							AgentExtendCont T=null;
@@ -67,6 +81,10 @@ public class Ribosome extends AgentExtendCont {
 								T.setTheContext(getTheContext());
 								((Cytoplasm)getTheContext()).addToAddList(T);
 								this.largeStepAwayFrom(aec);
+								if (aec.getNoBound()>0) {
+									aec.setNoBound(aec.getNoBound()-1);
+								} 
+								this.setBound(false);
 							}
 						}
 						break;
