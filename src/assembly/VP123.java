@@ -717,15 +717,15 @@ public class VP123 extends AgentExtendCont{
 				}
 				if (sep) {
 					if (AgentGeometry.calcDistance(center, ptv) < (radius-rerr)) {
-						separationg[0] = (ptv.getX()-center[0])/10;
-						separationg[1] = (ptv.getY()-center[1])/10;
-						separationg[2] = (ptv.getZ()-center[2])/10;
+						separationg[0] = (ptv.getX()-center[0])/20;
+						separationg[1] = (ptv.getY()-center[1])/20;
+						separationg[2] = (ptv.getZ()-center[2])/20;
 					}
 				}
 				if (aln) {
-					alignmentg[0] = (genome.getX()-this.getX())/8;
-					alignmentg[1] = (genome.getY()-this.getY())/8;
-					alignmentg[2] = (genome.getZ()-this.getZ())/8;
+					alignmentg[0] = (genome.getX()/*-this.getX()*/)/*/8*/;
+					alignmentg[1] = (genome.getY()/*-this.getY()*/)/*/8*/;
+					alignmentg[2] = (genome.getZ()/*-this.getZ()*/)/*/8*/;
 				}
 				break;
 			}
@@ -752,9 +752,9 @@ public class VP123 extends AgentExtendCont{
 						if (sep) {
 							NdPoint tvp = space.getLocation(this);
 							if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-vpserr)) {
-								separationv[0] += (tvp.getX()-vpt.getX())/20;
-								separationv[1] += (tvp.getY()-vpt.getY())/20;
-								separationv[2] += (tvp.getZ()-vpt.getZ())/20;
+								separationv[0] += (tvp.getX()-vpt.getX())/30;
+								separationv[1] += (tvp.getY()-vpt.getY())/30;
+								separationv[2] += (tvp.getZ()-vpt.getZ())/30;
 							}
 						}
 						if (aln) {
@@ -776,9 +776,9 @@ public class VP123 extends AgentExtendCont{
 			}
 			if (counta > 0) {
 				if (aln) {
-					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
-					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
-					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+					alignmentv[0] = ((alignmentv[0]/counta)/*-this.getX()*/)/*/8*/;
+					alignmentv[1] = ((alignmentv[1]/counta)/*-this.getY()*/)/*/8*/;
+					alignmentv[2] = ((alignmentv[2]/counta)/*-this.getZ()*/)/*/8*/;
 				}
 			}
 		} else {
