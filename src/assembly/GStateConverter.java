@@ -13,6 +13,8 @@ public class GStateConverter implements StringConverter<GState> {
 			gs = GState.late;
 		} else if (strRep == "Replicate") {
 			gs = GState.replicate;
+		} else if (strRep == "Assembly") {
+			gs = GState.assembly;
 		}
 		return gs;
 	}
@@ -24,6 +26,8 @@ public class GStateConverter implements StringConverter<GState> {
 			s = "Late";
 		} else if (obj == GState.replicate) {
 			s = "Replicate";
+		} else if (obj == GState.assembly) {
+			s = "Assembly";
 		}
 		return s;
 	}

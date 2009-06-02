@@ -4,6 +4,8 @@ package assembly;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import assembly.Genome.GState;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -184,13 +186,13 @@ public class VP123 extends AgentExtendCont{
 	}
 	
 //	@Parameter(usageName="bound",displayName="Bound State", converter = "assembly.BoundConverter")
-	public Bound getBound() {
+/*	public Bound getBound() {
 		return boundG;
 	}
 
 	public void setBound(Bound bound) {
 		this.boundG = bound;
-	}
+	}*/
 	public double [] findCenter(Iterator l) {
 		double [] c={0.0,0.0,0.0};
 		int count=0;
@@ -681,21 +683,18 @@ public class VP123 extends AgentExtendCont{
 		ContinuousSpace space = getSpace();
 		double radius;
 		double vpradius;
-		double vpserr;
 		double rerr;
-		double vplerr;
+		double vperr;
 		if (RunEnvironment.getInstance().isBatch()){
 			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-			vplerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
-			vpserr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 		} else {
 			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-			vplerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
-			vpserr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 		}
 		ContinuousWithin list = new ContinuousWithin(space,this,(radius+rerr));
 		Iterator l = list.query().iterator();
@@ -711,15 +710,15 @@ public class VP123 extends AgentExtendCont{
 				center[2] = space.getLocation(genome).getZ();
 				NdPoint ptv = space.getLocation(this);
 				if (coh) {
-					cohesiong[0] = (center[0]-ptv.getX())/100;
-					cohesiong[1] = (center[1]-ptv.getY())/100;
-					cohesiong[2] = (center[2]-ptv.getZ())/100;
+					cohesiong[0] = (center[0]-ptv.getX())/90;
+					cohesiong[1] = (center[1]-ptv.getY())/90;
+					cohesiong[2] = (center[2]-ptv.getZ())/90;
 				}
 				if (sep) {
 					if (AgentGeometry.calcDistance(center, ptv) < (radius-rerr)) {
-						separationg[0] = (ptv.getX()-center[0])/20;
-						separationg[1] = (ptv.getY()-center[1])/20;
-						separationg[2] = (ptv.getZ()-center[2])/20;
+						separationg[0] = (ptv.getX()-center[0])/30;
+						separationg[1] = (ptv.getY()-center[1])/30;
+						separationg[2] = (ptv.getZ()-center[2])/30;
 					}
 				}
 				if (aln) {
@@ -727,15 +726,19 @@ public class VP123 extends AgentExtendCont{
 					alignmentg[1] = (genome.getY()/*-this.getY()*/)/*/8*/;
 					alignmentg[2] = (genome.getZ()/*-this.getZ()*/)/*/8*/;
 				}
+				if (genome.getState() == GState.late) {
+					genome.setState(GState.assembly);
+				}
 				break;
 			}
 		}
 
 		int count=0;
 		int counta = 0;
-		list = new ContinuousWithin(space,this,(vpradius+vplerr));
+		list = new ContinuousWithin(space,this,(vpradius+vperr));
 		l = list.query().iterator();
-		if (gFound) {
+		if (gFound || this.isBound()) {
+			this.setBound(true);
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
@@ -751,7 +754,7 @@ public class VP123 extends AgentExtendCont{
 						}
 						if (sep) {
 							NdPoint tvp = space.getLocation(this);
-							if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-vpserr)) {
+							if (AgentGeometry.calcDistanceNdPoints(vpt, tvp) < (vpradius-vperr)) {
 								separationv[0] += (tvp.getX()-vpt.getX())/30;
 								separationv[1] += (tvp.getY()-vpt.getY())/30;
 								separationv[2] += (tvp.getZ()-vpt.getZ())/30;
@@ -781,7 +784,11 @@ public class VP123 extends AgentExtendCont{
 					alignmentv[2] = ((alignmentv[2]/counta)/*-this.getZ()*/)/*/8*/;
 				}
 			}
-		} else {
+		} else if (this.isBound()) {
+			this.setBound(false);
+		}
+		
+		/*else {
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
@@ -796,7 +803,7 @@ public class VP123 extends AgentExtendCont{
 					}
 				}
 			}
-		}
+		}*/
 		
 		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
 					(separationg[0] + separationv[0])/2 + 
@@ -809,11 +816,18 @@ public class VP123 extends AgentExtendCont{
 					(alignmentg[2] + alignmentv[2])/2;
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 			this.genXYZ();
-			retpt[0] = this.getX();
-			retpt[1] = this.getY();
-			retpt[2] = this.getZ();
+			if (isBound()) {
+				//retpt[0] = genome.getX();
+				//retpt[1] = genome.getY();
+				//retpt[2] = genome.getZ();
+				setBound(false);
+			} //else {
+				retpt[0] = this.getX();
+				retpt[1] = this.getY();
+				retpt[2] = this.getZ();
+			//}
 		} else {
-			AgentGeometry.trim(retpt, vpserr);
+			AgentGeometry.trim(retpt, vperr/2);
 			this.setX(retpt[0]);
 			this.setY(retpt[1]);
 			this.setZ(retpt[2]);

@@ -414,7 +414,7 @@ public class AgentExtendCont {
 		int counta = 0;
 		list = new ContinuousWithin<AgentExtendCont>(space,this,(distn+nerr));
 		l = list.query().iterator();
-		if (cAgent) {
+		if (cAgent || isBound()) {
 			setBound(true);
 			while (l.hasNext()) {
 				AgentExtendCont obj = l.next();
@@ -556,7 +556,7 @@ public class AgentExtendCont {
 		coord[1] = align[1] + separ[1];
 		coord[2] = align[2] + separ[2];
 		if (coord[0]==0 && coord[1]==0 && coord[2]==0) {
-			
+			;
 		} else {
 			AgentGeometry.trim(coord, cerr);
 			this.setX(coord[0]);

@@ -336,7 +336,7 @@ public class Genome extends AgentExtendCont{
 				coord[2] = this.getZ() + pt.getZ();*/
 				;
 			} else {
-				AgentGeometry.trim(coord, rerr);
+				AgentGeometry.trim(coord, rerr/2);
 				this.setX(coord[0]);
 				this.setY(coord[1]);
 				this.setZ(coord[2]);
