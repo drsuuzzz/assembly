@@ -430,9 +430,9 @@ public class AgentExtendCont {
 						}
 						if (sep) {
 							if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (distn-nerr)) {
-								separationv[0] += (thispt.getX()-vpt.getX())/30;
-								separationv[1] += (thispt.getY()-vpt.getY())/30;
-								separationv[2] += (thispt.getZ()-vpt.getZ())/30;
+								separationv[0] += (thispt.getX()-vpt.getX())/20;
+								separationv[1] += (thispt.getY()-vpt.getY())/20;
+								separationv[2] += (thispt.getZ()-vpt.getZ())/20;
 							}
 						}
 						if (aln) {
@@ -461,15 +461,15 @@ public class AgentExtendCont {
 		} else {
 			setBound(false);
 		}
-		retpt[0] = (cohesiong[0] + cohesionv[0]) + 
-					(separationg[0] + separationv[0]) + 
-					(alignmentg[0] + alignmentv[0]);
-		retpt[1] = (cohesiong[1] + cohesionv[1]) + 
-					(separationg[1] + separationv[1]) + 
-					(alignmentg[1] + alignmentv[1]);
-		retpt[2] = (cohesiong[2] + cohesionv[2]) + 
-					(separationg[2] + separationv[2]) + 
-					(alignmentg[2] + alignmentv[2]);
+		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
+					(separationg[0] + separationv[0])/2 + 
+					(alignmentg[0] + alignmentv[0])/2;
+		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
+					(separationg[1] + separationv[1])/2 + 
+					(alignmentg[1] + alignmentv[1])/2;
+		retpt[2] = (cohesiong[2] + cohesionv[2])/2 + 
+					(separationg[2] + separationv[2])/2 + 
+					(alignmentg[2] + alignmentv[2])/2;
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 
 		} else {
@@ -503,6 +503,8 @@ public class AgentExtendCont {
 		} else if (this instanceof Genome) {
 			if (((Genome)this).getState()==GState.replicate) {
 				max = 2;
+			} else if (((Genome)this).getState() == GState.assembly) {
+				max = 72;
 			} else {
 				max = 1;
 			}
@@ -544,9 +546,9 @@ public class AgentExtendCont {
 				if (sep) {
 					NdPoint other = this.getSpace().getLocation(obj);
 					//if (AgentGeometry.calcDistanceNdPoints(other, thispt) < 2*(r+rerr)) {
-						separ[0] += (thispt.getX()-other.getX())/10;
-						separ[1] += (thispt.getY()-other.getY())/10;
-						separ[2] += (thispt.getZ()-other.getZ())/10;
+						separ[0] += (thispt.getX()-other.getX())/20;
+						separ[1] += (thispt.getY()-other.getY())/20;
+						separ[2] += (thispt.getZ()-other.getZ())/20;
 					//}
 				}
 			}

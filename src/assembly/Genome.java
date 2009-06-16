@@ -399,8 +399,8 @@ public class Genome extends AgentExtendCont{
 					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				}
-				//disp = this.calcDispIfCenter(VP123.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
-				disp = move2();
+				disp = this.calcDispIfCenter(VP123.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
+				//disp = move2();
 			}
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
