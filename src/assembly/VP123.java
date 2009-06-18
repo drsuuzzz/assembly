@@ -522,21 +522,18 @@ public class VP123 extends AgentExtendCont{
 		ContinuousSpace space = getSpace();
 		double radius;
 		double vpradius;
-		double vpserr;
 		double rerr;
-		double vplerr;
+		double vperr;
 		if (RunEnvironment.getInstance().isBatch()){
 			radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-			vplerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
-			vpserr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 		} else {
 			radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-			vplerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidLookError");
-			vpserr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+			vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 		}
 
 		//find the pseudo-center
@@ -572,7 +569,7 @@ public class VP123 extends AgentExtendCont{
 		}
 
 		//adjust between VP1 agents
-		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vplerr));
+		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
 		Iterator l = list.query().iterator();
 		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			int count=0;
@@ -590,7 +587,7 @@ public class VP123 extends AgentExtendCont{
 							count++;
 						}
 						if (sep) {
-							if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vpserr)) {
+							if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
 								separationv[0] += (thispt.getX()-vpt.getX())/20;
 								separationv[1] += (thispt.getY()-vpt.getY())/20;
 								separationv[2] += (thispt.getZ()-vpt.getZ())/20;
@@ -626,7 +623,7 @@ public class VP123 extends AgentExtendCont{
 				if (obj instanceof VP123) {
 					if (sep) {
 						NdPoint vpt = this.getSpace().getLocation(obj);
-						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vpserr)) {
+						if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (vpradius-vperr)) {
 							separationv[0] += (thispt.getX()-vpt.getX())/20;
 							separationv[1] += (thispt.getY()-vpt.getY())/20;
 							separationv[2] += (thispt.getZ()-vpt.getZ())/20;
