@@ -116,7 +116,7 @@ public class MRNA extends AgentExtendCont {
 						setMType(MType.vp3);
 					}
 					state = mState.complete;
-				} else if (rand < .9) {
+				} else if (rand < .8) {
 					setMType(MType.vp1);
 					state = mState.complete;
 				}

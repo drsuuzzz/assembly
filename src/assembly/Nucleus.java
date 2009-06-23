@@ -36,6 +36,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 	private Cell cell;
 	
 	private List<AgentExtendCont> addList;
+	private List<AgentExtendCont> remList;
 	
 	private double addTick;
 	private double infectTick;
@@ -44,6 +45,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		super("Nucleus");
 		
 		addList = new ArrayList<AgentExtendCont>();
+		remList = new ArrayList<AgentExtendCont>();
 		
 		addTick = 0;
 		infectTick = 0;
@@ -83,6 +85,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			//schedule.schedule(sparams, g, "move2");
 			schedule.schedule(sparams, g, "move");
 			schedule.schedule(sparams,g,"transcription");
+			schedule.schedule(sparams, g, "egress");
 		}
 		
 		int numh = (Integer)parm.getValue("numberofHost");
@@ -119,6 +122,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams,vp,"move2");
 		}
 		schedule.schedule(sparamseven, this, "addAgents");
+		schedule.schedule(sparamseven, this, "remAgents");
 	}
 	
 	public ContinuousSpace<AgentExtendCont> getSpace() {
@@ -131,6 +135,10 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 
 	public void setCell(Cell cell) {
 		this.cell = cell;
+	}
+	
+	public void addToRemList (AgentExtendCont aec) {
+		remList.add(aec);
 	}
 	
 	public void addToAddList (AgentExtendCont aec) {
@@ -155,6 +163,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 					this.add(aec);
 					schedule.schedule(sparams,aec,"move");
 					schedule.schedule(sparams,aec,"transcription");
+					schedule.schedule(sparams,aec,"egress");
 				} else if (aec instanceof MRNA) {
 					this.add(aec);
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
@@ -167,6 +176,16 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 				agents.remove();
 			}
 			addTick = tick;
+		}
+	}
+	
+	public void remAgents() {
+		Iterator<AgentExtendCont> l = remList.iterator();
+		while (l.hasNext()) {
+			AgentExtendCont aec = l.next();
+			aec.removeScheduledActions();
+			this.remove(aec);
+			l.remove();
 		}
 	}
 }

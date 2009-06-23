@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import assembly.MRNA.mState;
+import assembly.VP123.VPType;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
@@ -55,6 +56,7 @@ public class Genome extends AgentExtendCont{
 	private double move2Tick;
 	private double xcriptTick;
 	private double repTick;
+	private double egressTick;
 	
 	private AgentExtendCont bind1;
 	private AgentExtendCont bind2;
@@ -68,6 +70,7 @@ public class Genome extends AgentExtendCont{
 		moveTick = 0;
 		move2Tick = 0;
 		xcriptTick = 0;
+		egressTick = 0;
 		setName("Genome");
 		state = GState.early;
 		this.genXYZ();
@@ -451,7 +454,7 @@ public class Genome extends AgentExtendCont{
 								aec.largeStepAwayFrom(this);
 								aec.setBound(false);
 								this.setNoBound(0);
-								state = GState.replicate;
+								//state = GState.replicate;
 								break;
 							}
 						}
@@ -511,6 +514,36 @@ public class Genome extends AgentExtendCont{
 				}
 			}
 			xcriptTick = tick;
+		}
+	}
+	
+	public void egress() {
+		double tick = (double)RepastEssentials.GetTickCount();
+		if (tick > egressTick) {
+			if (getNoBound() == 72) {
+				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				if (rand < 0.5) {
+					double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+					double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+					ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
+					Iterator<AgentExtendCont> l = list.query().iterator();
+					while (l.hasNext()) {
+						AgentExtendCont aec = l.next();
+						if (aec instanceof VP123 && aec.isBound()) {
+								//aec.setMoving(true);
+							((Nucleus)getTheContext()).addToRemList(aec);
+						}
+					}
+						//this.setMoving(true);
+					((Nucleus)getTheContext()).addToRemList(this);
+						//VP123 vp = new VP123();
+						//vp.setVptype(VPType.VP12);
+						//((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
+					((Nucleus)getTheContext()).getCell().setVirions();
+				}
+			}
+			egressTick = tick;
+
 		}
 	}
 /*	public void move() {

@@ -14,6 +14,7 @@ public class Assembly implements ContextBuilder {
 		
 		Cell cell = new Cell();
 		context.addSubContext(cell);
+		//context.add(cell);
 		return context;
 	}
 
