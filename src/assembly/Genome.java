@@ -539,7 +539,7 @@ public class Genome extends AgentExtendCont{
 						//VP123 vp = new VP123();
 						//vp.setVptype(VPType.VP12);
 						//((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
-					((Nucleus)getTheContext()).getCell().setVirions();
+					((Nucleus)getTheContext()).getCell().addVirions();
 				}
 			}
 			egressTick = tick;

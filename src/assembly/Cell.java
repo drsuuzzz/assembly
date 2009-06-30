@@ -36,6 +36,7 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 	private double moveTick;
 	
 	private int virions;
+	private int VLP;
 
 	public Cell() {
 		super("Cell");
@@ -78,7 +79,7 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 		try {
 			FileWriter fw = new FileWriter(countp, true);
 			PrintWriter pw = new PrintWriter(fw);
-			pw.println("tick,Tag,tag,VP1,VP2,VP3,VP123,Genome,DNAPol");
+			pw.println("tick,Tag,tag,VP1,VP2,VP3,VP123,Genome,DNAPol,virions,VLP");
 			fw.close();
 		} catch (IOException e) {
 			System.out.println("Something wrong with count file.");
@@ -90,8 +91,16 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 		return virions;
 	}
 
-	public void setVirions() {
+	public void addVirions() {
 		this.virions += 1;
+	}
+	
+	public int getVLP() {
+		return VLP;
+	}
+	
+	public void addVLP() {
+		this.VLP += 1;
 	}
 
 	public int getNoTag() {
@@ -189,7 +198,8 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 			try {
 				FileWriter fw = new FileWriter(countp, true);
 				PrintWriter pw = new PrintWriter(fw);
-				pw.println(tick+","+getNoTag()+","+getNotag()+","+this.getNoVP1()+","+this.getNoVP2()+","+this.getNoVP3()+","+this.getNoVP123()+","+this.getNoGenome()+","+this.getNoDNAPol());
+				pw.println(tick+","+getNoTag()+","+getNotag()+","+this.getNoVP1()+","+this.getNoVP2()+","+this.getNoVP3()+","+this.getNoVP123()+
+						","+this.getNoGenome()+","+this.getNoDNAPol()+","+virions+","+VLP);
 				fw.close();
 			} catch (IOException e) {
 				System.out.println("Something wrong with count file.");
