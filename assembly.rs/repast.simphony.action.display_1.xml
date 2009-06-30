@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.DefaultDisplayDescriptor>
-  <name>Cytoplasm</name>
+  <name>Cytoplasm/ER</name>
   <type>THREE_D</type>
   <styles>
     <entry>
@@ -19,11 +19,11 @@
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
@@ -49,11 +49,11 @@
       <null/>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <null/>
     </entry>
     <entry>
@@ -74,36 +74,7 @@
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Cytoplasm</layoutProjection>
   <layoutInterval>0</layoutInterval>
-  <layerOrder>
-    <entry>
-      <string>assembly.VP2</string>
-      <int>1</int>
-    </entry>
-    <entry>
-      <string>assembly.SmTAg</string>
-      <int>6</int>
-    </entry>
-    <entry>
-      <string>assembly.Ribosome</string>
-      <int>5</int>
-    </entry>
-    <entry>
-      <string>assembly.VP1</string>
-      <int>0</int>
-    </entry>
-    <entry>
-      <string>assembly.LgTAg</string>
-      <int>4</int>
-    </entry>
-    <entry>
-      <string>assembly.MRNA</string>
-      <int>3</int>
-    </entry>
-    <entry>
-      <string>assembly.VP3</string>
-      <int>2</int>
-    </entry>
-  </layerOrder>
+  <layerOrder/>
   <projections>
     <repast.score.impl.SContinuousSpaceImpl>
       <name>Cytoplasm</name>
