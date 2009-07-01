@@ -50,6 +50,7 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 		fileTick = 0;
 		moveTick = 0;
 		virions = 0;
+		VLP = 0;
 		
 		mAgents = new ArrayList<AgentExtendCont>();
 		addList = new ArrayList<AgentExtendCont>();
