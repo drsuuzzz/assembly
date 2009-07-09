@@ -329,7 +329,7 @@ public class AgentExtendCont {
 			x = 5;
 		} else if (agentType1.getName().equals(MRNA.class.getName())){
 			x = 20;
-		} else if (agentType1.getName().equals(VP123.class.getName())) {
+		} else if (agentType1.getName().equals(Genome.class.getName())) {
 			x = 72;
 		}
 		else {

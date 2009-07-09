@@ -251,7 +251,7 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 				aec.setTheContext(n);
 				aec.setSpace(n.getSpace());
 				aec.setLocation(Loc.nucleus);
-				aec.setMove(schedule.schedule(sparams, aec, "move2"));
+				aec.setMove(schedule.schedule(sparams, aec, "move"));
 			}
 			agents.remove();
 

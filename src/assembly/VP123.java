@@ -562,9 +562,9 @@ public class VP123 extends AgentExtendCont{
 				double x = RepastEssentials.RandomDraw(-1,1);
 				double y = RepastEssentials.RandomDraw(-1,1);
 				double z = RepastEssentials.RandomDraw(-1,1);
-				alignmentg[0] = (x-this.getX())/8;
-				alignmentg[1] = (y-this.getY())/8;
-				alignmentg[2] = (z-this.getZ())/8;
+				alignmentg[0] = x;
+				alignmentg[1] = y;
+				alignmentg[2] = z;
 			}
 		}
 
@@ -612,12 +612,12 @@ public class VP123 extends AgentExtendCont{
 			}
 			if (counta > 0) {
 				if (aln) {
-					alignmentv[0] = ((alignmentv[0]/counta)-this.getX())/8;
-					alignmentv[1] = ((alignmentv[1]/counta)-this.getY())/8;
-					alignmentv[2] = ((alignmentv[2]/counta)-this.getZ())/8;
+					alignmentv[0] = alignmentv[0]/counta;
+					alignmentv[1] = alignmentv[1]/counta;
+					alignmentv[2] = alignmentv[2]/counta;
 				}
 			}
-		} else {
+		}/* else {
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
@@ -631,23 +631,23 @@ public class VP123 extends AgentExtendCont{
 					}
 				}
 			}
-		}
-		retpt[0] = (cohesiong[0] + cohesionv[0]) + 
-					(separationg[0] + separationv[0]) + 
-					(alignmentg[0] + alignmentv[0]);
-		retpt[1] = (cohesiong[1] + cohesionv[1]) + 
-					(separationg[1] + separationv[1]) + 
-					(alignmentg[1] + alignmentv[1]);
-		retpt[2] = (cohesiong[2] + cohesionv[2]) + 
-					(separationg[2] + separationv[2]) + 
-					(alignmentg[2] + alignmentv[2]);
+		}*/
+		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
+					(separationg[0] + separationv[0])/2 + 
+					(alignmentg[0] + alignmentv[0])/2;
+		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
+					(separationg[1] + separationv[1])/2 + 
+					(alignmentg[1] + alignmentv[1])/2;
+		retpt[2] = (cohesiong[2] + cohesionv[2])/2 + 
+					(separationg[2] + separationv[2])/2 + 
+					(alignmentg[2] + alignmentv[2])/2;
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 			this.genXYZ();
 			retpt[0] = this.getX();
 			retpt[1] = this.getY();
 			retpt[2] = this.getZ();
 		} else {
-			AgentGeometry.trim(retpt, rerr);
+			AgentGeometry.trim(retpt, rerr/2);
 			this.setX(retpt[0]);
 			this.setY(retpt[1]);
 			this.setZ(retpt[2]);
@@ -657,7 +657,7 @@ public class VP123 extends AgentExtendCont{
 		}
 	}
 	
-	public void move2() {
+/*	public void move2() {
 		//cohesion
 		//center of mass around genome or otherwise
 		
@@ -718,11 +718,11 @@ public class VP123 extends AgentExtendCont{
 						separationg[2] = (ptv.getZ()-center[2])/30;
 					}
 				}
-				if (aln) {
-					alignmentg[0] = (genome.getX()/*-this.getX()*/)/*/8*/;
-					alignmentg[1] = (genome.getY()/*-this.getY()*/)/*/8*/;
-					alignmentg[2] = (genome.getZ()/*-this.getZ()*/)/*/8*/;
-				}
+				if (aln) {*/
+					//alignmentg[0] = (genome.getX()/*-this.getX()*/)/*/8*/;
+					//alignmentg[1] = (genome.getY()/*-this.getY()*/)/*/8*/;
+					//alignmentg[2] = (genome.getZ()/*-this.getZ()*/)/*/8*/;
+				/*}
 				if (genome.getState() == GState.late) {
 					genome.setState(GState.assembly);
 				}
@@ -775,15 +775,15 @@ public class VP123 extends AgentExtendCont{
 				}
 			}
 			if (counta > 0) {
-				if (aln) {
-					alignmentv[0] = ((alignmentv[0]/counta)/*-this.getX()*/)/*/8*/;
-					alignmentv[1] = ((alignmentv[1]/counta)/*-this.getY()*/)/*/8*/;
-					alignmentv[2] = ((alignmentv[2]/counta)/*-this.getZ()*/)/*/8*/;
-				}
+				if (aln) {*/
+					//alignmentv[0] = ((alignmentv[0]/counta)/*-this.getX()*/)/*/8*/;
+					//alignmentv[1] = ((alignmentv[1]/counta)/*-this.getY()*/)/*/8*/;
+					//alignmentv[2] = ((alignmentv[2]/counta)/*-this.getZ()*/)/*/8*/;
+			/*	}
 			}
 		} else if (this.isBound()) {
 			this.setBound(false);
-		}
+		}*/
 		
 		/*else {
 			while (l.hasNext()) {
@@ -802,7 +802,7 @@ public class VP123 extends AgentExtendCont{
 			}
 		}*/
 		
-		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
+	/*	retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
 					(separationg[0] + separationv[0])/2 + 
 					(alignmentg[0] + alignmentv[0])/2;
 		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
@@ -832,7 +832,7 @@ public class VP123 extends AgentExtendCont{
 		space.moveByDisplacement(this, retpt);
 		move2Tick = tick;
 		}
-	}
+	}*/
 	
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
@@ -845,12 +845,12 @@ public class VP123 extends AgentExtendCont{
 				radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 			} else {
 				radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidSepError");
+				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 			}
 			double disp[] = this.calcDisplacement(Genome.class, Genome.class, radius,rerr,vpradius,vperr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
