@@ -101,6 +101,7 @@ public class MRNA extends AgentExtendCont {
 				if (rand < .2) {
 					setMType(MType.tag);
 					state = mState.complete;
+					this.die();  //remove once tag fully implemented
 				} else if (rand < .8) {
 					setMType(MType.Tag);
 					state = mState.complete;
@@ -116,7 +117,7 @@ public class MRNA extends AgentExtendCont {
 						setMType(MType.vp3);
 					}
 					state = mState.complete;
-				} else if (rand < .8) {
+				} else if (rand < .7) {
 					setMType(MType.vp1);
 					state = mState.complete;
 				}
