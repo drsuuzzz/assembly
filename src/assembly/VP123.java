@@ -537,14 +537,14 @@ public class VP123 extends AgentExtendCont{
 		}
 
 		//find the pseudo-center
-		double center[] = {0.0,0.0,0.0};
-		center = findPseudoCenter();
+		//double center[] = {0.0,0.0,0.0};
+		//center = findPseudoCenter();
 		/*if (AgentGeometry.calcDistance(center, thispt) > (radius+rerr)) {
 			center[0] = 0.0;
 			center[1] = 0.0;
 			center[2] = 0.0;
 		}*/
-		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
+		/*if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			if (coh) {
 				cohesiong[0] = (center[0]-thispt.getX())/100;
 				cohesiong[1] = (center[1]-thispt.getY())/100;
@@ -566,12 +566,12 @@ public class VP123 extends AgentExtendCont{
 				alignmentg[1] = y;
 				alignmentg[2] = z;
 			}
-		}
+		}*/
 
 		//adjust between VP1 agents
 		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
 		Iterator l = list.query().iterator();
-		if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
+	//	if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
 			int count=0;
 			int counta=0;
 			while (l.hasNext()) {
@@ -579,7 +579,7 @@ public class VP123 extends AgentExtendCont{
 				if (obj instanceof VP123) {
 					VP123 vp = (VP123) obj;
 					NdPoint vpt = space.getLocation(vp);
-					if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
+					//if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
 						if (coh) {
 							cohesionv[0] += vpt.getX();
 							cohesionv[1] += vpt.getY();
@@ -599,7 +599,7 @@ public class VP123 extends AgentExtendCont{
 							alignmentv[2] += vp.getZ();
 							counta++;
 						}
-					}
+					//}
 				}
 			}
 			if (count > 0) {
@@ -617,7 +617,8 @@ public class VP123 extends AgentExtendCont{
 					alignmentv[2] = alignmentv[2]/counta;
 				}
 			}
-		}/* else {
+		//}
+			/* else {
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
