@@ -633,15 +633,15 @@ public class VP123 extends AgentExtendCont{
 				}
 			}
 		}*/
-		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
-					(separationg[0] + separationv[0])/2 + 
-					(alignmentg[0] + alignmentv[0])/2;
-		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
-					(separationg[1] + separationv[1])/2 + 
-					(alignmentg[1] + alignmentv[1])/2;
-		retpt[2] = (cohesiong[2] + cohesionv[2])/2 + 
-					(separationg[2] + separationv[2])/2 + 
-					(alignmentg[2] + alignmentv[2])/2;
+		retpt[0] = (cohesiong[0] + cohesionv[0]) + 
+					(separationg[0] + separationv[0]) + 
+					(alignmentg[0] + alignmentv[0]);
+		retpt[1] = (cohesiong[1] + cohesionv[1]) + 
+					(separationg[1] + separationv[1]) + 
+					(alignmentg[1] + alignmentv[1]);
+		retpt[2] = (cohesiong[2] + cohesionv[2]) + 
+					(separationg[2] + separationv[2]) + 
+					(alignmentg[2] + alignmentv[2]);
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 			this.genXYZ();
 			retpt[0] = this.getX();
