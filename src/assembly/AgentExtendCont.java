@@ -67,6 +67,7 @@ public class AgentExtendCont {
 		export = null;
 		death = null;
 		splice = null;
+		location = Loc.nucleus;
 	}
 	//@Parameter(usageName="stop",displayName="Stopped")
 /*	public Boolean getStop() {
@@ -329,13 +330,69 @@ public class AgentExtendCont {
 			x = 5;
 		} else if (agentType1.getName().equals(MRNA.class.getName())){
 			x = 20;
-		} else if (agentType1.getName().equals(Genome.class.getName())) {
+		} else if (agentType1.getName().equals(Genome.class.getName()) || agentType1.getName().equals(VLP.class.getName())) {
 			x = 72;
 		}
 		else {
 			x = 1;
 		}
 		return x;
+	}
+	
+	public void makeVLP(double[] center) {
+		
+		double v[] = {0.0,0.0,0.0};
+		v[0] = center[0] - getSpace().getLocation(this).getX();
+		v[1] = center[1] - getSpace().getLocation(this).getY();
+		v[2] = center[2] - getSpace().getLocation(this).getZ();
+		double r;
+		if (RunEnvironment.getInstance().isBatch()){
+			r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+		} else {
+			r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+		}
+		AgentGeometry.trim(v, r);
+		v[0] = getSpace().getLocation(this).getX() + v[0];
+		v[1] = getSpace().getLocation(this).getY() + v[1];
+		v[2] = getSpace().getLocation(this).getZ() + v[2];
+		VLP vlp = new VLP();
+		vlp.setTheContext(this.getTheContext());
+		vlp.setSpace(this.getSpace());
+		this.getTheContext().add(vlp);
+		getSpace().moveTo(vlp, v);
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
+		double starteven;
+		if ((int)start%2==0) {
+			start = start + 1;
+		}
+		//odd tick
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+		this.setMove(schedule.schedule(sparams,vlp,"move"));
+	}	
+	
+	public boolean neighborCenterChk (AgentExtendCont center, ContinuousWithin list, double cdist, double ndist, double cerr, double nerr) {
+	
+		boolean retval = false;
+		
+		if (center instanceof VLP) {
+			retval = true;
+			Iterator l = list.query().iterator();
+			while (l.hasNext()) {
+				AgentExtendCont aec = (AgentExtendCont) l.next();
+				NdPoint pt1 = getSpace().getLocation(center);
+				NdPoint pt2 = getSpace().getLocation(aec);
+				NdPoint pt3 = getSpace().getLocation(this);
+				if (AgentGeometry.calcDistanceNdPoints(pt1, pt2) < (cdist+cerr)) {
+					if (AgentGeometry.calcDistanceNdPoints(pt2, pt3) < (ndist+nerr)) {
+						retval = false;
+						break;
+					}
+				}
+			}
+		}
+		
+		return retval;
 	}
 	
 	public double[] calcDisplacement(Class agentType1, Class agentType2, double distc, double cerr, double distn, double nerr) {
@@ -360,6 +417,7 @@ public class AgentExtendCont {
 		boolean cAgent = false;
 		double center[] = {0,0,0};
 		int max = calcMax(agentType1,agentType2);
+		int parcnt=0;
 		
 		while (l.hasNext()) {
 			AgentExtendCont obj = l.next();
@@ -386,7 +444,7 @@ public class AgentExtendCont {
 					}
 				}
 					
-				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {
+				if (!neighborCenterChk(obj,list,distc,distn,cerr,nerr) && (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound()))) {
 					cAgent = true;
 					center[0] = space.getLocation(obj).getX();
 					center[1] = space.getLocation(obj).getY();
@@ -408,6 +466,7 @@ public class AgentExtendCont {
 						alignmentg[1] = obj.getY();
 						alignmentg[2] = obj.getZ();
 					}
+					parcnt++;
 					break;
 				}
 			}
@@ -453,6 +512,7 @@ public class AgentExtendCont {
 					cohesionv[1] = ((cohesionv[1]/count)-thispt.getY())/100;
 					cohesionv[2] = ((cohesionv[2]/count)-thispt.getZ())/100;
 				}
+				parcnt++;
 			}
 			if (counta > 0) {
 				if (aln) {
@@ -462,17 +522,72 @@ public class AgentExtendCont {
 				}
 			}
 		} else {
-			setBound(false);
+			//setBound(false);
+			while (l.hasNext()) {
+				Object obj = l.next();
+				if (obj instanceof VP123) {
+					VP123 vp = (VP123) obj;
+					NdPoint vpt = space.getLocation(vp);
+					//if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
+						if (coh) {
+							cohesionv[0] += vpt.getX();
+							cohesionv[1] += vpt.getY();
+							cohesionv[2] += vpt.getZ();
+							count++;
+						}
+						if (sep) {
+							if (AgentGeometry.calcDistanceNdPoints(vpt, thispt) < (distn-nerr)) {
+								separationv[0] += (thispt.getX()-vpt.getX())/20;
+								separationv[1] += (thispt.getY()-vpt.getY())/20;
+								separationv[2] += (thispt.getZ()-vpt.getZ())/20;
+							}
+						}
+						if (aln) {
+							alignmentv[0] += vp.getX();
+							alignmentv[1] += vp.getY();
+							alignmentv[2] += vp.getZ();
+							counta++;
+						}
+					//}
+				}
+			}
+			if (count >= 2 && !this.isBound()) {
+				center[0] = cohesionv[0]/count;
+				center[1] = cohesionv[1]/count;
+				center[2] = cohesionv[2]/count;
+				makeVLP(center);
+				setBound(true);
+			} else {
+				setBound(false);
+			}
+			if (count > 0) {
+				if (coh) {
+					double mypt[] = space.getLocation(this).toDoubleArray(null);
+					cohesionv[0] = ((cohesionv[0]/count)-mypt[0])/100;
+					cohesionv[1] = ((cohesionv[1]/count)-mypt[1])/100;
+					cohesionv[2] = ((cohesionv[2]/count)-mypt[2])/100;
+				}
+				parcnt++;
+			}
+			if (counta > 0) {
+				if (aln) {
+					alignmentv[0] = alignmentv[0]/counta;
+					alignmentv[1] = alignmentv[1]/counta;
+					alignmentv[2] = alignmentv[2]/counta;
+				}
+			}
 		}
-		retpt[0] = (cohesiong[0] + cohesionv[0])/2 + 
-					(separationg[0] + separationv[0])/2 + 
-					(alignmentg[0] + alignmentv[0])/2;
-		retpt[1] = (cohesiong[1] + cohesionv[1])/2 + 
-					(separationg[1] + separationv[1])/2 + 
-					(alignmentg[1] + alignmentv[1])/2;
-		retpt[2] = (cohesiong[2] + cohesionv[2])/2 + 
-					(separationg[2] + separationv[2])/2 + 
-					(alignmentg[2] + alignmentv[2])/2;
+		if (parcnt > 0) {
+			retpt[0] = (cohesiong[0] + cohesionv[0])/parcnt + 
+				(separationg[0] + separationv[0])/parcnt + 
+				(alignmentg[0] + alignmentv[0])/parcnt;
+			retpt[1] = (cohesiong[1] + cohesionv[1])/parcnt + 
+					(separationg[1] + separationv[1])/parcnt + 
+					(alignmentg[1] + alignmentv[1])/parcnt;
+			retpt[2] = (cohesiong[2] + cohesionv[2])/parcnt + 
+					(separationg[2] + separationv[2])/parcnt + 
+					(alignmentg[2] + alignmentv[2])/parcnt;
+		}
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 
 		} else {
@@ -511,6 +626,8 @@ public class AgentExtendCont {
 			} else {
 				max = 1;
 			}
+		} else if (this instanceof VLP) {
+			max = 72;
 		} else {
 			max = 1;
 		}
@@ -540,22 +657,32 @@ public class AgentExtendCont {
 		setNoBound(count);
 
 		//keep distance from other vp2 & vp3
-		list = new ContinuousWithin(this.getSpace(), this, 2.5*(distc+cerr));
-		neighbors = list.query().iterator();
 		double separ[] = {0.0,0.0,0.0};
-		while (neighbors.hasNext()) {
-			Object obj = neighbors.next();
-			if (obj.getClass().getName().equals(agentType1.getName()) || obj.getClass().getName().equals(agentType2.getName())) {
-				if (sep) {
-					NdPoint other = this.getSpace().getLocation(obj);
+		if (this instanceof VLP) {
+			if (getNoBound() == 0) {
+				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				if (rand < 0.1) {
+					//this.die();
+				}
+			}
+		} else {
+			list = new ContinuousWithin(this.getSpace(), this, 2.5*(distc+cerr));
+			neighbors = list.query().iterator();
+			while (neighbors.hasNext()) {
+				Object obj = neighbors.next();
+				if (obj.getClass().getName().equals(agentType1.getName()) || obj.getClass().getName().equals(agentType2.getName())) {
+					if (sep) {
+						NdPoint other = this.getSpace().getLocation(obj);
 					//if (AgentGeometry.calcDistanceNdPoints(other, thispt) < 2*(r+rerr)) {
-						separ[0] += (thispt.getX()-other.getX())/20;
-						separ[1] += (thispt.getY()-other.getY())/20;
-						separ[2] += (thispt.getZ()-other.getZ())/20;
+							separ[0] += (thispt.getX()-other.getX())/20;
+							separ[1] += (thispt.getY()-other.getY())/20;
+							separ[2] += (thispt.getZ()-other.getZ())/20;
 					//}
+					}
 				}
 			}
 		}
+
 		
 		coord[0] = align[0] + separ[0];
 		coord[1] = align[1] + separ[1];
@@ -598,12 +725,11 @@ public class AgentExtendCont {
 	public void die() {
 		if (!dead) {
 			//if (this instanceof MRNA) {
-				//if (((MRNA) this).getLocation() == Loc.cytoplasm) {
-					((Cytoplasm)getTheContext()).addToRemList(this);
-			//	} else {
-					//((Nucleus)getTheContext()).addToRemList(this);
-				//}
-			//}
+			if (this.getLocation() == Loc.cytoplasm) {
+				((Cytoplasm)getTheContext()).addToRemList(this);
+			} else {
+				((Nucleus)getTheContext()).addToRemList(this);
+			}
 			this.setDead(true);
 			this.setTheContext(null);
 			this.setSpace(null);

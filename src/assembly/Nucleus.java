@@ -119,7 +119,8 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 				vp.setVptype(VPType.VP13);
 			}
 			this.add(vp);
-			schedule.schedule(sparams,vp,"move3");
+			//schedule.schedule(sparams,vp,"move3");
+			schedule.schedule(sparams,vp,"move");
 		}
 		schedule.schedule(sparamseven, this, "addAgents");
 		schedule.schedule(sparamseven, this, "remAgents");
