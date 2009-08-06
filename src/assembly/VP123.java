@@ -7,6 +7,7 @@ import java.util.Iterator;
 import assembly.Genome.GState;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
@@ -72,6 +73,7 @@ public class VP123 extends AgentExtendCont{
 	
 	//neighbors
 	private Genome genome;
+	private VLP vlp;
 	//private VP1 sides[] = new VP1[6];
 
 	//private boolean flock;
@@ -100,6 +102,7 @@ public class VP123 extends AgentExtendCont{
 		//rotatephi = 0;
 		//phi0 = 90;
 		genome = null;
+		vlp = null;
 		//flock=false;
 		moveTick = 0;
 		move2Tick = 0;
@@ -499,6 +502,38 @@ public class VP123 extends AgentExtendCont{
 		return center;
 				
 	}
+	
+	public void makeVLP(double[] center) {
+		
+		double v[] = {0.0,0.0,0.0};
+		v[0] = center[0] - getSpace().getLocation(this).getX();
+		v[1] = center[1] - getSpace().getLocation(this).getY();
+		v[2] = center[2] - getSpace().getLocation(this).getZ();
+		double r;
+		if (RunEnvironment.getInstance().isBatch()){
+			r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+		} else {
+			r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+		}
+		AgentGeometry.trim(v, r);
+		v[0] = getSpace().getLocation(this).getX() + v[0];
+		v[1] = getSpace().getLocation(this).getY() + v[1];
+		v[2] = getSpace().getLocation(this).getZ() + v[2];
+		VLP vlp = new VLP();
+		vlp.setTheContext(this.getTheContext());
+		vlp.setSpace(this.getSpace());
+		this.getTheContext().add(vlp);
+		getSpace().moveTo(vlp, v);
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
+		double starteven;
+		if ((int)start%2==0) {
+			start = start + 1;
+		}
+		//odd tick
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+		schedule.schedule(sparams,vlp,"move");
+	}
 
 	public void move3() {
 		//center of mass of group
@@ -537,41 +572,68 @@ public class VP123 extends AgentExtendCont{
 		}
 
 		//find the pseudo-center
-		//double center[] = {0.0,0.0,0.0};
-		//center = findPseudoCenter();
-		/*if (AgentGeometry.calcDistance(center, thispt) > (radius+rerr)) {
-			center[0] = 0.0;
-			center[1] = 0.0;
-			center[2] = 0.0;
-		}*/
-		/*if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
+		double center[] = {0.0,0.0,0.0};
+		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
+		Iterator l = list.query().iterator();
+		while (l.hasNext()){
+			AgentExtendCont obj = (AgentExtendCont)l.next();
+			center[0] = space.getLocation(obj).getX();
+			center[1] = space.getLocation(obj).getY();
+			center[2] = space.getLocation(obj).getZ();
 			if (coh) {
 				cohesiong[0] = (center[0]-thispt.getX())/100;
 				cohesiong[1] = (center[1]-thispt.getY())/100;
 				cohesiong[2] = (center[2]-thispt.getZ())/100;
 			}
 			if (sep) {
-				if (AgentGeometry.calcDistance(center, thispt) < (radius-rerr)) {
-					separationg[0] = (thispt.getX()-center[0])/10;
-					separationg[1] = (thispt.getY()-center[1])/10;
-					separationg[2] = (thispt.getZ()-center[2])/10;
+				if (AgentGeometry.calcDistance(center, thispt) < (vpradius-vperr)) {
+					separationg[0] = (thispt.getX()-center[0])/20;
+					separationg[1] = (thispt.getY()-center[1])/20;
+					separationg[2] = (thispt.getZ()-center[2])/20;
 				}
 			}
 			if (aln) {
-				//pseudo alignment values since center doesn't exist
-				double x = RepastEssentials.RandomDraw(-1,1);
-				double y = RepastEssentials.RandomDraw(-1,1);
-				double z = RepastEssentials.RandomDraw(-1,1);
-				alignmentg[0] = x;
-				alignmentg[1] = y;
-				alignmentg[2] = z;
+				alignmentg[0] = obj.getX();
+				alignmentg[1] = obj.getY();
+				alignmentg[2] = obj.getZ();
 			}
-		}*/
-
+			break;
+		}
+		if (this.isBound()) {
+			NdPoint vlppt = space.getLocation(vlp);
+			center[0] = vlppt.getX();
+			center[1] = vlppt.getY();
+			center[2] = vlppt.getZ();
+			//if (AgentGeometry.calcDistance(center, thispt) <= (radius+rerr)) {
+				if (coh) {
+					cohesiong[0] = (center[0]-thispt.getX())/100;
+					cohesiong[1] = (center[1]-thispt.getY())/100;
+					cohesiong[2] = (center[2]-thispt.getZ())/100;
+				}
+				if (sep) {
+					if (AgentGeometry.calcDistance(center, thispt) < (radius-rerr)) {
+						separationg[0] = (thispt.getX()-center[0])/10;
+						separationg[1] = (thispt.getY()-center[1])/10;
+						separationg[2] = (thispt.getZ()-center[2])/10;
+					}
+				}
+				if (aln) {
+					//pseudo alignment values since center doesn't exist
+					//double x = RepastEssentials.RandomDraw(-1,1);
+					//double y = RepastEssentials.RandomDraw(-1,1);
+					//double z = RepastEssentials.RandomDraw(-1,1);
+					//alignmentg[0] = x;
+					//alignmentg[1] = y;
+					//alignmentg[2] = z;
+					alignmentg[0] = vlp.getX();
+					alignmentg[1] = vlp.getY();
+					alignmentg[2] = vlp.getZ();
+				}
+			//}
+		}
 		//adjust between VP1 agents
-		ContinuousWithin list = new ContinuousWithin(space,this,(vpradius+vperr));
-		Iterator l = list.query().iterator();
-	//	if (center[0] != 0.0 && center[1] != 0.0 && center[2] != 0.0) {
+		list = new ContinuousWithin(space,this,(vpradius+vperr));
+		l = list.query().iterator();
 			int count=0;
 			int counta=0;
 			while (l.hasNext()) {
@@ -602,6 +664,12 @@ public class VP123 extends AgentExtendCont{
 					//}
 				}
 			}
+			if (count >= 5 && !this.isBound()) {
+				center[0] = cohesionv[0]/count;
+				center[1] = cohesionv[1]/count;
+				center[2] = cohesionv[2]/count;
+				makeVLP(center);
+			}
 			if (count > 0) {
 				if (coh) {
 					double mypt[] = space.getLocation(this).toDoubleArray(null);
@@ -617,6 +685,7 @@ public class VP123 extends AgentExtendCont{
 					alignmentv[2] = alignmentv[2]/counta;
 				}
 			}
+			
 		//}
 			/* else {
 			while (l.hasNext()) {
@@ -853,7 +922,7 @@ public class VP123 extends AgentExtendCont{
 				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
 				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
 			}
-			double disp[] = this.calcDisplacement(Genome.class, Genome.class, radius,rerr,vpradius,vperr);
+			double disp[] = this.calcDisplacement(Genome.class, VLP.class, radius,rerr,vpradius,vperr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {
