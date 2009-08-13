@@ -497,12 +497,12 @@ public class AgentExtendCont {
 								separationv[2] += (thispt.getZ()-vpt.getZ())/20;
 							}
 						}
-						if (aln) {
-							alignmentv[0] += obj.getX();
-							alignmentv[1] += obj.getY();
-							alignmentv[2] += obj.getZ();
-							counta++;
-						}
+						//if (aln) {
+							//alignmentv[0] += obj.getX();
+						//	alignmentv[1] += obj.getY();
+							//alignmentv[2] += obj.getZ();
+							//counta++;
+						//}
 					}
 				}
 			}
@@ -529,6 +529,7 @@ public class AgentExtendCont {
 					VP123 vp = (VP123) obj;
 					NdPoint vpt = space.getLocation(vp);
 					//if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
+					if (!vp.isBound()) {
 						if (coh) {
 							cohesionv[0] += vpt.getX();
 							cohesionv[1] += vpt.getY();
@@ -543,20 +544,24 @@ public class AgentExtendCont {
 							}
 						}
 						if (aln) {
-							alignmentv[0] += vp.getX();
-							alignmentv[1] += vp.getY();
-							alignmentv[2] += vp.getZ();
+							alignmentg[0] += vp.getX();
+							alignmentg[1] += vp.getY();
+							alignmentg[2] += vp.getZ();
 							counta++;
 						}
 					//}
+					}
 				}
 			}
 			if (count >= 2 && !this.isBound()) {
 				center[0] = cohesionv[0]/count;
 				center[1] = cohesionv[1]/count;
 				center[2] = cohesionv[2]/count;
-				makeVLP(center);
-				setBound(true);
+				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				if (rand < 0.01) {
+					makeVLP(center);
+					//setBound(true);
+				}
 			} else {
 				setBound(false);
 			}
@@ -571,22 +576,22 @@ public class AgentExtendCont {
 			}
 			if (counta > 0) {
 				if (aln) {
-					alignmentv[0] = alignmentv[0]/counta;
-					alignmentv[1] = alignmentv[1]/counta;
-					alignmentv[2] = alignmentv[2]/counta;
+					alignmentg[0] = alignmentg[0]/counta;
+					alignmentg[1] = alignmentg[1]/counta;
+					alignmentg[2] = alignmentg[2]/counta;
 				}
 			}
 		}
 		if (parcnt > 0) {
 			retpt[0] = (cohesiong[0] + cohesionv[0])/parcnt + 
 				(separationg[0] + separationv[0])/parcnt + 
-				(alignmentg[0] + alignmentv[0])/parcnt;
+				(alignmentg[0]);
 			retpt[1] = (cohesiong[1] + cohesionv[1])/parcnt + 
 					(separationg[1] + separationv[1])/parcnt + 
-					(alignmentg[1] + alignmentv[1])/parcnt;
+					(alignmentg[1]);
 			retpt[2] = (cohesiong[2] + cohesionv[2])/parcnt + 
 					(separationg[2] + separationv[2])/parcnt + 
-					(alignmentg[2] + alignmentv[2])/parcnt;
+					(alignmentg[2]);
 		}
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 
