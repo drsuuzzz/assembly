@@ -80,7 +80,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			Genome g = new Genome();
 			g.setTheContext(/*context*/this);
 			g.setSpace(space);
-			//g.setState(GState.assembly);
+			g.setState(GState.assembly);
 			this.add(g);
 			//schedule.schedule(sparams, g, "move3");
 			schedule.schedule(sparams, g, "move");
