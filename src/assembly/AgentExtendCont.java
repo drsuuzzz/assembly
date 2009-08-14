@@ -25,6 +25,8 @@ public class AgentExtendCont {
 	
 	public enum Loc {nucleus, cytoplasm};
 	private Loc location;
+	public enum BoundTo {vlp, genome, none};
+	private BoundTo boundTo;
 	
 	private Context theContext;
 	private Boolean stop;
@@ -68,6 +70,7 @@ public class AgentExtendCont {
 		death = null;
 		splice = null;
 		location = Loc.nucleus;
+		boundTo = BoundTo.none;
 	}
 	//@Parameter(usageName="stop",displayName="Stopped")
 /*	public Boolean getStop() {
@@ -95,7 +98,15 @@ public class AgentExtendCont {
 	public void setNoBound(int noBound) {
 		this.noBound = noBound;
 	}
+	
+	@Parameter(usageName = "boundTo", displayName="Bound To", converter = "assembly.BoundToConverter")
+	public BoundTo getBoundTo() {
+		return boundTo;
+	}
 
+	public void setBoundTo(BoundTo boundTo) {
+		this.boundTo = boundTo;
+	}
 
 	public Loc getLocation() {
 		return location;
@@ -445,29 +456,31 @@ public class AgentExtendCont {
 				}
 					
 				if (!neighborCenterChk(obj,list,distc,distn,cerr,nerr) && (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound()))) {
-					cAgent = true;
-					center[0] = space.getLocation(obj).getX();
-					center[1] = space.getLocation(obj).getY();
-					center[2] = space.getLocation(obj).getZ();
-					if (coh) {
-						cohesiong[0] = (center[0]-thispt.getX())/100;
-						cohesiong[1] = (center[1]-thispt.getY())/100;
-						cohesiong[2] = (center[2]-thispt.getZ())/100;
-					}
-					if (sep) {
-						if (AgentGeometry.calcDistance(center, thispt) < (distc-cerr)) {
-							separationg[0] = (thispt.getX()-center[0])/20;
-							separationg[1] = (thispt.getY()-center[1])/20;
-							separationg[2] = (thispt.getZ()-center[2])/20;
+					if (!(obj instanceof VLP && this.getBoundTo() == BoundTo.genome)) {
+						cAgent = true;
+						center[0] = space.getLocation(obj).getX();
+						center[1] = space.getLocation(obj).getY();
+						center[2] = space.getLocation(obj).getZ();
+						if (coh) {
+							cohesiong[0] = (center[0]-thispt.getX())/100;
+							cohesiong[1] = (center[1]-thispt.getY())/100;
+							cohesiong[2] = (center[2]-thispt.getZ())/100;
 						}
+						if (sep) {
+							if (AgentGeometry.calcDistance(center, thispt) < (distc-cerr)) {
+								separationg[0] = (thispt.getX()-center[0])/20;
+								separationg[1] = (thispt.getY()-center[1])/20;
+								separationg[2] = (thispt.getZ()-center[2])/20;
+							}
+						}
+						if (aln) {
+							alignmentg[0] = obj.getX();
+							alignmentg[1] = obj.getY();
+							alignmentg[2] = obj.getZ();
+						}
+						parcnt++;
+						break;
 					}
-					if (aln) {
-						alignmentg[0] = obj.getX();
-						alignmentg[1] = obj.getY();
-						alignmentg[2] = obj.getZ();
-					}
-					parcnt++;
-					break;
 				}
 			}
 		}
@@ -642,11 +655,18 @@ public class AgentExtendCont {
 			if (aec.getClass().getName().equals(centerType1.getName()) || aec.getClass().getName().equals(centerType2.getName())) {
 				if (aln) {
 					if (getNoBound() < max || (getNoBound() == max && aec.isBound())) {
-						align[0] += aec.getX();
-						align[1] += aec.getY();
-						align[2] += aec.getZ();
-						setBound(true);
-						count++;
+						if (!(this instanceof VLP && aec.getBoundTo() == BoundTo.genome)) {
+							align[0] += aec.getX();
+							align[1] += aec.getY();
+							align[2] += aec.getZ();
+							setBound(true);
+							if (aec instanceof VLP && aec.getBoundTo() != BoundTo.genome) {
+								setBoundTo(BoundTo.vlp);
+							} else if (aec instanceof Genome) {
+								setBoundTo(BoundTo.genome);
+							}
+							count++;
+						}
 					}
 				}
 			}
