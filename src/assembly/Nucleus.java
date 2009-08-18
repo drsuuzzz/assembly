@@ -107,7 +107,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, tf, "move");
 		}
 		
-		int numvp123 =5;//80;//72;
+		int numvp123 =5;//72;
 		for (int i = 0; i < numvp123; i++) {
 			VP123 vp = new VP123();
 			vp.setTheContext(this);
@@ -124,6 +124,15 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		}
 		schedule.schedule(sparamseven, this, "addAgents");
 		schedule.schedule(sparamseven, this, "remAgents");
+		
+		int numvlp = 1;
+		for (int i = 0; i < numvlp; i++) {
+			VLP vlp = new VLP();
+			vlp.setTheContext(this);
+			vlp.setSpace(space);
+			this.add(vlp);
+			schedule.schedule(sparams,vlp,"move");
+		}
 	}
 	
 	public ContinuousSpace<AgentExtendCont> getSpace() {
