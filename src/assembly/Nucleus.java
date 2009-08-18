@@ -107,7 +107,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, tf, "move");
 		}
 		
-		int numvp123 =80;//72;
+		int numvp123 =5;//80;//72;
 		for (int i = 0; i < numvp123; i++) {
 			VP123 vp = new VP123();
 			vp.setTheContext(this);
