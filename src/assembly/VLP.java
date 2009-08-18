@@ -2,6 +2,7 @@ package assembly;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.NdPoint;
 import assembly.Genome.GState;
 
@@ -30,30 +31,36 @@ public class VLP extends AgentExtendCont {
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 			}
-			disp = this.calcDispIfCenter(VP123.class, VP123.class, HostGenome.class, HostGenome.class,r,rerr);
+			disp = this.calcDispIfCenter(VP123.class, VP123.class, HostGenome.class, VLP.class,r,rerr);
 				//disp = move2();
-			
-			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f && !isDead()) {
-				randomWalk();
+			/*if (this.getNoBound() <=1) {
+				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				if (rand < 0.1) {
+					this.die();
+				}
+			} else {*/
+				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f && !isDead()) {
+					randomWalk();
 				//clearBoundProteins();
-			} else if (!isDead()){
-				double tmp[] = new double[3];
-				NdPoint thispt = getSpace().getLocation(this);
-				tmp[0] = disp[0]+thispt.getX();
-				tmp[1] = disp[1]+thispt.getY();
-				tmp[2] = disp[2]+thispt.getZ();
+				} else {
+					double tmp[] = new double[3];
+					NdPoint thispt = getSpace().getLocation(this);
+					tmp[0] = disp[0]+thispt.getX();
+					tmp[1] = disp[1]+thispt.getY();
+					tmp[2] = disp[2]+thispt.getZ();
 				//NdPoint pt = getSpace().moveByDisplacement(this, disp);
 				//if (pt != null) {
 					//this.setX(pt.getX()-thispt.getX());
 					//this.setY(pt.getY()-thispt.getY());
 					//this.setZ(pt.getZ() - thispt.getZ());
 				//}
-				this.normPositionToBorder(tmp, r);
-				getSpace().moveTo(this, tmp);
-				this.setX(tmp[0]-thispt.getX());
-				this.setY(tmp[1]-thispt.getY());
-				this.setZ(tmp[2]-thispt.getZ());
-			}
+					this.normPositionToBorder(tmp, r);
+					getSpace().moveTo(this, tmp);
+					this.setX(tmp[0]-thispt.getX());
+					this.setY(tmp[1]-thispt.getY());
+					this.setZ(tmp[2]-thispt.getZ());
+				}
+			//}
 			moveTick = tick;
 		}
 	}
