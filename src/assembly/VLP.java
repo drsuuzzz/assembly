@@ -33,13 +33,15 @@ public class VLP extends AgentExtendCont {
 			}
 			disp = this.calcDispIfCenter(VP123.class, VP123.class, HostGenome.class, VLP.class,r,rerr);
 				//disp = move2();
-			/*if (this.getNoBound() <=1) {
+			if (this.getNoBound() <=1 ) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.1) {
-					this.die();
+				if (rand < 0.01) {
+					//this.die();
+				} else {
+					randomWalk();
 				}
-			} else {*/
-				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f && !isDead()) {
+			} else {
+				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 					randomWalk();
 				//clearBoundProteins();
 				} else {
@@ -60,7 +62,7 @@ public class VLP extends AgentExtendCont {
 					this.setY(tmp[1]-thispt.getY());
 					this.setZ(tmp[2]-thispt.getZ());
 				}
-			//}
+			}
 			moveTick = tick;
 		}
 	}
