@@ -1,5 +1,6 @@
 package assembly;
 
+import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.continuous.AbstractContinuousSpace.PointHolder;
@@ -11,24 +12,37 @@ public class AgentMove {
 		
 	}
 	
+	public void bounce () {
+		
+	}
+	
 	public static NdPoint moveByDisplacement(ContinuousSpace space, AgentExtendCont aec, double [] disp) {
 	
-		if (dimensions.size() < displacement.length) {
+		Dimensions dim = space.getDimensions();
+		if (dim.size() < disp.length) {
 			throw new IllegalArgumentException(
 					"Displacement matrix cannot have more dimensions than space");
 		}
-
-		if (doMove(object, displacement, null)) {
-			return agentLocationMap.get(object).point;
-		} else {
-			return null;
-		}
-		NdPoint pt = null;
 		
-		return pt;
+		NdPoint pt = space.getLocation(aec);
+		double[] npt = {0.0,0.0,0.0};
+		npt[0] = pt.getX() + disp[0];
+		npt[1] = pt.getY() + disp[1];
+		npt[2] = pt.getZ() + disp[2];
+		if (npt[0] <= 0.0 || npt[0] >= dim.getWidth()-1 ||
+				npt[1] <= 0.0 || npt[1] >= dim.getHeight()-1 ||
+				npt[2] <= 0.0 || npt[2] >= dim.getDepth()-1){
+			npt[0] = pt.getX() - disp[0];
+			npt[1] = pt.getY() - disp[1];
+			npt[2] = pt.getZ() - disp[2];
+		}
+		
+		space.moveTo(aec, npt);
+		
+		return new NdPoint(npt);
 	}
 	
-	public static boolean moveTo (ContinuousSpace space, AgentExtendCont aec, double[] newpt) {
+/*	public static boolean moveTo (ContinuousSpace space, AgentExtendCont aec, double[] newpt) {
 		
 		boolean retval = false;
 		
@@ -57,6 +71,6 @@ public class AgentMove {
 			return false;
 		}
 		return retval;
-	}
+	}*/
 	
 }
