@@ -571,12 +571,13 @@ public class AgentExtendCont {
 				center[1] = cohesionv[1]/count;
 				center[2] = cohesionv[2]/count;
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.01) {
-					makeVLP(center);
+				if (rand < 0.1) {
+					//makeVLP(center);
 					//setBound(true);
 				}
 			} else {
 				setBound(false);
+				setBoundTo(BoundTo.none);
 			}
 			if (count > 0) {
 				if (coh) {
@@ -660,10 +661,10 @@ public class AgentExtendCont {
 							align[1] += aec.getY();
 							align[2] += aec.getZ();
 							setBound(true);
-							if (aec instanceof VLP && aec.getBoundTo() != BoundTo.genome) {
-								setBoundTo(BoundTo.vlp);
-							} else if (aec instanceof Genome) {
-								setBoundTo(BoundTo.genome);
+							if (this instanceof VLP && aec.getBoundTo() != BoundTo.genome) {
+								aec.setBoundTo(BoundTo.vlp);
+							} else if (this instanceof Genome) {
+								aec.setBoundTo(BoundTo.genome);
 							}
 							count++;
 						}
@@ -679,6 +680,7 @@ public class AgentExtendCont {
 			align[1] = (align[1])/(count)/*+this.getY())/8*/;
 			align[2] = (align[2])/(count)/*+this.getZ())/8*/;
 		}
+
 		setNoBound(count);
 
 		//keep distance from other vp2 & vp3
