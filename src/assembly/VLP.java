@@ -37,10 +37,9 @@ public class VLP extends AgentExtendCont {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				if (rand < 0.01) {
 					//this.die();
-				} else {
-					randomWalk();
-				}
-			} else {
+				} 
+			} 
+			if (!isDead()){
 				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 					randomWalk();
 				//clearBoundProteins();

@@ -80,7 +80,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			Genome g = new Genome();
 			g.setTheContext(/*context*/this);
 			g.setSpace(space);
-			g.setState(GState.assembly);
+			//g.setState(GState.assembly);
 			this.add(g);
 			//schedule.schedule(sparams, g, "move3");
 			schedule.schedule(sparams, g, "move");
@@ -107,7 +107,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparams, tf, "move");
 		}
 		
-		int numvp123 =5;//72;
+		int numvp123 =0;//72;
 		for (int i = 0; i < numvp123; i++) {
 			VP123 vp = new VP123();
 			vp.setTheContext(this);
@@ -125,7 +125,7 @@ public class Nucleus extends DefaultContext<AgentExtendCont> {
 		schedule.schedule(sparamseven, this, "addAgents");
 		schedule.schedule(sparamseven, this, "remAgents");
 		
-		int numvlp = 1;
+		int numvlp = 0;
 		for (int i = 0; i < numvlp; i++) {
 			VLP vlp = new VLP();
 			vlp.setTheContext(this);

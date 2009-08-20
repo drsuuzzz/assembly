@@ -42,12 +42,12 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 		super("Cell");
 		n = new Nucleus();
 		n.setCell(this);
-		//this.addSubContext(n);
+		this.addSubContext(n);
 		c = new Cytoplasm();
 		c.setCell(this);
 		this.addSubContext(c);
 		
-		c.addSubContext(n);
+		//c.addSubContext(n);
 		
 		fileTick = 0;
 		moveTick = 0;

@@ -387,21 +387,23 @@ public class AgentExtendCont {
 	
 	public boolean neighborCenterChk (AgentExtendCont center, ContinuousWithin list, double cdist, double ndist, double cerr, double nerr) {
 	
-		boolean retval = false;
+		boolean retval = true;
 		
 		if (center instanceof VLP) {
-			if (center.getNoBound() >=1) {
-				retval = true;
+			if (center.getNoBound() >1) {
+				retval = false;
 				Iterator l = list.query().iterator();
 				while (l.hasNext()) {
 					AgentExtendCont aec = (AgentExtendCont) l.next();
-					NdPoint pt1 = getSpace().getLocation(center);
-					NdPoint pt2 = getSpace().getLocation(aec);
-					NdPoint pt3 = getSpace().getLocation(this);
-					if (AgentGeometry.calcDistanceNdPoints(pt1, pt2) < (cdist+cerr)) {
-						if (AgentGeometry.calcDistanceNdPoints(pt2, pt3) < (ndist+nerr)) {
-							retval = false;
-							break;
+					if (aec instanceof VP123 && !isBound()) {
+						NdPoint pt1 = getSpace().getLocation(center);
+						NdPoint pt2 = getSpace().getLocation(aec);
+						NdPoint pt3 = getSpace().getLocation(this);
+						if (AgentGeometry.calcDistanceNdPoints(pt1, pt2) < (cdist+cerr)) {
+							if (AgentGeometry.calcDistanceNdPoints(pt2, pt3) < (ndist+nerr)) {
+								retval = true;
+								break;
+							}
 						}
 					}
 				}
@@ -459,7 +461,7 @@ public class AgentExtendCont {
 						}
 					}
 				}
-				neighborCenterChk(obj,list,distc,distn,cerr,nerr);
+				//if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
 				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {
 					cAgent = true;
 					center[0] = space.getLocation(obj).getX();
@@ -483,10 +485,15 @@ public class AgentExtendCont {
 						alignmentg[2] = obj.getZ();
 					}
 					parcnt=1;
+					setBound(true);
 					if (obj instanceof Genome) {
+						setBoundTo(BoundTo.genome);
 						break;
+					} else if (obj instanceof VLP) {
+						setBoundTo(BoundTo.vlp);
 					}
 				}
+				//}
 			}
 		}
 
@@ -495,11 +502,10 @@ public class AgentExtendCont {
 		list = new ContinuousWithin<AgentExtendCont>(space,this,(distn+nerr));
 		l = list.query().iterator();
 		if (cAgent || isBound()) {
-			setBound(true);
+			//setBound(true);
 			while (l.hasNext()) {
 				AgentExtendCont obj = l.next();
 				if (obj.getClass().getName().equals(this.getClass().getName()) && obj.isBound()) {
-					//AgentExtendCont vp =  obj;
 					NdPoint vpt = space.getLocation(obj);
 					if (AgentGeometry.calcDistance(center,vpt) < (distc+cerr)) {
 						if (coh) {
@@ -540,7 +546,6 @@ public class AgentExtendCont {
 				}
 			}
 		} else {
-			//setBound(false);
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
@@ -666,12 +671,12 @@ public class AgentExtendCont {
 							align[0] += aec.getX();
 							align[1] += aec.getY();
 							align[2] += aec.getZ();
-							aec.setBound(true);
-							if (this instanceof VLP && aec.getBoundTo() != BoundTo.genome) {
-								aec.setBoundTo(BoundTo.vlp);
-							} else if (this instanceof Genome) {
-								aec.setBoundTo(BoundTo.genome);
-							}
+							//aec.setBound(true);
+							//if (this instanceof VLP && aec.getBoundTo() != BoundTo.genome) {
+								//aec.setBoundTo(BoundTo.vlp);
+							//} else if (this instanceof Genome) {
+								//aec.setBoundTo(BoundTo.genome);
+							//}
 							count++;
 						}
 					}
