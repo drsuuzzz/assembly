@@ -1,5 +1,8 @@
 package assembly;
 
+import assembly.AgentExtendCont.Loc;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -16,6 +19,16 @@ public class AgentMove {
 		
 	}
 	
+	public static void randomLocation (Loc loc) {
+		
+		int X = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeX");
+		int	Y = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeY");
+		int Z = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeZ");
+		
+		double min = 0+X/4;
+		double max = X-X/4;
+	}
+	
 	public static NdPoint moveByDisplacement(ContinuousSpace space, AgentExtendCont aec, double [] disp) {
 	
 		Dimensions dim = space.getDimensions();
@@ -25,21 +38,25 @@ public class AgentMove {
 		}
 		
 		NdPoint pt = space.getLocation(aec);
-		double[] npt = {0.0,0.0,0.0};
-		npt[0] = pt.getX() + disp[0];
-		npt[1] = pt.getY() + disp[1];
-		npt[2] = pt.getZ() + disp[2];
-		if (npt[0] <= 0.0 || npt[0] >= dim.getWidth()-1 ||
-				npt[1] <= 0.0 || npt[1] >= dim.getHeight()-1 ||
-				npt[2] <= 0.0 || npt[2] >= dim.getDepth()-1){
-			npt[0] = pt.getX() - disp[0];
-			npt[1] = pt.getY() - disp[1];
-			npt[2] = pt.getZ() - disp[2];
-		}
+		double maxX = dim.getWidth()-1;
+		double maxY = dim.getHeight()-1;
+		double maxZ = dim.getDepth()-1;
+		double minX=0;
+		double minY=0;
+		double minZ=0;
+		double[] rpt = pt.toDoubleArray(null);
+		rpt[0] = rpt[0] + disp[0];
+		rpt[1] = rpt[1] + disp[1];
+		rpt[2] = rpt[2] + disp[2];
+		rpt[0] = rpt[0] < minX ? (minX+(minX-rpt[0])) : rpt[0];
+		rpt[0] = rpt[0] > maxX ? (maxX-(rpt[0]-maxX)): rpt[0];
+		rpt[1] = rpt[1] < minY ? (minY+(minY-rpt[1])) : rpt[1];
+		rpt[1] = rpt[1] > maxY ? (maxY-(rpt[1]-maxY)): rpt[1];
+		rpt[2] = rpt[2] < minZ ? (minZ+(minZ-rpt[2])) : rpt[2];
+		rpt[2] = rpt[2] > maxZ ? (maxZ-(rpt[2]-maxZ)): rpt[2];
+		space.moveTo(aec, rpt);
 		
-		space.moveTo(aec, npt);
-		
-		return new NdPoint(npt);
+		return new NdPoint(rpt);
 	}
 	
 /*	public static boolean moveTo (ContinuousSpace space, AgentExtendCont aec, double[] newpt) {

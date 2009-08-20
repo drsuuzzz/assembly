@@ -550,7 +550,7 @@ public class AgentExtendCont {
 					alignmentv[2] = ((alignmentv[2]/counta));
 				}
 			}
-		} else {
+		} else if (this instanceof VP123){
 			while (l.hasNext()) {
 				Object obj = l.next();
 				if (obj instanceof VP123) {
