@@ -460,6 +460,11 @@ public class AgentExtendCont {
 							((Genome)obj).setState(GState.assembly);
 						}
 					}
+					if (((Genome)obj).getState() == GState.assembly) {
+						if (!((Genome)obj).needAgent(this)) {
+							break;
+						}
+					}
 				}
 				//if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
 				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {

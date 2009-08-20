@@ -101,6 +101,11 @@ public class Genome extends AgentExtendCont{
 	public boolean needAgent (AgentExtendCont agent) {
 		
 		boolean need = false;
+		if (state == GState.assembly) {
+			if (agent instanceof VP123) {
+				need = true;
+			}
+		} else {
 		if (bind1 != null) {
 			if (bind1 instanceof LgTAg && bind2 == null) {
 				if (agent instanceof DNAPol) {
@@ -119,6 +124,7 @@ public class Genome extends AgentExtendCont{
 			}
 		} else if (agent instanceof DNAPol || agent instanceof LgTAg){
 			need = true;
+		}
 		}
 		
 		return need;
