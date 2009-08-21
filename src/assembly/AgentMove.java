@@ -3,6 +3,7 @@ package assembly;
 import assembly.AgentExtendCont.Loc;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
@@ -19,7 +20,29 @@ public class AgentMove {
 		
 	}
 	
-	public static void randomLocation (Loc loc) {
+	public static double[] adjustPointToSpace(Loc loc) {
+		
+		double[] npt = {0.0,0.0,0.0};
+		if (loc == Loc.cytoplasm) {
+			if (npt[0] > min) {
+				npt[0] = max + min -npt[0];
+			}
+			if (npt[1] > min) {
+				npt[1] = max + min-npt[1];
+			}
+			if (npt[2] > min) {
+				npt[2] = max + min - npt[2];
+			}
+		} else if (loc == Loc.nucleus) {
+			npt[0] = npt[0] + min;
+			npt[1] = npt[1] + min;
+			npt[2] = npt[2] + min;
+		}
+		
+		return npt;
+	}
+	
+	public static double[] randomLocation (Loc loc) {
 		
 		int X = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeX");
 		int	Y = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeY");
@@ -27,6 +50,28 @@ public class AgentMove {
 		
 		double min = 0+X/4;
 		double max = X-X/4;
+		double[] npt = {0.0,0.0,0.0};
+		npt[0] = RandomHelper.nextDoubleFromTo(0.0, (X-1)/2);
+		npt[1] = RandomHelper.nextDoubleFromTo(0.0, (Y-1)/2);
+		npt[2] = RandomHelper.nextDoubleFromTo(0.0, (Z-1)/2);
+		if (loc == Loc.cytoplasm) {
+			if (npt[0] > min) {
+				npt[0] = max + min -npt[0];
+			}
+			if (npt[1] > min) {
+				npt[1] = max + min-npt[1];
+			}
+			if (npt[2] > min) {
+				npt[2] = max + min - npt[2];
+			}
+		} else if (loc == Loc.nucleus) {
+			npt[0] = npt[0] + min;
+			npt[1] = npt[1] + min;
+			npt[2] = npt[2] + min;
+		}
+		
+		return npt;
+		
 	}
 	
 	public static NdPoint moveByDisplacement(ContinuousSpace space, AgentExtendCont aec, double [] disp) {
