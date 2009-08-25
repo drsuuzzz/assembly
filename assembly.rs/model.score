@@ -22,6 +22,9 @@
   <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
   <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".1"/>
   <attributes label="File Path" ID="filePath" pluralLabel="File Paths" sType="STRING" defaultValue="/Users/svasa/repast2/assembly/logs"/>
+  <attributes label="Cell Size X" ID="cellSizeX" pluralLabel="Cell Size Xs" sType="INTEGER" defaultValue="200"/>
+  <attributes label="Cell Size Y" ID="cellSizeY" pluralLabel="Cell Size Ys" sType="INTEGER" defaultValue="200"/>
+  <attributes label="Cell Size Z" ID="cellSizeZ" pluralLabel="Cell Size Zs" sType="INTEGER" defaultValue="200"/>
   <implementation package="assembly" className="" basePath="../assembly"/>
   <agents xsi:type="score:SContext" label="Cell" ID="cell" pluralLabel="Cells">
     <implementation className="Cell"/>
@@ -117,5 +120,75 @@
       </agents>
       <projections xsi:type="score:SContinuousSpace" label="Nucleus" ID="nucleus" pluralLabel="Nucleuss" borderRule="BOUNCY"/>
     </agents>
+  </agents>
+  <agents xsi:type="score:SContext" label="CytoNuc" ID="cytoNuc" pluralLabel="CytoNucs">
+    <implementation className="CytoNuc"/>
+    <agents label="LgTAg" ID="lgTAg" pluralLabel="LgTAgs">
+      <implementation className="LgTAg"/>
+    </agents>
+    <agents label="SmTAg" ID="smTAg" pluralLabel="SmTAgs">
+      <implementation className="SmTAg"/>
+    </agents>
+    <agents label="TranscriptionFactor" ID="transcriptionFactor" pluralLabel="TranscriptionFactors">
+      <implementation className="TranscriptionFactor"/>
+      <styles xsi:type="score:SStyle3D" label="TranscriptionFactorStyle3D" ID="transcriptionFactorStyle3D">
+        <implementation className="TranscriptionFactorStyle3D"/>
+      </styles>
+    </agents>
+    <agents label="DNAPol" ID="dNAPol" pluralLabel="DNAPols">
+      <implementation className="DNAPol"/>
+      <styles xsi:type="score:SStyle3D" label="DNAPolStyle3D" ID="dNAPolStyle3D">
+        <implementation className="DNAPolStyle3D"/>
+      </styles>
+    </agents>
+    <agents label="HostGenome" ID="hostGenome" pluralLabel="HostGenomes">
+      <implementation className="HostGenome"/>
+    </agents>
+    <agents label="VLP" ID="vLP" pluralLabel="VLPs">
+      <implementation className="VLP"/>
+    </agents>
+    <agents label="MRNA" ID="mRNA" pluralLabel="MRNAs">
+      <implementation className="MRNA"/>
+      <styles xsi:type="score:SStyle3D" label="MRNAStyle3D" ID="mRNAStyle3D">
+        <implementation className="MRNAStyle3D"/>
+      </styles>
+    </agents>
+    <agents label="Genome" ID="genome" pluralLabel="Genomes" description="">
+      <implementation className="Genome"/>
+      <styles xsi:type="score:SStyle3D" label="GenomeStyle3D" ID="genomeStyle3D">
+        <implementation className="GenomeStyle3D"/>
+      </styles>
+    </agents>
+    <agents label="VP123" ID="vP123" pluralLabel="VP123s">
+      <implementation className="VP123"/>
+      <styles xsi:type="score:SStyle3D" label="VP123Style3D" ID="vP123Style3D">
+        <implementation className="VP123Style3D"/>
+      </styles>
+    </agents>
+    <agents label="Ribosome" ID="ribosome" pluralLabel="Ribosomes">
+      <implementation className="Ribosome"/>
+      <styles xsi:type="score:SStyle3D" label="RibosomeStyle3D" ID="ribosomeStyle3D">
+        <implementation className="RibosomeStyle3D"/>
+      </styles>
+    </agents>
+    <agents label="VP3" ID="vP3" pluralLabel="VP3s" description="">
+      <implementation className="VP3"/>
+      <styles xsi:type="score:SStyle3D" label="VP3Style3D" ID="vP3Style3D">
+        <implementation className="VP3Style3D"/>
+      </styles>
+    </agents>
+    <agents label="VP2" ID="vP2" pluralLabel="VP2s" description="">
+      <implementation className="VP2"/>
+      <styles xsi:type="score:SStyle3D" label="VP2Style3D" ID="vP2Style3D">
+        <implementation className="VP2Style3D"/>
+      </styles>
+    </agents>
+    <agents label="VP1" ID="vP1" pluralLabel="VP1s" description="">
+      <implementation className="VP1"/>
+      <styles xsi:type="score:SStyle3D" label="VP1Style3D" ID="vP1Style3D">
+        <implementation className="VP1Style3D"/>
+      </styles>
+    </agents>
+    <projections xsi:type="score:SContinuousSpace" label="CellSpace" ID="cellSpace" pluralLabel="CellSpaces"/>
   </agents>
 </score:SContext>
