@@ -7,14 +7,12 @@ public class Assembly implements ContextBuilder {
 
 	public Context build(Context context) {
 		
-		//Nucleus model = new Nucleus();
-		//context.addSubContext(model);
-		//Cytoplasm cyto = new Cytoplasm();
-		//context.addSubContext(cyto);
+		//Cell cell = new Cell();
+		//context.addSubContext(cell);
 		
-		Cell cell = new Cell();
-		context.addSubContext(cell);
-		//context.add(cell);
+		CytoNuc cn = new CytoNuc();
+		context.addSubContext(cn);
+		
 		return context;
 	}
 

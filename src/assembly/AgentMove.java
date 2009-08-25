@@ -20,69 +20,75 @@ public class AgentMove {
 		
 	}
 	
-	public static double[] adjustPointToSpace(Loc loc) {
+	public static double[] adjustPointToSpace(AgentExtendCont aec) {
 		
-		double[] npt = {0.0,0.0,0.0};
-		if (loc == Loc.cytoplasm) {
-			if (npt[0] > min) {
-				npt[0] = max + min -npt[0];
-			}
-			if (npt[1] > min) {
-				npt[1] = max + min-npt[1];
-			}
-			if (npt[2] > min) {
-				npt[2] = max + min - npt[2];
-			}
-		} else if (loc == Loc.nucleus) {
-			npt[0] = npt[0] + min;
-			npt[1] = npt[1] + min;
-			npt[2] = npt[2] + min;
-		}
-		
-		return npt;
-	}
-	
-	public static double[] randomLocation (Loc loc) {
-		
+		double[] npt = aec.getSpace().getLocation(aec).toDoubleArray(null);
 		int X = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeX");
 		int	Y = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeY");
 		int Z = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeZ");
 		
 		double min = 0+X/4;
 		double max = X-X/4;
-		double[] npt = {0.0,0.0,0.0};
-		npt[0] = RandomHelper.nextDoubleFromTo(0.0, (X-1)/2);
-		npt[1] = RandomHelper.nextDoubleFromTo(0.0, (Y-1)/2);
-		npt[2] = RandomHelper.nextDoubleFromTo(0.0, (Z-1)/2);
-		if (loc == Loc.cytoplasm) {
-			if (npt[0] > min) {
-				npt[0] = max + min -npt[0];
+		if (aec.getLocation() == Loc.cytoplasm) {
+			if (npt[0] > min && npt[0] < max) {
+				npt[0] = npt[0] < X/2 ? npt[0]-min : npt[0];
+				npt[0] = npt[0] >= X/2 ? max + min -npt[0] : npt[0];
 			}
-			if (npt[1] > min) {
-				npt[1] = max + min-npt[1];
+			if (npt[1] > min && npt[1] < max) {
+				npt[1] = npt[1] < X/2 ? npt[1] - min : npt[1];
+				npt[1] = npt[1] >= X/2 ? max + min-npt[1] : npt[1];
 			}
-			if (npt[2] > min) {
-				npt[2] = max + min - npt[2];
+			if (npt[2] > min && npt[2] < max) {
+				npt[2] = npt[2] < X/2 ? npt[2] - min : npt[2];
+				npt[2] = npt[2] >= X/2 ? max + min - npt[2] : npt[2];
 			}
-		} else if (loc == Loc.nucleus) {
-			npt[0] = npt[0] + min;
-			npt[1] = npt[1] + min;
-			npt[2] = npt[2] + min;
+		} else if (aec.getLocation() == Loc.nucleus) {
+			npt[0] = npt[0] < min ? npt[0] + min : npt[0];
+			npt[1] = npt[1] < min ? npt[1] + min : npt[1];
+			npt[2] = npt[2] < min ? npt[2] + min : npt[2];
+			npt[0] = npt[0] > max ? npt[0] - max + X/2 : npt[0];
+			npt[1] = npt[1] > max ? npt[1] - max + X/2 : npt[1];
+			npt[2] = npt[2] > max ? npt[2] - max + X/2 : npt[2];
 		}
 		
 		return npt;
-		
 	}
 	
-	public static NdPoint moveByDisplacement(ContinuousSpace space, AgentExtendCont aec, double [] disp) {
+	public static double[] bounceInLocation(double[] npt, double[] opt, Loc loc) {
+
+		int X = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeX");
+		int	Y = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeY");
+		int Z = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellSizeZ");
+		
+		double min = 0+X/4;
+		double max = X-X/4;
+		if (loc == Loc.cytoplasm) {
+			npt[0] = opt[0] > max && npt[0] < max ? max + max - npt[0] : npt[0];
+			npt[0] = opt[0] < min && npt[0] > min ? min - (min - npt[0]) : npt[0];
+			npt[1] = opt[1] > max && npt[1] < max ? max + max - npt[1] : npt[1];
+			npt[1] = opt[1] < min && npt[1] > min ? min - (min - npt[1]) : npt[1];
+			npt[2] = opt[2] > max && npt[2] < max ? max + max - npt[2] : npt[2];
+			npt[2] = opt[2] < min && npt[2] > min ? min - (min - npt[2]) : npt[2];
+		} else if (loc == Loc.nucleus) {
+			npt[0] = opt[0] < max && npt[0] > max ? max - (max - npt[0]) : npt[0];
+			npt[0] = opt[0] > min && npt[0] < min ? min + (min - npt[0]) : npt[0];
+			npt[1] = opt[1] < max && npt[1] > max ? max - (max - npt[1]) : npt[1];
+			npt[1] = opt[1] > min && npt[1] < min ? min + (min - npt[1]) : npt[1];
+			npt[2] = opt[2] < max && npt[2] > max ? max - (max - npt[2]) : npt[2];
+			npt[2] = opt[2] > min && npt[2] < min ? min + (min - npt[2]) : npt[2];
+		}
+		return npt;
+	}
 	
-		Dimensions dim = space.getDimensions();
+	public static NdPoint moveByDisplacement(AgentExtendCont aec, double [] disp) {
+	
+		Dimensions dim = aec.getSpace().getDimensions();
 		if (dim.size() < disp.length) {
 			throw new IllegalArgumentException(
 					"Displacement matrix cannot have more dimensions than space");
 		}
 		
-		NdPoint pt = space.getLocation(aec);
+		NdPoint pt = aec.getSpace().getLocation(aec);
 		double maxX = dim.getWidth()-1;
 		double maxY = dim.getHeight()-1;
 		double maxZ = dim.getDepth()-1;
@@ -99,7 +105,8 @@ public class AgentMove {
 		rpt[1] = rpt[1] > maxY ? (maxY-(rpt[1]-maxY)): rpt[1];
 		rpt[2] = rpt[2] < minZ ? (minZ+(minZ-rpt[2])) : rpt[2];
 		rpt[2] = rpt[2] > maxZ ? (maxZ-(rpt[2]-maxZ)): rpt[2];
-		space.moveTo(aec, rpt);
+		AgentMove.bounceInLocation(rpt, pt.toDoubleArray(null), aec.getLocation());
+		aec.getSpace().moveTo(aec, rpt);
 		
 		return new NdPoint(rpt);
 	}

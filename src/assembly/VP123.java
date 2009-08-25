@@ -88,7 +88,7 @@ public class VP123 extends AgentExtendCont{
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {
-				AgentMove.moveByDisplacement(getSpace(),this, disp);
+				AgentMove.moveByDisplacement(this, disp);
 				//getSpace().moveByDisplacement(this, disp);
 			}
 			moveTick = tick;

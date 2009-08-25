@@ -241,19 +241,6 @@ public class AgentExtendCont {
 		}
 	}
 
-	public double[] normPositionToGrid(double x1, double y1, double z1) {
-		
-		Dimensions dim = getSpace().getDimensions();
-		x1 = x1 < 0 ? -x1 : x1;
-		x1 = x1 >= dim.getWidth() ? (dim.getWidth() - x1 + dim.getWidth() -2) : x1;
-		y1 = y1 < 0 ? -y1 : y1;
-		y1 = y1 >= dim.getHeight() ? (dim.getHeight()- y1 + dim.getHeight() - 2) : y1;
-		z1 = z1 < 0 ? -z1 : z1;
-		z1 = z1 >= dim.getDepth() ? (dim.getDepth() - z1 + dim.getDepth() - 2) : z1;
-		double ret[]={x1,y1,z1};
-		return ret;
-	}
-	
 	public double[] normPositionToBorder(double[] pt, double dist) {
 		
 		Dimensions dim = getSpace().getDimensions();
@@ -271,12 +258,6 @@ public class AgentExtendCont {
 		return pt;
 	}
 	
-/*	public void thetaPhiDistGen() {
-		theta = RepastEssentials.RandomDraw(0, 2*Math.PI);
-		phi = RepastEssentials.RandomDraw(0, Math.PI);
-		distance = RepastEssentials.RandomDraw(0, 1);
-		//System.out.println(name+","+theta+","+phi+","+distance);
-	}*/
 	public boolean nearWall(NdPoint pt) {
 		
 		boolean retval = false;
@@ -322,6 +303,7 @@ public class AgentExtendCont {
 		coord[0] = this.getX();
 		coord[1] = this.getY();
 		coord[2] = this.getZ();
+		AgentMove.bounceInLocation(coord, getSpace().getLocation(this).toDoubleArray(null), this.getLocation());
 		space.moveByDisplacement(this, coord);
 	}
 	
@@ -333,6 +315,7 @@ public class AgentExtendCont {
 		disp[0] = vector[0][0]*4;
 		disp[1] = vector[1][0]*4;
 		disp[2] = vector[2][0]*4;
+		AgentMove.bounceInLocation(disp, thisp.toDoubleArray(null), this.getLocation());
 		space.moveByDisplacement(this, disp);
 	}
 	public int calcMax(Class agentType1, Class agentType2) {

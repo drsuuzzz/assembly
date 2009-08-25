@@ -68,6 +68,7 @@ public class HostGenome extends AgentExtendCont {
 							DNAPol pol = new DNAPol();
 							pol.setTheContext(this.getTheContext());
 							pol.setSpace(this.getSpace());
+							pol.setLocation(Loc.nucleus);
 							((Nucleus)getTheContext()).addToAddList(pol);
 							aec.largeStepAwayFrom(this);
 							aec.setBound(false);

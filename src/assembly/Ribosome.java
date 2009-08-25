@@ -79,6 +79,7 @@ public class Ribosome extends AgentExtendCont {
 							if (T != null) {
 								T.setSpace(this.getSpace());
 								T.setTheContext(getTheContext());
+								T.setLocation(Loc.cytoplasm);
 								((Cytoplasm)getTheContext()).addToAddList(T);
 								this.largeStepAwayFrom(aec);
 								if (aec.getNoBound()>0) {

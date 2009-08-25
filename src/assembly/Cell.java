@@ -47,7 +47,6 @@ public class Cell extends DefaultContext<AgentExtendCont> {
 		c.setCell(this);
 		this.addSubContext(c);
 		
-		//c.addSubContext(n);
 		
 		fileTick = 0;
 		moveTick = 0;
