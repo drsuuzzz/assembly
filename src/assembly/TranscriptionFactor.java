@@ -41,7 +41,8 @@ public class TranscriptionFactor extends AgentExtendCont {
 				//tmp[0] = disp[0]+thispt.getX();
 				//tmp[1] = disp[1]+thispt.getY();
 				//tmp[2] = disp[2]+thispt.getZ();
-				NdPoint pt = getSpace().moveByDisplacement(this, disp);
+				//NdPoint pt = getSpace().moveByDisplacement(this, disp);
+				NdPoint pt = AgentMove.moveByDisplacement(this, disp);
 				if (pt != null) {
 					this.setX(pt.getX()-thispt.getX());
 					this.setY(pt.getY()-thispt.getY());

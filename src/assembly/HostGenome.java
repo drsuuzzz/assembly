@@ -69,7 +69,7 @@ public class HostGenome extends AgentExtendCont {
 							pol.setTheContext(this.getTheContext());
 							pol.setSpace(this.getSpace());
 							pol.setLocation(Loc.nucleus);
-							((Nucleus)getTheContext()).addToAddList(pol);
+							((CytoNuc)getTheContext()).addToAddList(pol);
 							aec.largeStepAwayFrom(this);
 							aec.setBound(false);
 							this.setNoBound(0);

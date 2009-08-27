@@ -64,10 +64,10 @@ public class VP2 extends AgentExtendCont{
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > exTick) {
 			if (getNoBound() == 5) {
-				if (nearWallGroup()) {
+				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				if (nearWallGroup(dist)) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < 0.4) {
-						double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 						double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 						ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
 						Iterator<AgentExtendCont> l = list.query().iterator();
@@ -75,14 +75,14 @@ public class VP2 extends AgentExtendCont{
 							AgentExtendCont aec = l.next();
 							if (aec instanceof VP1 && aec.isBound()) {
 								aec.setMoving(true);
-								((Cytoplasm)getTheContext()).addToRemList(aec);
+								((CytoNuc)getTheContext()).addToRemList(aec);
 							}
 						}
 						this.setMoving(true);
-						((Cytoplasm)getTheContext()).addToRemList(this);
+						((CytoNuc)getTheContext()).addToRemList(this);
 						VP123 vp = new VP123();
 						vp.setVptype(VPType.VP12);
-						((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
+						((CytoNuc)getTheContext()).addToMoveList(vp);
 					}
 				}
 			}

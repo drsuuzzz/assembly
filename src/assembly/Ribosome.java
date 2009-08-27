@@ -45,7 +45,8 @@ public class Ribosome extends AgentExtendCont {
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {
-				getSpace().moveByDisplacement(this, disp);
+				//getSpace().moveByDisplacement(this, disp);
+				AgentMove.moveByDisplacement(this, disp);
 			}
 			moveTick = tick;
 		}
@@ -80,7 +81,7 @@ public class Ribosome extends AgentExtendCont {
 								T.setSpace(this.getSpace());
 								T.setTheContext(getTheContext());
 								T.setLocation(Loc.cytoplasm);
-								((Cytoplasm)getTheContext()).addToAddList(T);
+								((CytoNuc)getTheContext()).addToAddList(T);
 								this.largeStepAwayFrom(aec);
 								if (aec.getNoBound()>0) {
 									aec.setNoBound(aec.getNoBound()-1);

@@ -64,9 +64,9 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 		remList = new ArrayList<AgentExtendCont>();
 		
 		Parameters parm = RunEnvironment.getInstance().getParameters();
-		int x = (Integer)parm.getValue("cellSizeX");
-		int y = (Integer)parm.getValue("cellSizeY");
-		int z = (Integer)parm.getValue("cellSizeZ");
+		int x = (Integer)parm.getValue("cellRadius") * 2;
+		int y = x;
+		int z = x;
 		
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
@@ -141,7 +141,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparamsodd, tf, "move");
 		}
 		
-		int numvp123 =72;
+		int numvp123 =0;//72;
 		for (int i = 0; i < numvp123; i++) {
 			VP123 vp = new VP123();
 			vp.setTheContext(this);

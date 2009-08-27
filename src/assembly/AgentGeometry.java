@@ -36,6 +36,12 @@ public class AgentGeometry {
 		return l;
 	}
 	
+	public static double lengthOfVector (double[] v) {
+		double l = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
+		l = Math.sqrt(l);
+		return l;
+	}
+	
 	public static double lengthOfVectorSquared (double[][] v) {
 		
 		double l = v[0][0]*v[0][0]+v[1][0]*v[1][0]+v[2][0]*v[2][0];
@@ -50,6 +56,21 @@ public class AgentGeometry {
 		return vreturn;
 	}
 	
+	public static void unit(double[] v) {
+		double l = lengthOfVector(v);
+		v[0] = v[0]/l;
+		v[1] = v[1]/l;
+		v[2] = v[2]/l;
+		//return vreturn;
+	}
+	
+	public static void scale(double[] v, double s){
+		unit(v);
+		v[0] = v[0]*s;
+		v[1] = v[1]*s;
+		v[2] = v[2]*s;
+		
+	}
 	public static double[][] dotProduct(double[][] m1, double[][] m2) {
 		//tryin to do matrix multiplication
 		double ret[][] = new double[m1.length][m2[0].length];
@@ -97,30 +118,6 @@ public class AgentGeometry {
 		
 		return coord;
 	}
-	
-	public static double distanceBetween2Pts (NdPoint pt1, NdPoint pt2) {
-		
-		double dist = (pt1.getX()-pt2.getX())*(pt1.getX()-pt2.getX()) +
-		              (pt1.getY()-pt2.getY())*(pt1.getY()-pt2.getY()) +
-		              (pt1.getZ()-pt2.getZ())*(pt1.getZ()-pt2.getZ());
-		dist = Math.sqrt(dist);
-		return dist;
-	}
-	
-/*	public static double[] pointFromPt (double dist, NdPoint pt1, NdPoint pt2) {
-		
-		double newpt[] = {0f,0f,0f};
-		
-		double l = distanceBetween2Pts(pt1,pt2);
-		
-		double k = dist/l;
-		
-		newpt[0] = (k*pt1.getX()+(100-k)*pt2.getX())/100;
-		newpt[1] = (k*pt1.getY()+(100-k)*pt2.getY())/100;
-		newpt[2] = (k*pt1.getZ()+(100-k)*pt2.getZ())/100;
-		
-		return newpt;
-	}*/
 	
 	public static double[][] newPoint (double phi, double theta, double length) {
 		//to cartesian coordinates from spherical
@@ -177,20 +174,6 @@ public class AgentGeometry {
 	}
 
 	
-	public static ArrayList calcPentPts(double defect, double dist) {
-		
-		double angle = 72*Math.PI/180;
-		double angles[] = {0f, angle, 2*angle, 3*angle, 4*angle};
-		ArrayList pts = new ArrayList();
-		for (int i = 0; i < angles.length; i++) {
-			double nTheta = angles[i];
-			double pt[][] = AgentGeometry.newPoint(defect, nTheta, dist);
-			pts.add(pt);
-		}
-		
-		return (pts.size() > 0 ? pts : null);
-	}
-	
 	public static double cosTheta(double[][] v1, double [][]v2){
 
 		double val = -10;
@@ -217,48 +200,16 @@ public class AgentGeometry {
 		}
 		return ret;
 	}
-	
-	public static ArrayList rotateRefPtsAroundZAxis(ArrayList al, double[] pt, double[] disp ) {
-		//find the z angle in the xy plane
-		
-		ArrayList newList = new ArrayList();
-		double v1[][] = (double[][])al.get(0);
-		//first vector is the point in reference points
 
-		double V1p[][] = AgentGeometry.dotProduct(noZ, v1);
-		//second vector is centered pt around disp
-		double v2[][] = AgentGeometry.pointDisplacement(pt, disp);
-		//Find cos and sin of z angle by dropping vector onto xy plane (0 out z)
-		double V2p[][] = AgentGeometry.dotProduct(noZ, v2);
-		double cosz = cosTheta(V1p,V2p);
-		double sinz = sinTheta(V1p,V2p,Axis.Z);
-		if (cosz > -10 && sinz > -10) {
-			//rotate reference set around z axis
-			double rotzm[][] = AgentGeometry.rotateZ(cosz, sinz);
-			for (int i = 0; i < al.size(); i++) {
-				double npt[][] = AgentGeometry.dotProduct(rotzm, ((double[][])al.get(i)));
-				newList.add(i, npt);
-			}
-		}
-		//return the new points
-		return newList;
-	}
-	
-	public static double[] calcHexAngles () {
+
+	public static double distanceBetween2Pts (NdPoint pt1, NdPoint pt2) {
 		
-		return null;
+		double dist = (pt1.getX()-pt2.getX())*(pt1.getX()-pt2.getX()) +
+		              (pt1.getY()-pt2.getY())*(pt1.getY()-pt2.getY()) +
+		              (pt1.getZ()-pt2.getZ())*(pt1.getZ()-pt2.getZ());
+		dist = Math.sqrt(dist);
+		return dist;
 	}
-	
-/*	public static double[] calcThetaPhiAngles(NdPoint pt1, double[] pt2) {
-		
-		double angles[] ={0f, 0f};
-		double pt[] = {0f, 0f, 0f};
-		double disp[] = AgentGeometry.pointDisplacement(pt1.toDoubleArray(pt), pt2);
-		angles[0] = Math.atan2(disp[0], disp[2]);   //theta
-		angles[1] = Math.atan2(Math.sqrt(disp[2]*disp[2] + disp[0]*disp[0]),disp[1]);  //phi
-		return angles;
-	}*/
-	
 	
 	public static double calcDistance(double c[],NdPoint pt){
 		
@@ -266,6 +217,23 @@ public class AgentGeometry {
 		dist = Math.sqrt((c[0]-pt.getX())*(c[0]-pt.getX())+
 				         (c[1]-pt.getY())*(c[1]-pt.getY())+
 				         (c[2]-pt.getZ())*(c[2]-pt.getZ()));
+		return dist;
+	}
+	
+	public static double calcDistance(double[] pt1, double[] pt2) {
+		double dist = 0.0;
+		dist = (pt1[0]-pt2[0])*(pt1[0]-pt2[0]) +
+		       (pt1[1] - pt2[1]) * (pt1[1]-pt2[1]) +
+		       (pt1[2] - pt2[2])*(pt1[2]-pt2[2]);
+		dist = Math.sqrt(dist);
+		return dist;
+	}
+	
+	public static double calcDistanceSq(double[] pt1, double[] pt2) {
+		double dist = 0.0;
+		dist = (pt1[0]-pt2[0])*(pt1[0]-pt2[0]) +
+			(pt1[1] - pt2[1]) * (pt1[1]-pt2[1]) +
+	       (pt1[2] - pt2[2])*(pt1[2]-pt2[2]);
 		return dist;
 	}
 	
@@ -277,6 +245,7 @@ public class AgentGeometry {
 				         (pt1.getZ()-pt2.getZ())*(pt1.getZ()-pt2.getZ()));
 		return dist;
 	}
+	
 	
 	public static void trim(double[] vector, double trimby) {
 		
@@ -379,83 +348,6 @@ public class AgentGeometry {
 		return ret;
 	}
 	
-/*	public static ArrayList objectsWithinPts(ContinuousSpace space, AgentExtendCont agent, ArrayList pts, double[] g, double[] pt, double distance) {
-
-		//new reference set
-		ArrayList al = new ArrayList();
-		al.addAll(pts);
-		//return
-		ArrayList ret = new ArrayList();
-		//rotate reference points to face genome
-		//vector towards genome g-pt
-		double v2[][] = AgentGeometry.pointDisplacement(g, pt);
-		double v1[][] = {{0},{0},{1},{1}};
-		//find y angle on zx plane
-		double v1p[][] = AgentGeometry.dotProduct(noY,v1);
-		double v2p[][] = AgentGeometry.dotProduct(noY, v2);
-		double cos = AgentGeometry.cosTheta(v1p, v2p);
-		double sin = AgentGeometry.sinTheta(v1p, v2p, Axis.Y);
-		//now rotate points through y angle
-		if (cos > -10 && sin > -10) {
-			double roty[][] = AgentGeometry.rotateY(cos, sin);
-			for (int i = 0; i < pts.size(); i++) {
-				double npt[][] = AgentGeometry.dotProduct(roty, (double[][]) al.get(i));
-				al.set(i, npt);
-			}
-			//rotate norm vector
-			v1p = AgentGeometry.dotProduct(roty,v1);
-		}
-		//find x angle on yz plane
-		v1p = AgentGeometry.dotProduct(noX, v1p);
-		v2p = AgentGeometry.dotProduct(noX, v2);
-		cos = AgentGeometry.cosTheta(v1p, v2p);
-		sin = AgentGeometry.sinTheta(v1p, v2p, Axis.X);
-		if (cos > -10 && sin > -10) {
-			double rotx[][] = AgentGeometry.rotateX(cos, sin);
-			for (int i = 0; i < pts.size(); i++) {
-				double npt[][] = AgentGeometry.dotProduct(rotx, (double[][]) al.get(i));
-				al.set(i, npt);
-			}
-			v1p = AgentGeometry.dotProduct(rotx, v1p);
-		}
-		//find z angle on xy plane
-		v1p = AgentGeometry.dotProduct(noZ, v1p);
-		v2p = AgentGeometry.dotProduct(noZ, v2);
-		cos = AgentGeometry.cosTheta(v1p, v2p);
-		sin = AgentGeometry.sinTheta(v1p, v2p, Axis.Z);
-		if (cos > -10 && sin > -10) {
-			double rotz[][] = AgentGeometry.rotateZ(cos, sin);
-			for (int i = 0; i < pts.size(); i++) {
-				double npt[][]=AgentGeometry.dotProduct(rotz, (double [][]) al.get(i));
-				al.set(i,npt);
-			}
-		}
-		
-		//now translate points
-		double T[][] = AgentGeometry.translate(pt);
-		for (int i = 0; i < pts.size(); i++) {
-			double npt[][] = AgentGeometry.dotProduct(T, (double [][])al.get(i));
-			al.set(i, npt);
-		}
-		
-		Iterable list = space.getObjects();
-		for (Object obj:list){
-			NdPoint spacept = space.getLocation(obj);
-			for (int i = 0; i < al.size(); i++) {
-				double x = ((double[][])al.get(i))[0][0];
-				double y = ((double[][])al.get(i))[1][0];
-				double z = ((double[][])al.get(i))[2][0];
-				double refpt[] = {x,y,z};
-				double dist = AgentGeometry.calcDistance(refpt,spacept);
-				if (dist <= distance) {
-					//((VP1)obj).setSides(i,(VP1)agent);
-					ret.add(obj);  //return list of AgentExtendCont
-					break;
-				}
-			}
-		}
-		return ret;
-	}*/
 	
 	public static ArrayList objectsWithinThetaAngle(ContinuousSpace space, AgentExtendCont agent, ArrayList pts, double c[],double distance, double[] angleOffset) {
 		//Iterator i = getSpace().getObjects().iterator();
@@ -510,23 +402,4 @@ public class AgentGeometry {
 		return retlist;
 	}
 	 
-/*	public static ArrayList findNeighborsInPlaneWithinDist(ContinuousSpace space, AgentExtendCont agent, double[] plane, double error, double distance) {
-
-		
-		ArrayList list = new ArrayList();
-		Iterator agentiter = space.getObjects().iterator();
-		while (agentiter.hasNext()) {
-			AgentExtendCont neighbor = (AgentExtendCont)agentiter.next();
-			NdPoint loc = space.getLocation(neighbor);
-			if (lieOnPlane(plane,loc,error)) {
-				//add it to the list
-				NdPoint loc2 = space.getLocation(agent);
-				double dist = distanceBetween2Pts(loc2, loc);
-				if (dist <= distance) {
-					list.add(neighbor);
-				}
-			}
-		}
-		return (list.size() > 0 ? list : null);
-	}*/
 }

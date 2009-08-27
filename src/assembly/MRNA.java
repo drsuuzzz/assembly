@@ -135,7 +135,7 @@ public class MRNA extends AgentExtendCont {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 						if (rand < 0.4) {
 						//remove from nucleus and add to cytoplasm
-							((Nucleus)getTheContext()).getCell().addToMoveList(this);
+							((CytoNuc)getTheContext()).addToMoveList(this);
 							setMoving(true);
 						}
 					}

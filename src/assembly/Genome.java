@@ -215,7 +215,7 @@ public class Genome extends AgentExtendCont{
 								mrna.setLocation(Loc.nucleus);
 								mrna.setTheContext(this.getTheContext());
 								mrna.setSpace(this.getSpace());
-								((Nucleus)getTheContext()).addToAddList(mrna);
+								((CytoNuc)getTheContext()).addToAddList(mrna);
 								aec.largeStepAwayFrom(this);
 								aec.setBound(false);
 								this.setNoBound(0);
@@ -253,7 +253,7 @@ public class Genome extends AgentExtendCont{
 						g.setSpace(this.getSpace());
 						g.setTheContext(this.getTheContext());
 						g.setLocation(Loc.nucleus);
-						((Nucleus)getTheContext()).addToAddList(g);
+						((CytoNuc)getTheContext()).addToAddList(g);
 						daec.largeStepAwayFrom(this);
 						daec.setBound(false);
 						laec.largeStepAwayFrom(this);
@@ -272,7 +272,7 @@ public class Genome extends AgentExtendCont{
 						m.setLocation(Loc.nucleus);
 						m.setSpace(this.getSpace());
 						m.setTheContext(this.getTheContext());
-						((Nucleus)getTheContext()).addToAddList(m);
+						((CytoNuc)getTheContext()).addToAddList(m);
 						aec.largeStepAwayFrom(this);
 						aec.setBound(false);
 						this.setNoBound(0);
@@ -297,15 +297,15 @@ public class Genome extends AgentExtendCont{
 						AgentExtendCont aec = l.next();
 						if (aec instanceof VP123 && aec.isBound()) {
 								//aec.setMoving(true);
-							((Nucleus)getTheContext()).addToRemList(aec);
+							((CytoNuc)getTheContext()).addToRemList(aec);
 						}
 					}
 						//this.setMoving(true);
-					((Nucleus)getTheContext()).addToRemList(this);
+					((CytoNuc)getTheContext()).addToRemList(this);
 						//VP123 vp = new VP123();
 						//vp.setVptype(VPType.VP12);
 						//((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
-					((Nucleus)getTheContext()).getCell().addVirions();
+					((CytoNuc)getTheContext()).addVirions();
 				}
 			}
 			egressTick = tick;

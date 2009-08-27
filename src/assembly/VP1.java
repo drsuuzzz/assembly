@@ -44,7 +44,8 @@ public class VP1 extends AgentExtendCont {
 			if (disp[0]==0 && disp[1]==0 && disp[2]==0) {
 				randomWalk();
 			} else {
-				getSpace().moveByDisplacement(this, disp);
+				//getSpace().moveByDisplacement(this, disp);
+				AgentMove.moveByDisplacement(this, disp);
 			}
 			moveTick = tick;
 		}

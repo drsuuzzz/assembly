@@ -35,7 +35,8 @@ public class DNAPol extends AgentExtendCont {
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {
-				getSpace().moveByDisplacement(this, disp);
+				//getSpace().moveByDisplacement(this, disp);
+				AgentMove.moveByDisplacement(this, disp);
 			}
 			moveTick = tick;
 		}

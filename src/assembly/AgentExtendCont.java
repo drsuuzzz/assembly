@@ -52,16 +52,11 @@ public class AgentExtendCont {
 	private ISchedulableAction splice;
 	
 	public AgentExtendCont() {
-		//stop = false;
 		theContext=null;
 		dead = false;
 		moving = false;
 		noBound = 0;
 		bound = false;
-		//thetaPhiDistGen();
-		//theta = RepastEssentials.RandomDraw(0, 2*Math.PI);
-		//phi = RepastEssentials.RandomDraw(0, 2*Math.PI);
-		//distance = RepastEssentials.RandomDraw(0, 2);
 		moveTick = 0;
 		name=null;
 		move = null;
@@ -72,14 +67,6 @@ public class AgentExtendCont {
 		location = Loc.nucleus;
 		boundTo = BoundTo.none;
 	}
-	//@Parameter(usageName="stop",displayName="Stopped")
-/*	public Boolean getStop() {
-		return stop;
-	}
-
-	public void setStop(Boolean stop) {
-		this.stop = stop;
-	}*/
 	
 	@Parameter(usageName="bound",displayName="Bound")
 	public boolean isBound() {
@@ -107,7 +94,8 @@ public class AgentExtendCont {
 	public void setBoundTo(BoundTo boundTo) {
 		this.boundTo = boundTo;
 	}
-
+	
+	@Parameter(usageName = "location", displayName = "Location", converter = "assembly.LocationConverter")
 	public Loc getLocation() {
 		return location;
 	}
@@ -184,26 +172,6 @@ public class AgentExtendCont {
 		this.space = space;
 	}
 	
-/*	public double getTheta() {
-		return theta;
-	}
-	public void setTheta(double theta) {
-		this.theta = theta;
-	}
-	public double getPhi() {
-		return phi;
-	}
-	public void setPhi(double phi) {
-		this.phi = phi;
-	}
-	
-	public double getDistance() {
-		return distance;
-	}
-	public void setDistance(double distance) {
-		this.distance = distance;
-	}*/
-	
 	public double getX() {
 		return X;
 	}
@@ -243,46 +211,110 @@ public class AgentExtendCont {
 
 	public double[] normPositionToBorder(double[] pt, double dist) {
 		
-		Dimensions dim = getSpace().getDimensions();
-		//int d = (int)Math.ceil(dist);
-		double min = dist;
-		double maxX = dim.getWidth()-dist;
-		double maxY = dim.getHeight()-dist;
-		double maxZ = dim.getDepth()-dist;
-		pt[0] = pt[0] < min ? (min+(min-pt[0])) : pt[0];
-		pt[0] = pt[0] > maxX ? (maxX-(pt[0]-maxX)): pt[0];
-		pt[1] = pt[1] < min ? (min+(min-pt[1])) : pt[1];
-		pt[1] = pt[1] > maxY ? (maxY-(pt[1]-maxY)): pt[1];
-		pt[2] = pt[2] < min ? (min+(min-pt[2])) : pt[2];
-		pt[2] = pt[2] > maxZ ? (maxZ-(pt[2]-maxZ)): pt[2];
+		int r = (Integer)RunEnvironment.getInstance().getParameters().getValue("nucleusRadius");
+		int cr = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellRadius");
+		
+		double[] center = new double[3];
+		center[0] = cr;
+		center[1] = cr;
+		center[2] = cr;
+
+		double[] v = new double[3];
+		v[0] = pt[0] - center[0];
+		v[1] = pt[1] - center[1];
+		v[2] = pt[2] - center[2];
+		
+		double d = AgentGeometry.calcDistance(center, pt);
+		
+		double min=0;
+		double max=0;
+		if (this.getLocation() == Loc.cytoplasm) {
+			min = r + dist;
+			max = cr - dist;
+		} else if (this.getLocation() == Loc.nucleus) {
+			max = r-dist;
+		}
+		
+		if (this.getLocation() == Loc.cytoplasm) {
+			if (d < min) {
+				double s = min + (min-d);
+				AgentGeometry.scale(v, s);
+			}
+			if (d > max) {
+				double s = max - (d-max);
+				AgentGeometry.scale(v, s);
+			}
+		} else if (this.getLocation() == Loc.nucleus) {
+			if (d > max) {
+				double s = max - (d-max);
+				AgentGeometry.scale(v, s);
+			}
+		}
+		pt[0] = v[0] + center[0];
+		pt[1] = v[1] + center[1];
+		pt[2] = v[2] + center[2];
 		return pt;
 	}
 	
 	public boolean nearWall(NdPoint pt) {
 		
 		boolean retval = false;
-		Dimensions dim = getSpace().getDimensions();
-		if (pt.getX() < 1 || pt.getY() < 1 || pt.getZ() < 1) {
-			retval = true;
-		} else if ((pt.getX() > dim.getWidth()-2) || (pt.getY() > dim.getHeight()-2) || (pt.getZ() > dim.getDepth()-2)) {
-			retval = true;
+		int r = (Integer)RunEnvironment.getInstance().getParameters().getValue("nucleusRadius");
+		int cr = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellRadius");
+		
+		double[] center = new double[3];
+		center[0] = cr;
+		center[1] = cr;
+		center[2] = cr;
+
+		double[] v = new double[3];
+		v[0] = pt.getX() - center[0];
+		v[1] = pt.getY() - center[1];
+		v[2] = pt.getZ() - center[2];
+		
+		double d = AgentGeometry.calcDistance(center, pt);
+		
+		if (this.getLocation() == Loc.cytoplasm) {
+			if ((d-r) < 1) {
+				retval = true;
+			}
+		} else if (this.getLocation() == Loc.nucleus) {
+			if ((r-d) < 1) {
+				retval = true;
+			}
 		}
+		//if (pt.getX() < 1 || pt.getY() < 1 || pt.getZ() < 1) {
+			//retval = true;
+		//} else if ((pt.getX() > dim.getWidth()-2) || (pt.getY() > dim.getHeight()-2) || (pt.getZ() > dim.getDepth()-2)) {
+			//retval = true;
+		//}
 		return retval;
 	}
 	
-	public boolean nearWallGroup() {
+	public boolean nearWallGroup(double dist) {
 		
 		boolean retval = false;
-		double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-		ContinuousWithin list = new ContinuousWithin(getSpace(), this, r);
-		Iterator l = list.query().iterator();
-		while (l.hasNext()) {
-			AgentExtendCont aec = (AgentExtendCont) l.next();
-			NdPoint pt = getSpace().getLocation(aec);
-			Dimensions dim = getSpace().getDimensions();
-			if (pt.getX() < 1 || pt.getY() < 1 || pt.getZ() < 1) {
+		double[] pt = this.getSpace().getLocation(this).toDoubleArray(null);
+		int r = (Integer)RunEnvironment.getInstance().getParameters().getValue("nucleusRadius");
+		int cr = (Integer)RunEnvironment.getInstance().getParameters().getValue("cellRadius");
+		
+		double[] center = new double[3];
+		center[0] = cr;
+		center[1] = cr;
+		center[2] = cr;
+
+		double[] v = new double[3];
+		v[0] = pt[0] - center[0];
+		v[1] = pt[1] - center[1];
+		v[2] = pt[2] - center[2];
+		
+		double d = AgentGeometry.calcDistance(center, pt);
+		if (this.getLocation() == Loc.cytoplasm) {
+			if (d-r <= dist ) {
 				retval = true;
-			} else if ((pt.getX() > dim.getWidth()-2) || (pt.getY() > dim.getHeight()-2) || (pt.getZ() > dim.getDepth()-2)) {
+			}
+		} else if (this.getLocation() == Loc.nucleus) {
+			if (r-d <= dist) {
 				retval = true;
 			}
 		}
@@ -300,11 +332,11 @@ public class AgentExtendCont {
 
 		double coord[] = {0.0,0.0,0.0};
 		genXYZ();
-		coord[0] = this.getX();
-		coord[1] = this.getY();
-		coord[2] = this.getZ();
-		AgentMove.bounceInLocation(coord, getSpace().getLocation(this).toDoubleArray(null), this.getLocation());
-		space.moveByDisplacement(this, coord);
+		coord[0] = this.getX() + this.getSpace().getLocation(this).getX();
+		coord[1] = this.getY() + this.getSpace().getLocation(this).getY();
+		coord[2] = this.getZ() + this.getSpace().getLocation(this).getZ();
+		AgentMove.bounceInLocation(coord, this.getLocation());
+		space.moveTo(this, coord);
 	}
 	
 	public void largeStepAwayFrom(AgentExtendCont agent) {
@@ -312,11 +344,11 @@ public class AgentExtendCont {
 		NdPoint pt = space.getLocation(agent);
 		double vector[][] = AgentGeometry.pointDisplacement(thisp.toDoubleArray(null), pt.toDoubleArray(null));
 		double disp[] = {0.0,0.0,0.0};
-		disp[0] = vector[0][0]*4;
-		disp[1] = vector[1][0]*4;
-		disp[2] = vector[2][0]*4;
-		AgentMove.bounceInLocation(disp, thisp.toDoubleArray(null), this.getLocation());
-		space.moveByDisplacement(this, disp);
+		disp[0] = vector[0][0]*4 + thisp.getX();
+		disp[1] = vector[1][0]*4 + thisp.getY();
+		disp[2] = vector[2][0]*4 + thisp.getZ();
+		AgentMove.bounceInLocation(disp, this.getLocation());
+		space.moveTo(this, disp);
 	}
 	public int calcMax(Class agentType1, Class agentType2) {
 		int x =0;
@@ -740,11 +772,11 @@ public class AgentExtendCont {
 	public void die() {
 		if (!dead) {
 			//if (this instanceof MRNA) {
-			if (this.getLocation() == Loc.cytoplasm) {
-				((Cytoplasm)getTheContext()).addToRemList(this);
-			} else {
-				((Nucleus)getTheContext()).addToRemList(this);
-			}
+			//if (this.getLocation() == Loc.cytoplasm) {
+				((CytoNuc)getTheContext()).addToRemList(this);
+			//} else {
+				//((Nucleus)getTheContext()).addToRemList(this);
+			//}
 			this.setDead(true);
 			this.setTheContext(null);
 			this.setSpace(null);
