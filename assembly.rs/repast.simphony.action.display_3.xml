@@ -143,7 +143,7 @@
             <map>
               <entry>
                 <string>SHOW</string>
-                <boolean>true</boolean>
+                <boolean>false</boolean>
               </entry>
               <entry>
                 <string>UNIT_SIZE</string>

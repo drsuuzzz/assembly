@@ -19,11 +19,11 @@
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
@@ -49,11 +49,11 @@
       <null/>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <null/>
     </entry>
     <entry>
