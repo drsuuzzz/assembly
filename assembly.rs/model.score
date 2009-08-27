@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:score="http://scoreabm.org/score" label="Assembly" ID="assembly" pluralLabel="Assemblys">
-  <attributes label="Cytoplasm Size X" ID="cytoplasmSizeX" pluralLabel="Cytoplasm Size Xs" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Cytoplasm Size Y" ID="cytoplasmSizeY" pluralLabel="Cytoplasm Size Ys" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Cytoplasm Size Z" ID="cytoplasmSizeZ" pluralLabel="Cytoplasm Size Zs" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Nucleus Size X" ID="nucleusSizeX" pluralLabel="Nucleus Size Xs" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Nucleus Size Y" ID="nucleusSizeY" pluralLabel="Nucleus Size Ys" sType="INTEGER" defaultValue="40"/>
-  <attributes label="Nucleus Size Z" ID="nucleusSizeZ" pluralLabel="Nucleus Size Zs" sType="INTEGER" defaultValue="40"/>
   <attributes label="Number of Genomes" ID="numberofGenomes" pluralLabel="Number of Genomess" sType="INTEGER" defaultValue="1"/>
   <attributes label="Number of Host" ID="numberofHost" pluralLabel="Number of Hosts" sType="INTEGER" defaultValue="2"/>
   <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="90"/>
@@ -22,9 +16,8 @@
   <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
   <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".1"/>
   <attributes label="File Path" ID="filePath" pluralLabel="File Paths" sType="STRING" defaultValue="/Users/svasa/repast2/assembly/logs"/>
-  <attributes label="Cell Size X" ID="cellSizeX" pluralLabel="Cell Size Xs" sType="INTEGER" defaultValue="200"/>
-  <attributes label="Cell Size Y" ID="cellSizeY" pluralLabel="Cell Size Ys" sType="INTEGER" defaultValue="200"/>
-  <attributes label="Cell Size Z" ID="cellSizeZ" pluralLabel="Cell Size Zs" sType="INTEGER" defaultValue="200"/>
+  <attributes label="Cell Radius" ID="cellRadius" pluralLabel="Cell Radiuss" sType="INTEGER" defaultValue="75"/>
+  <attributes label="Nucleus Radius" ID="nucleusRadius" pluralLabel="Nucleus Radiuss" sType="INTEGER" defaultValue="56"/>
   <implementation package="assembly" className="" basePath="../assembly"/>
   <agents xsi:type="score:SContext" label="Cell" ID="cell" pluralLabel="Cells">
     <implementation className="Cell"/>
