@@ -35,8 +35,8 @@ public class VLP extends AgentExtendCont {
 				//disp = move2();
 			if (this.getNoBound() <=1 ) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.01) {
-					//this.die();
+				if (rand < 0.001) {
+					this.die();
 				} 
 			} 
 			if (!isDead()){

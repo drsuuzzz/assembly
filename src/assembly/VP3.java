@@ -67,10 +67,10 @@ public class VP3 extends AgentExtendCont{
 
 			if (getNoBound() == 5) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-				if (nearWallGroup(dist)) {
+				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				if (nearWallGroup(dist, err)) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < 0.4) {
-						double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 						ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
 						Iterator<AgentExtendCont> l = list.query().iterator();
 						while (l.hasNext()) {

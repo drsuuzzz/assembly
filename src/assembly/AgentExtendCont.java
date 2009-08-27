@@ -291,7 +291,7 @@ public class AgentExtendCont {
 		return retval;
 	}
 	
-	public boolean nearWallGroup(double dist) {
+	public boolean nearWallGroup(double dist, double err) {
 		
 		boolean retval = false;
 		double[] pt = this.getSpace().getLocation(this).toDoubleArray(null);
@@ -310,11 +310,11 @@ public class AgentExtendCont {
 		
 		double d = AgentGeometry.calcDistance(center, pt);
 		if (this.getLocation() == Loc.cytoplasm) {
-			if (d-r <= dist ) {
+			if (d-r <= dist+err ) {
 				retval = true;
 			}
 		} else if (this.getLocation() == Loc.nucleus) {
-			if (r-d <= dist) {
+			if (r-d <= dist+err) {
 				retval = true;
 			}
 		}
@@ -380,7 +380,7 @@ public class AgentExtendCont {
 			r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 		}
-		AgentGeometry.trim(v, (r-rerr));
+		AgentGeometry.scale(v, (r-rerr));
 		v[0] = getSpace().getLocation(this).getX() + v[0];
 		v[1] = getSpace().getLocation(this).getY() + v[1];
 		v[2] = getSpace().getLocation(this).getZ() + v[2];

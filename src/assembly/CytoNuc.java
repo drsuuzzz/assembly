@@ -141,7 +141,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparamsodd, tf, "move");
 		}
 		
-		int numvp123 =0;//72;
+		int numvp123 = 0;//100;
 		for (int i = 0; i < numvp123; i++) {
 			VP123 vp = new VP123();
 			vp.setTheContext(this);
@@ -185,7 +185,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			schedule.schedule(sparamsodd, ribo, "translation");
 		}
 
-		int numvp1 = 0;//(Integer)parm.getValue("numberofVP1");
+		int numvp1 = 0;//100;//(Integer)parm.getValue("numberofVP1");
 		for (int i = 0; i < numvp1; i++) {
 			VP1 vp1 = new VP1();
 			vp1.setTheContext(this);
@@ -195,7 +195,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			cspace.moveTo(vp1, AgentMove.adjustPointToSpace(vp1));
 			vp1.setMove(schedule.schedule(sparamsodd,vp1,"move"));
 		}
-		int numvp2 = 0;//(Integer)parm.getValue("numberofVP2");
+		int numvp2 = 0;//25;//(Integer)parm.getValue("numberofVP2");
 		for (int i = 0; i < numvp2; i++) {
 			VP2 vp2 = new VP2();
 			vp2.setTheContext(this);
@@ -206,7 +206,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			vp2.setMove(schedule.schedule(sparamsodd,vp2,"move"));
 			vp2.setExport(schedule.schedule(sparamsodd,vp2,"export"));
 		}
-		int numvp3 = 0;//(Integer)parm.getValue("numberofVP3");
+		int numvp3 = 0;//25;//(Integer)parm.getValue("numberofVP3");
 		for (int i = 0; i < numvp3; i++) {
 			VP3 vp3 = new VP3();
 			vp3.setTheContext(this);

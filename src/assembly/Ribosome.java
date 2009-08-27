@@ -52,6 +52,10 @@ public class Ribosome extends AgentExtendCont {
 		}
 	}
 	
+	public void makeProtein() {
+		
+	}
+	
 	public void translation() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > tranTick) {
