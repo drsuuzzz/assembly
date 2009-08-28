@@ -153,6 +153,16 @@ public class AgentMove {
 		
 	}
 	
+	public static double[] addAtRandomLocationNextTo(AgentExtendCont aec1) {
+		
+		double[] pt1 = aec1.getSpace().getLocation(aec1).toDoubleArray(null);
+		pt1[0] = pt1[0] + RandomHelper.nextDoubleFromTo(-1.0, 1.0);
+		pt1[1] = pt1[1] + RandomHelper.nextDoubleFromTo(-1.0, 1.0);
+		pt1[2] = pt1[2] + RandomHelper.nextDoubleFromTo(-1.0, 1.0);
+		
+		return pt1;
+	}
+	
 /*	public static boolean moveTo (ContinuousSpace space, AgentExtendCont aec, double[] newpt) {
 		
 		boolean retval = false;

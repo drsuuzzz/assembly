@@ -422,6 +422,8 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 					this.add(aec);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					schedule.schedule(sparams,aec,"move");
+				} else if (aec instanceof Ribosome) {
+					((Ribosome)aec).makeProtein();
 				} else {
 					this.add(aec);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
