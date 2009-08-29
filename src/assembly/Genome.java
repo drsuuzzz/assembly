@@ -287,10 +287,11 @@ public class Genome extends AgentExtendCont{
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > egressTick) {
 			if (getNoBound() == 72) {
-				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.5) {
-					double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-					double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				//if (rand < 0.5) {
+				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				if (nearWallGroup(dist,err)) {
 					ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
 					Iterator<AgentExtendCont> l = list.query().iterator();
 					while (l.hasNext()) {
@@ -307,6 +308,7 @@ public class Genome extends AgentExtendCont{
 						//((Cytoplasm)getTheContext()).getCell().addToMoveList(vp);
 					((CytoNuc)getTheContext()).addVirions();
 				}
+				//}
 			}
 			egressTick = tick;
 

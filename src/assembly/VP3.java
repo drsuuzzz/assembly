@@ -69,8 +69,8 @@ public class VP3 extends AgentExtendCont{
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				if (nearWallGroup(dist, err)) {
-					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					if (rand < 0.4) {
+					//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+					//if (rand < 0.4) {
 						ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
 						Iterator<AgentExtendCont> l = list.query().iterator();
 						while (l.hasNext()) {
@@ -85,7 +85,7 @@ public class VP3 extends AgentExtendCont{
 						VP123 vp = new VP123();
 						vp.setVptype(VPType.VP13);
 						((CytoNuc)getTheContext()).addToMoveList(vp);
-					}
+					//}
 				}
 			}
 			exTick = tick;

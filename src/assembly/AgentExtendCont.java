@@ -410,7 +410,7 @@ public class AgentExtendCont {
 				Iterator l = list.query().iterator();
 				while (l.hasNext()) {
 					AgentExtendCont aec = (AgentExtendCont) l.next();
-					if (aec instanceof VP123 && !isBound()) {
+					if (aec instanceof VP123) {
 						NdPoint pt1 = getSpace().getLocation(center);
 						NdPoint pt2 = getSpace().getLocation(aec);
 						NdPoint pt3 = getSpace().getLocation(this);
@@ -481,7 +481,7 @@ public class AgentExtendCont {
 						}
 					}
 				}
-				//if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
+				if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
 				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {
 					cAgent = true;
 					center[0] = space.getLocation(obj).getX();
@@ -513,7 +513,7 @@ public class AgentExtendCont {
 						setBoundTo(BoundTo.vlp);
 					}
 				}
-				//}
+				}
 			}
 		}
 
@@ -565,11 +565,11 @@ public class AgentExtendCont {
 					alignmentv[2] = ((alignmentv[2]/counta));
 				}
 			}
-		} else if (this instanceof VP123){
+		} else if (this instanceof VP123 /*|| this instanceof VP1*/){
 			while (l.hasNext()) {
 				Object obj = l.next();
-				if (obj instanceof VP123) {
-					VP123 vp = (VP123) obj;
+				if (obj instanceof VP123 /*|| this instanceof VP1*/) {
+					AgentExtendCont vp = (AgentExtendCont) obj;
 					NdPoint vpt = space.getLocation(vp);
 					//if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
 					if (!vp.isBound()) {
@@ -596,7 +596,7 @@ public class AgentExtendCont {
 					}
 				}
 			}
-			if (count >= 4 && !this.isBound()) {
+			if (count >= 4 && !this.isBound() && this instanceof VP123) {
 				center[0] = cohesionv[0]/count;
 				center[1] = cohesionv[1]/count;
 				center[2] = cohesionv[2]/count;
