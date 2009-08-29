@@ -18,6 +18,10 @@
   <attributes label="File Path" ID="filePath" pluralLabel="File Paths" sType="STRING" defaultValue="/Users/svasa/repast2/assembly/logs"/>
   <attributes label="Cell Radius" ID="cellRadius" pluralLabel="Cell Radiuss" sType="INTEGER" defaultValue="40"/>
   <attributes label="Nucleus Radius" ID="nucleusRadius" pluralLabel="Nucleus Radiuss" sType="INTEGER" defaultValue="20"/>
+  <attributes label="Number of VP123" ID="numberofVP123" pluralLabel="Number of VP123s" sType="INTEGER" defaultValue="0"/>
+  <attributes label="Number of VP1" ID="numberofVP1" pluralLabel="Number of VP1s" sType="INTEGER" defaultValue="0"/>
+  <attributes label="Number of VP2" ID="numberofVP2" pluralLabel="Number of VP2s" sType="INTEGER" defaultValue="0"/>
+  <attributes label="Number of VP3" ID="numberofVP3" pluralLabel="Number of VP3s" sType="INTEGER" defaultValue="0"/>
   <implementation package="assembly" className="" basePath="../assembly"/>
   <agents xsi:type="score:SContext" label="CytoNuc" ID="cytoNuc" pluralLabel="CytoNucs">
     <implementation className="CytoNuc"/>
