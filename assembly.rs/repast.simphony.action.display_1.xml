@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.DefaultDisplayDescriptor>
-  <name>Cytoplasm/ER</name>
+  <name>Cell View</name>
   <type>THREE_D</type>
   <styles>
     <entry>
@@ -7,7 +7,27 @@
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
+      <string>assembly.Genome</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
+      <string>assembly.TranscriptionFactor</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
       <string>assembly.SmTAg</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
+      <string>assembly.HostGenome</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
+      <string>assembly.DNAPol</string>
+      <string>assembly.AgentStyle3D</string>
+    </entry>
+    <entry>
+      <string>assembly.VP123</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
@@ -19,11 +39,11 @@
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <string>assembly.AgentStyle3D</string>
     </entry>
     <entry>
@@ -37,7 +57,27 @@
       <null/>
     </entry>
     <entry>
+      <string>assembly.Genome</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>assembly.TranscriptionFactor</string>
+      <null/>
+    </entry>
+    <entry>
       <string>assembly.SmTAg</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>assembly.HostGenome</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>assembly.DNAPol</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>assembly.VP123</string>
       <null/>
     </entry>
     <entry>
@@ -49,11 +89,11 @@
       <null/>
     </entry>
     <entry>
-      <string>assembly.MRNA</string>
+      <string>assembly.LgTAg</string>
       <null/>
     </entry>
     <entry>
-      <string>assembly.LgTAg</string>
+      <string>assembly.MRNA</string>
       <null/>
     </entry>
     <entry>
@@ -72,12 +112,12 @@
     <frequency>REPEAT</frequency>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
-  <layoutProjection>Cytoplasm</layoutProjection>
+  <layoutProjection>CellSpace</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder/>
   <projections>
     <repast.score.impl.SContinuousSpaceImpl>
-      <name>Cytoplasm</name>
+      <name>CellSpace</name>
     </repast.score.impl.SContinuousSpaceImpl>
   </projections>
   <valueLayers/>
@@ -86,8 +126,8 @@
   </visualizationProperties>
   <projectionDescriptors>
     <entry>
-      <string>Cytoplasm</string>
-      <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+      <string>CellSpace</string>
+      <assembly.MyContinuousProjectionDescriptor>
         <proj class="repast.score.impl.SContinuousSpaceImpl" reference="../../../../projections/repast.score.impl.SContinuousSpaceImpl"/>
         <props>
           <entry>
@@ -108,7 +148,7 @@
             </map>
           </entry>
         </props>
-      </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+      </assembly.MyContinuousProjectionDescriptor>
     </entry>
   </projectionDescriptors>
   <props/>
