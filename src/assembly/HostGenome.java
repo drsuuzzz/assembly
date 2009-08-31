@@ -23,15 +23,9 @@ public class HostGenome extends AgentExtendCont {
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-			double r=0;
-			double rerr=0;
-			if (RunEnvironment.getInstance().isBatch()){
-				r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-			} else {
-				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-			}
+			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+
 			double disp[] = this.calcDispIfCenter(LgTAg.class, LgTAg.class, HostGenome.class, Genome.class,r,rerr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();

@@ -6,9 +6,11 @@ import java.util.Iterator;
 
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 
+import assembly.AgentExtendCont.Loc;
 import assembly.VP123.VPType;
 
 import com.sun.j3d.utils.geometry.GeometryInfo;
@@ -18,6 +20,7 @@ import com.sun.j3d.utils.picking.PickTool;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.query.space.continuous.ContinuousWithin;
+import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.visualization.visualization3D.AppearanceFactory;
 import repast.simphony.visualization.visualization3D.ShapeFactory;
 import repast.simphony.visualization.visualization3D.AppearanceFactory.PolygonDraw;
@@ -50,11 +53,11 @@ public class AgentStyle3D implements Style3D {
 			//AppearanceFactory.setPolygonAppearance(appearance.getAppearance(), PolygonDraw.FILL);
 			if (((VP123)obj).getVptype() == VPType.VP12) {
 				Color c = new Color(80,0,80);
-				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c/*Color.magenta*/);
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c);
 
 			} else {
 				Color c = new Color(0,80,80);
-				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c/*Color.cyan*/);
+				AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), c);
 			}
 		} else if (obj instanceof VP1) {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.blue);
@@ -78,6 +81,18 @@ public class AgentStyle3D implements Style3D {
 			AppearanceFactory.setMaterialAppearance(appearance.getAppearance(), Color.white);
 		}
 		
+		Loc loc = ((AgentExtendCont)obj).getLocation();
+		if (loc == Loc.cytoplasm) {
+			//what is view point
+			boolean view = (Boolean)RunEnvironment.getInstance().getParameters().getValue("viewCytoplasm");
+			if (!view) {			
+			//set transparency
+				AppearanceFactory.setTransparentAppearance(appearance.getAppearance(), TransparencyAttributes.NICEST, (float) 1.0);
+			} else {
+				AppearanceFactory.setTransparentAppearance(appearance.getAppearance(), TransparencyAttributes.NICEST, (float) 0.0);
+
+			}
+		}
 		return appearance;
 	}
 	

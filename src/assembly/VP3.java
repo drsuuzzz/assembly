@@ -31,15 +31,9 @@ public class VP3 extends AgentExtendCont{
 	public void move() {
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-			double r = 0;
-			double rerr = 0;
-			if (RunEnvironment.getInstance().isBatch()){
-				r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-			} else {
-				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-			}
+			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+
 			double disp[] = this.calcDispIfCenter(VP1.class, VP1.class, VP2.class, VP3.class, r, rerr);
 			if (disp[0]==0 && disp[1]==0 && disp[2]==0) {
 				randomWalk();

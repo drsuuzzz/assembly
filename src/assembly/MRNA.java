@@ -62,15 +62,8 @@ public class MRNA extends AgentExtendCont {
 		if (!isDead()) {
 			double tick = RepastEssentials.GetTickCount();
 			if (tick > moveTick) {
-				double r = 0;
-				double rerr = 0;
-				if (RunEnvironment.getInstance().isBatch()){
-					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				} else {
-					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				}
+				double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				double disp[] = calcDispIfCenter(Ribosome.class,Ribosome.class,MRNA.class,MRNA.class,r,rerr);
 				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 					randomWalk();

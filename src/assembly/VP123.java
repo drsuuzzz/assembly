@@ -69,21 +69,11 @@ public class VP123 extends AgentExtendCont{
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick) {
-			double radius;
-			double vpradius;
-			double rerr;
-			double vperr;
-			if (RunEnvironment.getInstance().isBatch()){
-				radius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-				vpradius = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-				vperr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
-			} else {
-				radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-				vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
-				vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
-			}
+			double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsidError");
+
 			double disp[] = this.calcDisplacement(Genome.class, VLP.class, radius,rerr,vpradius,vperr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();

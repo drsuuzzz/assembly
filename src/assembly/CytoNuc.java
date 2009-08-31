@@ -336,6 +336,11 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 				e.printStackTrace();
 			}
 			fileTick = tick;
+			if (virions >= 1) {
+				if (RunEnvironment.getInstance().isBatch()) {
+					RunEnvironment.getInstance().endRun();
+				}
+			}
 		}
 	}
 	

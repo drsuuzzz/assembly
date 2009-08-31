@@ -371,15 +371,10 @@ public class AgentExtendCont {
 		v[0] = center[0] - getSpace().getLocation(this).getX();
 		v[1] = center[1] - getSpace().getLocation(this).getY();
 		v[2] = center[2] - getSpace().getLocation(this).getZ();
-		double r;
-		double rerr;
-		if (RunEnvironment.getInstance().isBatch()){
-			r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-			rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-		} else {
-			r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-			rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-		}
+		
+		double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");;
+		double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+		
 		AgentGeometry.scale(v, (r-rerr));
 		v[0] = getSpace().getLocation(this).getX() + v[0];
 		v[1] = getSpace().getLocation(this).getY() + v[1];

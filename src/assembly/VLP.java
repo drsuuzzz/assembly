@@ -21,16 +21,9 @@ public class VLP extends AgentExtendCont {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick && !isDead()) {
 			double disp[] = {0.0,0.0,0.0};
-			double r=0;
-			double rerr=0;
-			
-			if (RunEnvironment.getInstance().isBatch()){
-				r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-				rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-			} else {
-				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-			}
+			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+		
 			disp = this.calcDispIfCenter(VP123.class, VP123.class, HostGenome.class, VLP.class,r,rerr);
 				//disp = move2();
 			if (this.getNoBound() <=1 ) {

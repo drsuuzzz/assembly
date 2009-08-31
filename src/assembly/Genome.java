@@ -130,45 +130,26 @@ public class Genome extends AgentExtendCont{
 			double rerr=0;
 			
 			if (state == GState.early) {
-				if (RunEnvironment.getInstance().isBatch()){
-					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				} else {
-					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				}
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				disp = this.calcDispIfCenter(TranscriptionFactor.class, LgTAg.class, Genome.class, HostGenome.class,r,rerr);
-				
 			} else if (state == GState.replicate) {
-				if (RunEnvironment.getInstance().isBatch()){
-					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				} else {
-					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				}
+
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				disp = this.calcDispIfCenter(LgTAg.class, DNAPol.class, Genome.class, HostGenome.class,r,rerr);
 				
 			} else if (state == GState.late) {
-				if (RunEnvironment.getInstance().isBatch()){
-					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				} else {
-					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
-					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				}
+
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				disp = this.calcDispIfCenter(LgTAg.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
 				
 			} else if (state == GState.assembly) {
-				if (RunEnvironment.getInstance().isBatch()){
-					r = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-					rerr = (Float)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-				} else {
-					r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
-					rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
-				}
+
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				disp = this.calcDispIfCenter(VP123.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
-				//disp = move2();
 			}
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
