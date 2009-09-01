@@ -35,7 +35,7 @@ public class MRNA extends AgentExtendCont {
 		state = mState.early;
 		id++;
 		myid = id;
-		System.out.println("MRNA"+myid);
+		//System.out.println("MRNA"+myid);
 	}
 	@Parameter(usageName="mtype",displayName="MRNA Type", converter = "assembly.MTypeConverter")
 	public MType getMType() {

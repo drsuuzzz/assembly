@@ -8,9 +8,9 @@ public class BoundToConverter implements StringConverter<BoundTo> {
 	public BoundTo fromString(String strRep) {
 		
 		BoundTo ret = BoundTo.none;
-		if (strRep == "VLP") {
+		if (strRep.compareTo("VLP") == 0) {
 			ret = BoundTo.vlp;
-		} else if (strRep == "Genome") {
+		} else if (strRep.compareTo("Genome") == 0) {
 			ret = BoundTo.genome;
 		}
 		return ret;

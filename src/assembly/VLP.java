@@ -1,7 +1,10 @@
 package assembly;
 
+import java.util.Iterator;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
+import repast.simphony.query.space.continuous.ContinuousWithin;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.NdPoint;
 import assembly.Genome.GState;
@@ -9,10 +12,12 @@ import assembly.Genome.GState;
 public class VLP extends AgentExtendCont {
 	
 	private double moveTick;
+	private double egressTick;
 	
 	public VLP() {
 		super();
 		moveTick = 0;
+		egressTick = 0;
 		setName("VLP");
 		this.genXYZ();
 	}
@@ -56,6 +61,34 @@ public class VLP extends AgentExtendCont {
 				}
 			}
 			moveTick = tick;
+		}
+	}
+	
+	public void egress() {
+		double tick = (double)RepastEssentials.GetTickCount();
+		if (tick > egressTick) {
+			if (getNoBound() == 72) {
+				RunEnvironment.getInstance().pauseRun();
+				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+				//if (rand < 0.5) {
+				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+				if (nearWallGroup(dist,err)) {
+					ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
+					Iterator<AgentExtendCont> l = list.query().iterator();
+					while (l.hasNext()) {
+						AgentExtendCont aec = l.next();
+						if (aec instanceof VP123 && aec.isBound()) {
+							((CytoNuc)getTheContext()).addToRemList(aec);
+						}
+					}
+						//this.setMoving(true);
+					((CytoNuc)getTheContext()).addToRemList(this);
+					((CytoNuc)getTheContext()).addVLP();
+				}
+				//}
+			}
+			egressTick = tick;
 		}
 	}
 }

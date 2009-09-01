@@ -9,9 +9,9 @@ public class MStateConverter implements StringConverter<mState> {
 	public mState fromString(String strRep) {
 		
 		mState ms = mState.early;
-		if (strRep == "Late") {
+		if (strRep.compareTo("Late") == 0) {
 			ms = mState.late;
-		} else if (strRep == "Complete") {
+		} else if (strRep.compareTo("Complete") == 0) {
 			ms = mState.complete;
 		}
 		return ms;

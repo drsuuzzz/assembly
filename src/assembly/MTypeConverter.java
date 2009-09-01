@@ -9,15 +9,15 @@ public class MTypeConverter implements StringConverter<MType> {
 	public MType fromString(String strRep) {
 		
 		MType mt = MType.tag;
-		if (strRep == "Tag") {
+		if (strRep.compareTo("Tag") == 0) {
 			mt = MType.Tag;
-		} else if (strRep == "tag") {
+		} else if (strRep.compareTo("tag") == 0) {
 			mt = MType.tag;
-		} else if (strRep == "VP1") {
+		} else if (strRep.compareTo("VP1") == 0) {
 			mt = MType.vp1;
-		} else if (strRep == "VP2") {
+		} else if (strRep.compareTo("VP2") == 0) {
 			mt = MType.vp2;
-		} else if (strRep == "VP3") {
+		} else if (strRep.compareTo("VP3") == 0) {
 			mt = MType.vp3;
 		}
 		return mt;

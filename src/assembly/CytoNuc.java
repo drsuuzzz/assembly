@@ -14,6 +14,7 @@ import java.util.List;
 
 import assembly.AgentExtendCont.Loc;
 import assembly.Genome.GState;
+import assembly.MRNA.MType;
 import assembly.VP123.VPType;
 
 import repast.simphony.context.DefaultContext;
@@ -92,7 +93,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 		try {
 			FileWriter fw = new FileWriter(countp, true);
 			PrintWriter pw = new PrintWriter(fw);
-			pw.println("tick,Tag,tag,VP1,VP2,VP3,VP123,Genome,DNAPol,virions,VLP");
+			pw.println("tick,Tag,T-mRNA,tag,t-mRNA,VP1,vp1-mRNA,VP2,vp2-mRNA,VP3,vp3-mRNA,VP123,Genome,DNAPol,virions,VLP");
 			fw.close();
 		} catch (IOException e) {
 			System.out.println("Something wrong with count file.");
@@ -291,6 +292,27 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 		return ret;
 	}
 	
+	public int[] getNoMRNAs() {
+		IndexedIterable<AgentExtendCont> i = this.getObjects(MRNA.class);
+		int[] ret = {0,0,0,0,0};
+		for (int j = 0; j < i.size(); j++) {
+			MRNA mrna = (MRNA)i.get(j);
+			if (mrna.getMType() == MType.Tag) {
+				ret[0]+=1;
+			} else if (mrna.getMType() == MType.tag) {
+				ret[1] += 1;
+			} else if (mrna.getMType() == MType.vp1) {
+				ret[2] += 1;
+			} else if (mrna.getMType() == MType.vp2) {
+				ret[3] += 1;
+			} else if (mrna.getMType() == MType.vp3) {
+				ret[4] += 1;
+			}
+		}
+		
+		return ret;
+	}
+	
 	public int getNoGenome() {
 		IndexedIterable<AgentExtendCont> i = this.getObjects(Genome.class);
 		int ret = 0;
@@ -328,7 +350,9 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			try {
 				FileWriter fw = new FileWriter(countp, true);
 				PrintWriter pw = new PrintWriter(fw);
-				pw.println(tick+","+getNoTag()+","+getNotag()+","+this.getNoVP1()+","+this.getNoVP2()+","+this.getNoVP3()+","+this.getNoVP123()+
+				int[] mrna = this.getNoMRNAs();
+				pw.println(tick+","+getNoTag()+","+mrna[0]+","+getNotag()+","+mrna[1]+","+this.getNoVP1()+","
+						+mrna[2]+","+this.getNoVP2()+","+mrna[3]+","+this.getNoVP3()+","+mrna[4]+","+this.getNoVP123()+
 						","+this.getNoGenome()+","+this.getNoDNAPol()+","+virions+","+VLP);
 				fw.close();
 			} catch (IOException e) {
@@ -355,18 +379,14 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			if ((int)start%2 == 0) {
 				start = start + 1.0f;
 			}
-			//schedule death rule in cytoplasm
 			ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
 			while (agents.hasNext()) {
 				AgentExtendCont aec = agents.next();
 				if (aec instanceof MRNA) {
-					System.out.println("Moving mRNA"+((MRNA) aec).getMyid());
-					//n.remove(aec);
-					//c.add(aec);
-					//aec.setTheContext(this);
-					//aec.setSpace(c.getSpace());
+					//System.out.println("Moving mRNA"+((MRNA) aec).getMyid());
 					((MRNA) aec).setLocation(Loc.cytoplasm);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+					//schedule death rule in cytoplasm
 					aec.setDeath(schedule.schedule(sparams,aec,"death"));
 					//remove the export rule;
 					aec.removeAnAction(aec.getExport());
@@ -375,10 +395,6 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 					aec.setSplice(null);
 					aec.setMoving(false);
 				} else if (aec instanceof LgTAg) {
-					//c.remove(aec);
-					//n.add(aec);
-					//aec.setTheContext(n);
-					//aec.setSpace(n.getSpace());
 					aec.setLocation(Loc.nucleus);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.removeAnAction(aec.getExport());
@@ -391,6 +407,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 					aec.setLocation(Loc.nucleus);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.setMove(schedule.schedule(sparams, aec, "move"));
+					aec.setEgress(schedule.schedule(sparams,aec, "egress"));
 				}
 				agents.remove();
 

@@ -50,6 +50,7 @@ public class AgentExtendCont {
 	private ISchedulableAction export;
 	private ISchedulableAction death;
 	private ISchedulableAction splice;
+	private ISchedulableAction egress;
 	
 	public AgentExtendCont() {
 		theContext=null;
@@ -64,6 +65,7 @@ public class AgentExtendCont {
 		export = null;
 		death = null;
 		splice = null;
+		egress = null;
 		location = Loc.nucleus;
 		boundTo = BoundTo.none;
 	}
@@ -154,7 +156,14 @@ public class AgentExtendCont {
 	public void setSplice(ISchedulableAction splice) {
 		this.splice = splice;
 	}
+	
+	public void setEgress(ISchedulableAction e) {
+		this.egress = e;
+	}
 
+	public ISchedulableAction getEgress() {
+		return egress;
+	}
 
 	public Context getTheContext() {
 		return theContext;
@@ -323,9 +332,9 @@ public class AgentExtendCont {
 	}
 	
 	public void genXYZ() {
-		X=RepastEssentials.RandomDraw(-1,1);
-		Y=RepastEssentials.RandomDraw(-1,1);
-		Z=RepastEssentials.RandomDraw(-1,1);
+		X=RepastEssentials.RandomDraw(-0.5,0.5);
+		Y=RepastEssentials.RandomDraw(-0.5,0.5);
+		Z=RepastEssentials.RandomDraw(-0.5,0.5);
 	}
 	
 	public void randomWalk() {
@@ -393,6 +402,7 @@ public class AgentExtendCont {
 		//odd tick
 		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
 		this.setMove(schedule.schedule(sparams,vlp,"move"));
+		this.setEgress(schedule.schedule(sparams, this, "egress"));
 	}	
 	
 	public boolean neighborCenterChk (AgentExtendCont center, ContinuousWithin list, double cdist, double ndist, double cerr, double nerr) {
@@ -446,7 +456,6 @@ public class AgentExtendCont {
 		double center[] = {0,0,0};
 		int max = calcMax(agentType1,agentType2);
 		int parcnt=0;
-		
 		while (l.hasNext()) {
 			AgentExtendCont obj = l.next();
 			
@@ -622,7 +631,7 @@ public class AgentExtendCont {
 				}
 			}
 		}
-		if (parcnt > 0) {
+		if (parcnt > 0 ) {
 			retpt[0] = (cohesiong[0] + cohesionv[0])/parcnt + 
 				(separationg[0] + separationv[0])/parcnt + 
 				(alignmentg[0]);
@@ -636,7 +645,7 @@ public class AgentExtendCont {
 		if (retpt[0]==0 && retpt[1]==0 && retpt[2]==0) {
 
 		} else {
-			AgentGeometry.trim(retpt, nerr/2);//maybe hardcode this?
+			AgentGeometry.trim(retpt, nerr);//maybe hardcode this?
 			this.setX(retpt[0]);
 			this.setY(retpt[1]);
 			this.setZ(retpt[2]);
@@ -761,6 +770,10 @@ public class AgentExtendCont {
 		if (splice != null) {
 			schedule.removeAction(splice);
 			splice = null;
+		}
+		if (egress != null) {
+			schedule.removeAction(egress);
+			egress = null;
 		}
 	}
 	

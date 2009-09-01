@@ -7,7 +7,7 @@ public class LocationConverter implements StringConverter<Loc>{
 	public Loc fromString(String strRep) {
 		
 		Loc ret = Loc.cytoplasm;
-		if (strRep == "Nucleus") {
+		if (strRep.compareTo("Nucleus") == 0) {
 			ret = Loc.nucleus;
 		}
 		return ret;
