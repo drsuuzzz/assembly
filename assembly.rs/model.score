@@ -7,7 +7,7 @@
   <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="2.1"/>
   <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue=".1"/>
   <attributes label="Distance Capsid" ID="distanceCapsid" pluralLabel="Distance Capsids" sType="FLOAT" defaultValue="1"/>
-  <attributes label="Distance Capsid Error" ID="distanceCapsidError" pluralLabel="Distance Capsid Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance Capsid Error" ID="distanceCapsidError" pluralLabel="Distance Capsid Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="Rule Separation" ID="ruleSeparation" pluralLabel="Rule Separations" defaultValue="true"/>
   <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>
   <attributes label="Rule Cohesion" ID="ruleCohesion" pluralLabel="Rule Cohesions" defaultValue="true"/>
