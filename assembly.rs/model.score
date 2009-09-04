@@ -5,16 +5,16 @@
   <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="90"/>
   <attributes label="Number of TF" ID="numberofTF" pluralLabel="Number of TFs" sType="INTEGER" defaultValue="10"/>
   <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="2.1"/>
-  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="Distance Capsid" ID="distanceCapsid" pluralLabel="Distance Capsids" sType="FLOAT" defaultValue="1"/>
   <attributes label="Distance Capsid Error" ID="distanceCapsidError" pluralLabel="Distance Capsid Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="Rule Separation" ID="ruleSeparation" pluralLabel="Rule Separations" defaultValue="true"/>
   <attributes label="Rule Alignment" ID="ruleAlignment" pluralLabel="Rule Alignments" defaultValue="true"/>
   <attributes label="Rule Cohesion" ID="ruleCohesion" pluralLabel="Rule Cohesions" defaultValue="true"/>
   <attributes label="Distance Bind" ID="distanceBind" pluralLabel="Distance Binds" sType="FLOAT" defaultValue="1.25"/>
-  <attributes label="Distance Bind Error" ID="distanceBindError" pluralLabel="Distance Bind Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance Bind Error" ID="distanceBindError" pluralLabel="Distance Bind Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
-  <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".1"/>
+  <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="File Path" ID="filePath" pluralLabel="File Paths" sType="STRING" defaultValue="/Users/svasa/repast2/assembly/logs"/>
   <attributes label="Cell Radius" ID="cellRadius" pluralLabel="Cell Radiuss" sType="INTEGER" defaultValue="40"/>
   <attributes label="Nucleus Radius" ID="nucleusRadius" pluralLabel="Nucleus Radiuss" sType="INTEGER" defaultValue="20"/>
