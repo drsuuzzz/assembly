@@ -13,6 +13,7 @@ public class VLP extends AgentExtendCont {
 	
 	private double moveTick;
 	private double egressTick;
+	private boolean prev;
 	
 	public VLP() {
 		super();
@@ -20,6 +21,7 @@ public class VLP extends AgentExtendCont {
 		egressTick = 0;
 		setName("VLP");
 		this.genXYZ();
+		prev = false;
 	}
 
 	public void move() {
@@ -31,7 +33,7 @@ public class VLP extends AgentExtendCont {
 		
 			disp = this.calcDispIfCenter(VP123.class, VP123.class, HostGenome.class, VLP.class,r,rerr);
 				//disp = move2();
-			if (this.getNoBound() <=1 ) {
+			if (this.getNoBound() <=1 && !prev) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				if (rand < 0.001) {
 					this.die();
@@ -40,8 +42,10 @@ public class VLP extends AgentExtendCont {
 			if (!isDead()){
 				if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 					randomWalk();
+					prev = false;
 				//clearBoundProteins();
 				} else {
+					prev = true;
 					double tmp[] = new double[3];
 					NdPoint thispt = getSpace().getLocation(this);
 					tmp[0] = disp[0]+thispt.getX();
@@ -80,9 +84,10 @@ public class VLP extends AgentExtendCont {
 						AgentExtendCont aec = l.next();
 						if (aec instanceof VP123 && aec.isBound()) {
 							((CytoNuc)getTheContext()).addToRemList(aec);
+							aec.setMoving(true);
 						}
 					}
-						//this.setMoving(true);
+					this.setMoving(true);
 					((CytoNuc)getTheContext()).addToRemList(this);
 					((CytoNuc)getTheContext()).addVLP();
 				}

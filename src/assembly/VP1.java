@@ -24,7 +24,7 @@ public class VP1 extends AgentExtendCont {
 		//center of mass around vp2 or vp3 or otherwise
 		
 		double tick = (double) RepastEssentials.GetTickCount();
-		if (tick > moveTick) {
+		if (tick > moveTick && !isMoving()) {
 			double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceVP1");
 			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");

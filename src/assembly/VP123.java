@@ -68,7 +68,7 @@ public class VP123 extends AgentExtendCont{
 	
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
-		if (tick > moveTick) {
+		if (tick > moveTick && !isMoving()) {
 			double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
 			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
@@ -77,6 +77,8 @@ public class VP123 extends AgentExtendCont{
 			double disp[] = this.calcDisplacement(Genome.class, VLP.class, radius,rerr,vpradius,vperr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
+				setBound(false);
+				setBoundTo(BoundTo.none);
 			} else {
 				AgentMove.moveByDisplacement(this, disp);
 				//getSpace().moveByDisplacement(this, disp);

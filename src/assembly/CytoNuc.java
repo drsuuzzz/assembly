@@ -114,9 +114,9 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			//g.setState(GState.assembly);
 			this.add(g);
 			cspace.moveTo(g, AgentMove.adjustPointToSpace(g));
-			schedule.schedule(sparamsodd, g, "move");
-			schedule.schedule(sparamsodd,g,"transcription");
-			schedule.schedule(sparamsodd, g, "egress");
+			g.setMove(schedule.schedule(sparamsodd, g, "move"));
+			g.setTranscription(schedule.schedule(sparamsodd,g,"transcription"));
+			g.setEgress(schedule.schedule(sparamsodd, g, "egress"));
 		}
 		
 		int numh = (Integer)parm.getValue("numberofHost");
@@ -156,7 +156,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			}
 			this.add(vp);
 			cspace.moveTo(vp, AgentMove.adjustPointToSpace(vp));
-			schedule.schedule(sparamsodd,vp,"move");
+			vp.setMove(schedule.schedule(sparamsodd,vp,"move"));
 		}
 		schedule.schedule(sparamseven, this, "addAgents");
 		schedule.schedule(sparamseven, this, "remAgents");
@@ -169,7 +169,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			vlp.setLocation(Loc.nucleus);
 			this.add(vlp);
 			cspace.moveTo(vlp, AgentMove.adjustPointToSpace(vlp));
-			schedule.schedule(sparamsodd,vlp,"move");
+			vlp.setMove(schedule.schedule(sparamsodd,vlp,"move"));
 		}
 		
 		//add cytoplasm/ER agents
@@ -407,7 +407,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 					aec.setLocation(Loc.nucleus);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.setMove(schedule.schedule(sparams, aec, "move"));
-					aec.setEgress(schedule.schedule(sparams,aec, "egress"));
+					//aec.setEgress(schedule.schedule(sparams,aec, "egress"));
 				}
 				agents.remove();
 
@@ -429,21 +429,27 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			while (agents.hasNext()) {
 				AgentExtendCont aec = agents.next();
 				if (aec instanceof Genome) {
-					this.add(aec);
-					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
-					schedule.schedule(sparams,aec,"move");
-					schedule.schedule(sparams,aec,"transcription");
-					schedule.schedule(sparams,aec,"egress");
-				} else if (aec instanceof MRNA) {
+					if (((Genome) aec).getState() == GState.replicate) {
+						this.add(aec);
+						((Genome)aec).setState(GState.early);
+						cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+						aec.setMove(schedule.schedule(sparams,aec,"move"));
+						aec.setTranscription(schedule.schedule(sparams,aec,"transcription"));
+						aec.setEgress(schedule.schedule(sparams,aec,"egress"));
+					} else {
+						((Genome)aec).makeBabyMRNA();
+					}
+				}/* else if (aec instanceof MRNA) {
 					this.add(aec);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
 					aec.setExport(schedule.schedule(sparams,aec,"export"));
 					aec.setSplice(schedule.schedule(sparams,aec,"splice"));
-				} else if (aec instanceof DNAPol) {
+				} */else if (aec instanceof DNAPol) {
 					this.add(aec);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
-					schedule.schedule(sparams,aec,"move");
+					aec.setMove(schedule.schedule(sparams,aec,"move"));
+					aec.setDeath(schedule.schedule(sparams,aec,"death"));
 				} else if (aec instanceof Ribosome) {
 					((Ribosome)aec).makeProtein();
 				} else {

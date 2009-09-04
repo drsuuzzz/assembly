@@ -9,6 +9,7 @@ import assembly.VP123.VPType;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.essentials.RepastEssentials;
@@ -124,7 +125,7 @@ public class Genome extends AgentExtendCont{
 	
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
-		if (tick > moveTick) {
+		if (tick > moveTick && !isDead()) {
 			double disp[] = {0.0,0.0,0.0};
 			double r=0;
 			double rerr=0;
@@ -176,9 +177,34 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
+	public void makeBabyMRNA() {
+		MRNA mrna = new MRNA();
+		if (state == GState.early) {
+			mrna.setState(mState.early);
+		} else if (state == GState.late) {
+			mrna.setState(mState.late);
+		}
+		mrna.setLocation(Loc.nucleus);
+		this.getTheContext().add(mrna);
+		mrna.setTheContext(this.getTheContext());
+		mrna.setSpace(this.getSpace());
+		double[] pt = AgentMove.bounceInLocation(AgentMove.addAtRandomLocationNextTo(this),mrna.getLocation());
+		getSpace().moveTo(mrna, pt);
+		mrna.largeStepAwayFrom(this);
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		double start = RepastEssentials.GetTickCount();
+		if ((int)start %2 == 0) {
+			start = start +1.0f;
+		}
+		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+		mrna.setMove(schedule.schedule(sparams,mrna,"move"));
+		mrna.setExport(schedule.schedule(sparams,mrna,"export"));
+		mrna.setSplice(schedule.schedule(sparams,mrna,"splice"));
+	}
+	
 	public void transcription() {
 		double tick = RepastEssentials.GetTickCount();
-		if (xcriptTick < tick) {
+		if (xcriptTick < tick && !isDead()) {
 			double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 			double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 			ContinuousWithin<AgentExtendCont> list = new ContinuousWithin(getSpace(), this, (dist+err));
@@ -190,17 +216,15 @@ public class Genome extends AgentExtendCont{
 						if (aec.isBound()) {
 							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 							if (rand < 0.1) {
-								MRNA mrna = new MRNA();
-								//mrna.setMType(MType.Tag);
-								mrna.setState(mState.early);
-								mrna.setLocation(Loc.nucleus);
-								mrna.setTheContext(this.getTheContext());
-								mrna.setSpace(this.getSpace());
-								((CytoNuc)getTheContext()).addToAddList(mrna);
+								//MRNA mrna = new MRNA();
+								//mrna.setState(mState.early);
+								//mrna.setLocation(Loc.nucleus);
+								//mrna.setTheContext(this.getTheContext());
+								//mrna.setSpace(this.getSpace());
+								((CytoNuc)getTheContext()).addToAddList(this);
 								aec.largeStepAwayFrom(this);
 								aec.setBound(false);
 								this.setNoBound(0);
-								//state = GState.replicate;
 								break;
 							}
 						}
@@ -229,7 +253,7 @@ public class Genome extends AgentExtendCont{
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < .2) {
 						Genome g = new Genome();
-						g.setState(GState.early);
+						g.setState(GState.replicate);
 						state = GState.late;
 						g.setSpace(this.getSpace());
 						g.setTheContext(this.getTheContext());
@@ -248,12 +272,12 @@ public class Genome extends AgentExtendCont{
 				while (l.hasNext()) {
 					AgentExtendCont aec = l.next();
 					if (aec instanceof LgTAg) {
-						MRNA m = new MRNA();
-						m.setState(mState.late);
-						m.setLocation(Loc.nucleus);
-						m.setSpace(this.getSpace());
-						m.setTheContext(this.getTheContext());
-						((CytoNuc)getTheContext()).addToAddList(m);
+						//MRNA m = new MRNA();
+						//m.setState(mState.late);
+						//m.setLocation(Loc.nucleus);
+						//m.setSpace(this.getSpace());
+						//m.setTheContext(this.getTheContext());
+						((CytoNuc)getTheContext()).addToAddList(this);
 						aec.largeStepAwayFrom(this);
 						aec.setBound(false);
 						this.setNoBound(0);
@@ -268,7 +292,7 @@ public class Genome extends AgentExtendCont{
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > egressTick) {
 			if (getNoBound() == 72) {
-				//RunEnvironment.getInstance().pauseRun();
+				RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				//if (rand < 0.5) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
@@ -280,9 +304,11 @@ public class Genome extends AgentExtendCont{
 						AgentExtendCont aec = l.next();
 						if (aec instanceof VP123 && aec.isBound()) {
 							((CytoNuc)getTheContext()).addToRemList(aec);
+							aec.setMoving(true);
 						}
 					}
 					((CytoNuc)getTheContext()).addToRemList(this);
+					this.setMoving(true);
 					((CytoNuc)getTheContext()).addVirions();
 				}
 				//}

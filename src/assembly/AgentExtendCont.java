@@ -164,6 +164,14 @@ public class AgentExtendCont {
 	public ISchedulableAction getEgress() {
 		return egress;
 	}
+	
+	public void setTranscription(ISchedulableAction t) {
+		this.transcription = t;
+	}
+	
+	public ISchedulableAction getTranscription() {
+		return transcription;
+	}
 
 	public Context getTheContext() {
 		return theContext;
@@ -402,7 +410,7 @@ public class AgentExtendCont {
 		//odd tick
 		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
 		this.setMove(schedule.schedule(sparams,vlp,"move"));
-		this.setEgress(schedule.schedule(sparams, this, "egress"));
+		this.setEgress(schedule.schedule(sparams, vlp, "egress"));
 	}	
 	
 	public boolean neighborCenterChk (AgentExtendCont center, ContinuousWithin list, double cdist, double ndist, double cerr, double nerr) {
@@ -485,7 +493,7 @@ public class AgentExtendCont {
 						}
 					}
 				}
-				if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
+				//if (neighborCenterChk(obj,list,distc,distn,cerr,nerr)) {
 				if (obj.getNoBound() < max || (obj.getNoBound() == max && this.isBound())) {
 					cAgent = true;
 					center[0] = space.getLocation(obj).getX();
@@ -498,9 +506,9 @@ public class AgentExtendCont {
 					}
 					if (sep) {
 						if (AgentGeometry.calcDistance(center, thispt) < (distc-cerr)) {
-							separationg[0] = (thispt.getX()-center[0])/20;
-							separationg[1] = (thispt.getY()-center[1])/20;
-							separationg[2] = (thispt.getZ()-center[2])/20;
+							separationg[0] = ((thispt.getX()/*+cohesiong[0]*/)-center[0])/20;
+							separationg[1] = ((thispt.getY()/*+cohesiong[1]*/)-center[1])/20;
+							separationg[2] = ((thispt.getZ()/*+cohesiong[2]*/)-center[2])/20;
 						}
 					}
 					if (aln) {
@@ -516,7 +524,7 @@ public class AgentExtendCont {
 					} else if (obj instanceof VLP) {
 						setBoundTo(BoundTo.vlp);
 					}
-				}
+				//}
 				}
 			}
 		}
@@ -575,8 +583,7 @@ public class AgentExtendCont {
 				if (obj instanceof VP123 /*|| this instanceof VP1*/) {
 					AgentExtendCont vp = (AgentExtendCont) obj;
 					NdPoint vpt = space.getLocation(vp);
-					//if (AgentGeometry.calcDistance(center, vpt) < (radius+rerr)) { 
-					if (!vp.isBound()) {
+					if (vp.getBoundTo()!= BoundTo.genome) {
 						if (coh) {
 							cohesionv[0] += vpt.getX();
 							cohesionv[1] += vpt.getY();
@@ -779,12 +786,7 @@ public class AgentExtendCont {
 	
 	public void die() {
 		if (!dead) {
-			//if (this instanceof MRNA) {
-			//if (this.getLocation() == Loc.cytoplasm) {
-				((CytoNuc)getTheContext()).addToRemList(this);
-			//} else {
-				//((Nucleus)getTheContext()).addToRemList(this);
-			//}
+			((CytoNuc)getTheContext()).addToRemList(this);
 			this.setDead(true);
 			this.setTheContext(null);
 			this.setSpace(null);
