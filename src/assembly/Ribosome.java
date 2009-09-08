@@ -78,6 +78,9 @@ public class Ribosome extends AgentExtendCont {
 				if (T instanceof LgTAg || T instanceof VP2 || T instanceof VP3) {
 					T.setExport(schedule.schedule(sparams, T, "export"));
 				}
+				if (T instanceof LgTAg) {
+					//T.setDeath(schedule.schedule(sparams, T, "death"));
+				}
 				if (boundmRNA.getNoBound()>0) {
 					boundmRNA.setNoBound(boundmRNA.getNoBound()-1);
 				} 

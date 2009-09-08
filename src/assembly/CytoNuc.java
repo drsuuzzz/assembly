@@ -459,6 +459,9 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 					if (aec instanceof LgTAg || aec instanceof VP2 || aec instanceof VP3) {
 						aec.setExport(schedule.schedule(sparams, aec, "export"));
 					}
+					if (aec instanceof LgTAg) {
+						//aec.setDeath(schedule.schedule(sparams, aec, "death"));
+					}
 				}
 				agents.remove();
 			}

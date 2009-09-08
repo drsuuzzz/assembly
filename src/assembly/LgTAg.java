@@ -46,7 +46,7 @@ public class LgTAg extends AgentExtendCont {
 	public void export() {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > expTick  && !isDead()) {
-			if (getLocation() == Loc.cytoplasm && !isMoving()) {
+			if (getLocation() == Loc.cytoplasm && !isMoving() && !isDead()) {
 				if (nearWall(getSpace().getLocation(this))) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < 0.4) {
@@ -64,7 +64,7 @@ public class LgTAg extends AgentExtendCont {
 		if (tick > deathTick) {
 			if (getLocation() == Loc.nucleus && !isMoving()) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0,1.0);
-				if (rand < 0.001) {
+				if (rand < 0.0001) {
 					die();
 				}
 			}

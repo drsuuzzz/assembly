@@ -254,7 +254,6 @@ public class Genome extends AgentExtendCont{
 					if (rand < .2) {
 						Genome g = new Genome();
 						g.setState(GState.replicate);
-						state = GState.late;
 						g.setSpace(this.getSpace());
 						g.setTheContext(this.getTheContext());
 						g.setLocation(Loc.nucleus);

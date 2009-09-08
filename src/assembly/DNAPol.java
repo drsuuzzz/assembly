@@ -40,7 +40,7 @@ public class DNAPol extends AgentExtendCont {
 			double tick = RepastEssentials.GetTickCount();
 			if (tick > deathTick) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.0001) {
+				if (rand < 0.00001) {
 					this.die();
 				}
 				deathTick = tick;
