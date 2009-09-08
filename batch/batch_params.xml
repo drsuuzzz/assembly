@@ -2,7 +2,7 @@
 <sweep runs="1">
   <parameter constant_type="number" name="numberofGenomes" type="constant" value="1"/>
   <parameter constant_type="number" name="numberofHost" type="constant" value="2"/>
-  <parameter constant_type="number" name="numberofRibosomes" type="constant" value="90"/>
+  <parameter constant_type="number" name="numberofRibosomes" type="constant" value="200"/>
   <parameter constant_type="number" name="numberofTF" type="constant" value="10"/>
   <parameter constant_type="number" name="distanceRadius" type="constant" value="2.1d"/>
   <parameter constant_type="number" name="distanceRadiusError" type="constant" value="0.2d"/>
@@ -16,8 +16,8 @@
   <parameter constant_type="number" name="distanceVP1" type="constant" value="1.25d"/>
   <parameter constant_type="number" name="distanceVP1Error" type="constant" value="0.2d"/>
   <parameter constant_type="string" name="filePath" type="constant" value="/Users/svasa/repast2/assembly/logs"/>
-  <parameter constant_type="number" name="cellRadius" type="constant" value="40"/>
-  <parameter constant_type="number" name="nucleusRadius" type="constant" value="20"/>
+  <parameter constant_type="number" name="cellRadius" type="constant" value="45"/>
+  <parameter constant_type="number" name="nucleusRadius" type="constant" value="30"/>
   <parameter constant_type="number" name="numberofVP123" type="constant" value="0"/>
   <parameter constant_type="number" name="numberofVP1" type="constant" value="0"/>
   <parameter constant_type="number" name="numberofVP2" type="constant" value="0"/>
