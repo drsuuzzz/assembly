@@ -2,7 +2,7 @@
 <score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:score="http://scoreabm.org/score" label="Assembly" ID="assembly" pluralLabel="Assemblys">
   <attributes label="Number of Genomes" ID="numberofGenomes" pluralLabel="Number of Genomess" sType="INTEGER" defaultValue="1"/>
   <attributes label="Number of Host" ID="numberofHost" pluralLabel="Number of Hosts" sType="INTEGER" defaultValue="2"/>
-  <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="90"/>
+  <attributes label="Number of Ribosomes" ID="numberofRibosomes" pluralLabel="Number of Ribosomess" sType="INTEGER" defaultValue="200"/>
   <attributes label="Number of TF" ID="numberofTF" pluralLabel="Number of TFs" sType="INTEGER" defaultValue="10"/>
   <attributes label="Distance Radius" ID="distanceRadius" pluralLabel="Distance Radiuss" sType="FLOAT" defaultValue="2.1"/>
   <attributes label="Distance Radius Error" ID="distanceRadiusError" pluralLabel="Distance Radius Errors" sType="FLOAT" defaultValue=".2"/>
