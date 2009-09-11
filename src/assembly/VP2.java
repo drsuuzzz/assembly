@@ -62,7 +62,7 @@ public class VP2 extends AgentExtendCont{
 				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
 				if (nearWallGroup(dist, err)) {
 					//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					//if (rand < 0.8) {
+					//if (rand < AgentProbabilities.importVP2) {
 						ContinuousWithin list = new ContinuousWithin(getSpace(),this,(dist+err));
 						Iterator<AgentExtendCont> l = list.query().iterator();
 						while (l.hasNext()) {

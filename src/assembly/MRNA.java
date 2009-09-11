@@ -91,18 +91,18 @@ public class MRNA extends AgentExtendCont {
 		if (tick > spliceTick) {
 			if (state == mState.early) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < .2) {
+				if (rand < AgentProbabilities.splicetag) {
 					setMType(MType.tag);
 					state = mState.complete;
 					this.die();  //remove once tag fully implemented
-				} else if (rand < .8) {
+				} else if (rand < AgentProbabilities.spliceTag) {
 					setMType(MType.Tag);
 					state = mState.complete;
 				}
 				
 			} else if (state == mState.late) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < .2) {
+				if (rand < AgentProbabilities.spliceVP23) {
 					int rand2 = RandomHelper.nextIntFromTo(1, 2);
 					if (rand2 == 1) {
 						setMType(MType.vp2);
@@ -110,7 +110,7 @@ public class MRNA extends AgentExtendCont {
 						setMType(MType.vp3);
 					}
 					state = mState.complete;
-				} else if (rand < .7) {
+				} else if (rand < AgentProbabilities.spliceVP1) {
 					setMType(MType.vp1);
 					state = mState.complete;
 				}
@@ -126,7 +126,7 @@ public class MRNA extends AgentExtendCont {
 				if (getLocation() == Loc.nucleus  && !isMoving()  && state == mState.complete) {
 					if (nearWall(getSpace().getLocation(this))) {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-						if (rand < 0.4) {
+						if (rand < AgentProbabilities.exportmRNA) {
 						//remove from nucleus and add to cytoplasm
 							((CytoNuc)getTheContext()).addToMoveList(this);
 							setMoving(true);
@@ -144,7 +144,7 @@ public class MRNA extends AgentExtendCont {
 			if (tick > deathTick) {
 				if (getLocation() == Loc.cytoplasm) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					if (rand < 0.0001) {
+					if (rand < AgentProbabilities.mRNADeath) {
 						this.die();
 					}
 				}

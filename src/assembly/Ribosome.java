@@ -53,10 +53,13 @@ public class Ribosome extends AgentExtendCont {
 			} else if (boundmRNA.getMType() == MType.tag) {
 				T = new SmTAg();
 			} else if (boundmRNA.getMType() == MType.vp1) {
+				//RunEnvironment.getInstance().pauseRun();
 				T = new VP1();
 			} else if (boundmRNA.getMType() == MType.vp2) {
+				//RunEnvironment.getInstance().pauseRun();
 				T = new VP2();
 			} else if (boundmRNA.getMType() == MType.vp3) {
+				//RunEnvironment.getInstance().pauseRun();
 				T = new VP3();
 			}
 			if (T != null) {
@@ -102,7 +105,7 @@ public class Ribosome extends AgentExtendCont {
 				if (aec instanceof MRNA) {
 					if (!((MRNA)aec).isDead() && this.isBound()) {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-						if (rand < .4) {
+						if (rand < AgentProbabilities.translation) {
 							boundmRNA = (MRNA)aec;
 							((CytoNuc)getTheContext()).addToAddList(this);
 						}

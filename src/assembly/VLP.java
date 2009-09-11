@@ -35,7 +35,7 @@ public class VLP extends AgentExtendCont {
 				//disp = move2();
 			if (this.getNoBound() <=1 && !prev) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.001) {
+				if (rand < AgentProbabilities.VLPDeath) {
 					this.die();
 				} 
 			} 
@@ -74,7 +74,7 @@ public class VLP extends AgentExtendCont {
 			if (getNoBound() == 72) {
 				RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				//if (rand < 0.5) {
+				//if (rand < AgentProbabilities.VLPEgress) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				if (nearWallGroup(dist,err)) {

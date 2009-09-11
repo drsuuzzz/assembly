@@ -429,9 +429,9 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			while (agents.hasNext()) {
 				AgentExtendCont aec = agents.next();
 				if (aec instanceof Genome) {
-					if (((Genome) aec).getState() == GState.replicate) {
+					if (((Genome) aec).getState() == GState.RR) {
 						this.add(aec);
-						((Genome)aec).setState(GState.early);
+						//((Genome)aec).setState(GState.RR);
 						cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 						aec.setMove(schedule.schedule(sparams,aec,"move"));
 						aec.setTranscription(schedule.schedule(sparams,aec,"transcription"));

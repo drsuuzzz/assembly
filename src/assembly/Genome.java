@@ -25,7 +25,7 @@ import repast.simphony.util.ContextUtils;
 
 public class Genome extends AgentExtendCont{
 	
-	public enum GState {early, replicate, late, assembly};
+	public enum GState {RR, early, replicate, late, assembly};
 	private GState state;
 	private double neighborTick;
 	private double lmoveTick;
@@ -49,7 +49,7 @@ public class Genome extends AgentExtendCont{
 		xcriptTick = 0;
 		egressTick = 0;
 		setName("Genome");
-		state = GState.early;
+		state = GState.RR;
 		this.genXYZ();
 		bind1 = null;
 		bind2 = null;
@@ -129,11 +129,15 @@ public class Genome extends AgentExtendCont{
 			double disp[] = {0.0,0.0,0.0};
 			double r=0;
 			double rerr=0;
-			
+			if (state == GState.RR) {
+				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				disp = this.calcDispIfCenter(TranscriptionFactor.class, LgTAg.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
+			}
 			if (state == GState.early) {
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				disp = this.calcDispIfCenter(TranscriptionFactor.class, LgTAg.class, Genome.class, HostGenome.class,r,rerr);
+				disp = this.calcDispIfCenter(TranscriptionFactor.class, TranscriptionFactor.class, Genome.class, HostGenome.class,r,rerr);
 			} else if (state == GState.replicate) {
 
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
@@ -144,7 +148,7 @@ public class Genome extends AgentExtendCont{
 
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
-				disp = this.calcDispIfCenter(LgTAg.class, VP123.class, Genome.class, HostGenome.class,r,rerr);
+				disp = this.calcDispIfCenter(LgTAg.class, LgTAg.class, Genome.class, HostGenome.class,r,rerr);
 				
 			} else if (state == GState.assembly) {
 
@@ -200,6 +204,7 @@ public class Genome extends AgentExtendCont{
 		mrna.setMove(schedule.schedule(sparams,mrna,"move"));
 		mrna.setExport(schedule.schedule(sparams,mrna,"export"));
 		mrna.setSplice(schedule.schedule(sparams,mrna,"splice"));
+		state = GState.RR;
 	}
 	
 	public void transcription() {
@@ -215,7 +220,7 @@ public class Genome extends AgentExtendCont{
 					if (aec instanceof TranscriptionFactor) {
 						if (aec.isBound()) {
 							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-							if (rand < 0.1) {
+							if (rand < AgentProbabilities.transcribeEarly) {
 								//MRNA mrna = new MRNA();
 								//mrna.setState(mState.early);
 								//mrna.setLocation(Loc.nucleus);
@@ -249,11 +254,12 @@ public class Genome extends AgentExtendCont{
 						}
 					}
 				}
-				if (dfound && lfound) {
+				if (dfound) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-					if (rand < .2) {
+					if (rand < AgentProbabilities.transcribeGenome) {
 						Genome g = new Genome();
-						g.setState(GState.replicate);
+						//g.setState(GState.replicate);
+						g.setState(GState.RR);
 						g.setSpace(this.getSpace());
 						g.setTheContext(this.getTheContext());
 						g.setLocation(Loc.nucleus);
@@ -264,22 +270,29 @@ public class Genome extends AgentExtendCont{
 						laec.setBound(false);
 						this.setNoBound(0);
 						this.clearBoundProteins();
-						state = GState.late;
+						//state = GState.late;
+						state = GState.RR;
 					}
 				}
 			} else if (state == GState.late) {
 				while (l.hasNext()) {
 					AgentExtendCont aec = l.next();
 					if (aec instanceof LgTAg) {
+						if (aec.isBound()) {
+							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+							if (rand < AgentProbabilities.transcribeLate) {
+								((CytoNuc)getTheContext()).addToAddList(this);
+								aec.largeStepAwayFrom(this);
+								aec.setBound(false);
+								this.setNoBound(0);
+							}
+						}
 						//MRNA m = new MRNA();
 						//m.setState(mState.late);
 						//m.setLocation(Loc.nucleus);
 						//m.setSpace(this.getSpace());
 						//m.setTheContext(this.getTheContext());
-						((CytoNuc)getTheContext()).addToAddList(this);
-						aec.largeStepAwayFrom(this);
-						aec.setBound(false);
-						this.setNoBound(0);
+						
 					}
 				}
 			}
@@ -293,7 +306,7 @@ public class Genome extends AgentExtendCont{
 			if (getNoBound() == 72) {
 				RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				//if (rand < 0.5) {
+				//if (rand < AgentProbabilities.BKVEgress) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 				double err = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				if (nearWallGroup(dist,err)) {

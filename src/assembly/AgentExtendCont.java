@@ -469,6 +469,20 @@ public class AgentExtendCont {
 			
 			if (obj.getClass().getName().equals(agentType1.getName()) || obj.getClass().getName().equals(agentType2.getName())) {
 				if (obj instanceof Genome) {
+					if (((Genome)obj).getState() == GState.RR) {
+						if (this instanceof TranscriptionFactor) {
+							((Genome)obj).setState(GState.early);
+						} else if (this instanceof LgTAg) {
+							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+							if (rand < AgentProbabilities.replicate) {
+								((Genome)obj).setState(GState.replicate);
+							} else {
+								((Genome)obj).setState(GState.late);
+							}
+						} else if (this instanceof VP123) {
+							((Genome)obj).setState(GState.assembly);
+						}
+					}
 					if (((Genome)obj).getState()==GState.replicate) {
 						max = 2;
 						if (!((Genome)obj).needAgent(this)) {
@@ -477,7 +491,7 @@ public class AgentExtendCont {
 							((Genome)obj).setBoundProteins(this);
 						}
 					}
-					if (((Genome)obj).getState() == GState.early) {
+					/*if (((Genome)obj).getState() == GState.early) {
 						if (this instanceof LgTAg) {
 							((Genome)obj).setState(GState.replicate);
 						}
@@ -486,7 +500,7 @@ public class AgentExtendCont {
 						if (this instanceof VP123) {
 							((Genome)obj).setState(GState.assembly);
 						}
-					}
+					}*/
 					if (((Genome)obj).getState() == GState.assembly) {
 						if (!((Genome)obj).needAgent(this)) {
 							break;
@@ -612,7 +626,7 @@ public class AgentExtendCont {
 				center[1] = cohesionv[1]/count;
 				center[2] = cohesionv[2]/count;
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-				if (rand < 0.1) {
+				if (rand < AgentProbabilities.makeVLP) {
 					makeVLP(center);
 					setBound(true);
 					setBoundTo(BoundTo.vlp);
@@ -662,6 +676,12 @@ public class AgentExtendCont {
 	
 	public double[] calcDispIfCenter(Class centerType1, Class centerType2, Class agentType1,Class agentType2,
 			double distc, double cerr) {
+		return calcDispIfCenter(centerType1, centerType2, centerType2, agentType1, agentType2, distc, cerr);
+		
+	}
+	
+	public double[] calcDispIfCenter(Class centerType1, Class centerType2, Class centerType3, Class agentType1,Class agentType2,
+			double distc, double cerr) {
 		double coord[] = {0,0,0};
 		NdPoint thispt = this.getSpace().getLocation(this);
 
@@ -694,7 +714,9 @@ public class AgentExtendCont {
 		while(neighbors.hasNext()){
 			AgentExtendCont aec = (AgentExtendCont)neighbors.next();
 
-			if (aec.getClass().getName().equals(centerType1.getName()) || aec.getClass().getName().equals(centerType2.getName())) {
+			if (aec.getClass().getName().equals(centerType1.getName()) || 
+					aec.getClass().getName().equals(centerType2.getName()) ||
+					aec.getClass().getName().equals(centerType3.getName())) {
 				if (aln) {
 					if (getNoBound() < max || (getNoBound() == max && aec.isBound())) {
 						

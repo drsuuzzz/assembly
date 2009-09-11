@@ -58,7 +58,7 @@ public class HostGenome extends AgentExtendCont {
 				if (aec instanceof LgTAg) {
 					if (aec.isBound()) {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-						if (rand < 0.001) {
+						if (rand < AgentProbabilities.transcribeDNAPol) {
 							DNAPol pol = new DNAPol();
 							pol.setTheContext(this.getTheContext());
 							pol.setSpace(this.getSpace());
