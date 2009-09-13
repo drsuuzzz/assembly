@@ -159,6 +159,7 @@ public class Genome extends AgentExtendCont{
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 				clearBoundProteins();
+				state = GState.RR;
 			} else {
 				double tmp[] = new double[3];
 				NdPoint thispt = getSpace().getLocation(this);
@@ -266,8 +267,10 @@ public class Genome extends AgentExtendCont{
 						((CytoNuc)getTheContext()).addToAddList(g);
 						daec.largeStepAwayFrom(this);
 						daec.setBound(false);
-						laec.largeStepAwayFrom(this);
-						laec.setBound(false);
+						if (laec != null) {
+							laec.largeStepAwayFrom(this);
+							laec.setBound(false);
+						}
 						this.setNoBound(0);
 						this.clearBoundProteins();
 						//state = GState.late;

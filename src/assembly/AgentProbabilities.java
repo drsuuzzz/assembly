@@ -3,7 +3,7 @@ package assembly;
 public class AgentProbabilities {
 	
 	public static double makeVLP = 0.1;
-	public static double replicate = 0.4;
+	public static double replicate = 0.2;
 	public static double DNAPolDeath = 0.00001;
 	public static double transcribeEarly = 0.1;
 	public static double transcribeGenome = 0.01;
