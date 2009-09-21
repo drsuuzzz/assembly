@@ -83,25 +83,32 @@ public class Genome extends AgentExtendCont{
 				need = true;
 			}
 		} else {
-		if (bind1 != null) {
-			if (bind1 instanceof LgTAg && bind2 == null) {
-				if (agent instanceof DNAPol) {
-					need = true;
-				} else if (bind1.equals(agent)) {
+			/*if (bind1 != null) {
+				if (bind1 instanceof LgTAg && bind2 == null) {
+					if (agent instanceof DNAPol) {
+						need = true;
+					} else if (bind1.equals(agent)) {
+						need = true;
+					}
+				} else if (bind1 instanceof DNAPol && bind2 == null) {
+					if (agent instanceof LgTAg) {
+						need = true;
+					} else if (bind1.equals(agent)) {
+						need = true;
+					}
+				} else if (bind1.equals(agent) || bind2.equals(agent)) {
 					need = true;
 				}
-			} else if (bind1 instanceof DNAPol && bind2 == null) {
-				if (agent instanceof LgTAg) {
-					need = true;
-				} else if (bind1.equals(agent)) {
-					need = true;
-				}
-			} else if (bind1.equals(agent) || bind2.equals(agent)) {
+			} else if (agent instanceof DNAPol || agent instanceof LgTAg){
 				need = true;
+			}*/
+			if (agent instanceof LgTAg) {
+				need = true;
+			} else if (agent instanceof DNAPol) {
+				if (this.getNoBound() >= 6) {
+					need = true;
+				}
 			}
-		} else if (agent instanceof DNAPol || agent instanceof LgTAg){
-			need = true;
-		}
 		}
 		
 		return need;
@@ -186,7 +193,7 @@ public class Genome extends AgentExtendCont{
 		MRNA mrna = new MRNA();
 		if (state == GState.early) {
 			mrna.setState(mState.early);
-		} else if (state == GState.late) {
+		} else {
 			mrna.setState(mState.late);
 		}
 		mrna.setLocation(Loc.nucleus);
@@ -205,7 +212,9 @@ public class Genome extends AgentExtendCont{
 		mrna.setMove(schedule.schedule(sparams,mrna,"move"));
 		mrna.setExport(schedule.schedule(sparams,mrna,"export"));
 		mrna.setSplice(schedule.schedule(sparams,mrna,"splice"));
-		state = GState.RR;
+		if (state == GState.early) {
+			state = GState.RR;
+		}
 	}
 	
 	public void transcription() {
@@ -237,13 +246,15 @@ public class Genome extends AgentExtendCont{
 					} 
 				}
 			} else if (state == GState.replicate) {
-				boolean dfound = false;
-				boolean lfound = false;
+				/*boolean dfound = false;
+				boolean lfound = false;*/
 				AgentExtendCont daec = null;
 				AgentExtendCont laec = null;
+				int dcount = 0;
+				int tcount = 0;
 				while (l.hasNext()) {
 					AgentExtendCont aec = l.next();
-					if (aec instanceof DNAPol && !dfound) {
+					/*if (aec instanceof DNAPol && !dfound) {
 						if (aec.isBound()) {
 							daec = aec;
 							dfound = true;
@@ -253,9 +264,14 @@ public class Genome extends AgentExtendCont{
 							laec = aec;
 							lfound = true;
 						}
+					}*/
+					if (aec instanceof DNAPol) {
+						dcount++;
+					} else if (aec instanceof LgTAg) {
+						tcount++;
 					}
 				}
-				if (dfound) {
+				if (/*dfound*/dcount+tcount == 7) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < AgentProbabilities.transcribeGenome) {
 						Genome g = new Genome();
@@ -265,16 +281,28 @@ public class Genome extends AgentExtendCont{
 						g.setTheContext(this.getTheContext());
 						g.setLocation(Loc.nucleus);
 						((CytoNuc)getTheContext()).addToAddList(g);
-						daec.largeStepAwayFrom(this);
+						l = list.query().iterator();
+						while (l.hasNext()) {
+							AgentExtendCont a = l.next();
+							a.largeStepAwayFrom(this);
+							a.setBound(false);
+							a.setBoundTo(BoundTo.none);
+						}
+						/*daec.largeStepAwayFrom(this);
 						daec.setBound(false);
 						if (laec != null) {
 							laec.largeStepAwayFrom(this);
 							laec.setBound(false);
-						}
+						}*/
 						this.setNoBound(0);
 						this.clearBoundProteins();
 						//state = GState.late;
 						state = GState.RR;
+					}
+				} else if (dcount+tcount >= 6) {
+					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+					if (rand < AgentProbabilities.transcribeLate) {
+						((CytoNuc)getTheContext()).addToAddList(this);
 					}
 				}
 			} else if (state == GState.late) {
@@ -307,7 +335,7 @@ public class Genome extends AgentExtendCont{
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > egressTick) {
 			if (getNoBound() == 72) {
-				RunEnvironment.getInstance().pauseRun();
+				//RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				//if (rand < AgentProbabilities.BKVEgress) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");

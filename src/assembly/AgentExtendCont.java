@@ -254,16 +254,16 @@ public class AgentExtendCont {
 		
 		if (this.getLocation() == Loc.cytoplasm) {
 			if (d < min) {
-				double s = min + (min-d);
+				double s = (min + (min-d));
 				AgentGeometry.scale(v, s);
 			}
 			if (d > max) {
-				double s = max - (d-max);
+				double s = (max - (d-max));
 				AgentGeometry.scale(v, s);
 			}
 		} else if (this.getLocation() == Loc.nucleus) {
 			if (d > max) {
-				double s = max - (d-max);
+				double s = (max - (d-max));
 				AgentGeometry.scale(v, s);
 			}
 		}
@@ -473,18 +473,22 @@ public class AgentExtendCont {
 						if (this instanceof TranscriptionFactor) {
 							((Genome)obj).setState(GState.early);
 						} else if (this instanceof LgTAg) {
-							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
-							if (rand < AgentProbabilities.replicate) {
-								((Genome)obj).setState(GState.replicate);
-							} else {
-								((Genome)obj).setState(GState.late);
-							}
+							//if (((CytoNuc)getTheContext()).getNoGenome() > 1) {
+								///double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+								//if (rand < AgentProbabilities.replicate) {
+									((Genome)obj).setState(GState.replicate);
+								//} else {
+									//((Genome)obj).setState(GState.late);
+								//}
+							//} else {
+								//((Genome)obj).setState(GState.late);
+							//}
 						} else if (this instanceof VP123) {
 							((Genome)obj).setState(GState.assembly);
 						}
 					}
 					if (((Genome)obj).getState()==GState.replicate) {
-						max = 2;
+						max = 7;
 						if (!((Genome)obj).needAgent(this)) {
 							break;
 						} else {
@@ -700,7 +704,7 @@ public class AgentExtendCont {
 			max = 20;
 		} else if (this instanceof Genome) {
 			if (((Genome)this).getState()==GState.replicate) {
-				max = 2;
+				max = 7;
 			} else if (((Genome)this).getState() == GState.assembly) {
 				max = 72;
 			} else {

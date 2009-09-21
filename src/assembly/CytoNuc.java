@@ -219,6 +219,27 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			vp3.setExport(schedule.schedule(sparamsodd,vp3,"export"));
 
 		}
+		int numtag = 0;//20;
+		for (int i = 0; i < numtag; i++) {
+			LgTAg lt = new LgTAg();
+			lt.setTheContext(this);
+			lt.setSpace(cspace);
+			lt.setLocation(Loc.nucleus);
+			this.add(lt);
+			cspace.moveTo(lt, AgentMove.adjustPointToSpace(lt));
+			lt.setMove(schedule.schedule(sparamsodd,lt,"move"));
+		}
+		int numdna = 0;//10;
+		for (int i = 0; i < numdna; i++) {
+			DNAPol dnap = new DNAPol();
+			dnap.setTheContext(this);
+			dnap.setSpace(cspace);
+			dnap.setLocation(Loc.nucleus);
+			this.add(dnap);
+			cspace.moveTo(dnap, AgentMove.adjustPointToSpace(dnap));
+			dnap.setMove(schedule.schedule(sparamsodd,dnap,"move"));
+			dnap.setDeath(schedule.schedule(sparamsodd, dnap,"death"));
+		}
 	}
 	
 	public int getVirions() {

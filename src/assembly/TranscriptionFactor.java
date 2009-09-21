@@ -24,6 +24,8 @@ public class TranscriptionFactor extends AgentExtendCont {
 			double disp[] = this.calcDisplacement(Genome.class, Genome.class,radius,rerr,vpradius,vperr);
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
+				this.setBoundTo(BoundTo.none);
+				this.setBound(false);
 			} else {
 				//double tmp[] = new double[3];
 				NdPoint thispt = getSpace().getLocation(this);
