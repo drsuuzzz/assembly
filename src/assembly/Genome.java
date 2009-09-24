@@ -336,6 +336,9 @@ public class Genome extends AgentExtendCont{
 		if (tick > egressTick) {
 			if (getNoBound() == 72) {
 				//RunEnvironment.getInstance().pauseRun();
+				if (RunEnvironment.getInstance().isBatch()) {
+					RunEnvironment.getInstance().endRun();
+				}
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				//if (rand < AgentProbabilities.BKVEgress) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
