@@ -189,7 +189,7 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
-	public void makeBabyMRNA() {
+/*	public void makeBabyMRNA() {
 		MRNA mrna = new MRNA();
 		if (state == GState.early) {
 			mrna.setState(mState.early);
@@ -215,7 +215,7 @@ public class Genome extends AgentExtendCont{
 		if (state == GState.early) {
 			state = GState.RR;
 		}
-	}
+	}*/
 	
 	public void transcription() {
 		double tick = RepastEssentials.GetTickCount();
@@ -231,15 +231,19 @@ public class Genome extends AgentExtendCont{
 						if (aec.isBound()) {
 							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 							if (rand < AgentProbabilities.transcribeEarly) {
-								//MRNA mrna = new MRNA();
-								//mrna.setState(mState.early);
-								//mrna.setLocation(Loc.nucleus);
-								//mrna.setTheContext(this.getTheContext());
-								//mrna.setSpace(this.getSpace());
-								((CytoNuc)getTheContext()).addToAddList(this);
+								MRNA mrna = new MRNA();
+								mrna.setState(mState.early);
+								mrna.setLocation(Loc.nucleus);
+								mrna.setTheContext(this.getTheContext());
+								mrna.setSpace(this.getSpace());
+								this.getTheContext().add(mrna);
+								this.getSpace().moveTo(mrna, this.getSpace().getLocation(this).toDoubleArray(null));
+								//((CytoNuc)getTheContext()).addToAddList(this);
+								((CytoNuc)getTheContext()).addToAddList(mrna);
 								aec.largeStepAwayFrom(this);
 								aec.setBound(false);
 								this.setNoBound(0);
+								//this.setState(GState.RR); //move rule will take care of this
 								break;
 							}
 						}
@@ -280,6 +284,8 @@ public class Genome extends AgentExtendCont{
 						g.setSpace(this.getSpace());
 						g.setTheContext(this.getTheContext());
 						g.setLocation(Loc.nucleus);
+						this.getTheContext().add(g);
+						this.getSpace().moveTo(g, this.getSpace().getLocation(this).toDoubleArray(null));
 						((CytoNuc)getTheContext()).addToAddList(g);
 						l = list.query().iterator();
 						while (l.hasNext()) {
@@ -312,17 +318,20 @@ public class Genome extends AgentExtendCont{
 						if (aec.isBound()) {
 							double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 							if (rand < AgentProbabilities.transcribeLate) {
-								((CytoNuc)getTheContext()).addToAddList(this);
+								MRNA m = new MRNA();
+								m.setState(mState.late);
+								m.setLocation(Loc.nucleus);
+								m.setSpace(this.getSpace());
+								m.setTheContext(this.getTheContext());
+								this.getTheContext().add(m);
+								this.getSpace().moveTo(m, this.getSpace().getLocation(this).toDoubleArray(null));
+								((CytoNuc)getTheContext()).addToAddList(m);
 								aec.largeStepAwayFrom(this);
 								aec.setBound(false);
 								this.setNoBound(0);
 							}
 						}
-						//MRNA m = new MRNA();
-						//m.setState(mState.late);
-						//m.setLocation(Loc.nucleus);
-						//m.setSpace(this.getSpace());
-						//m.setTheContext(this.getTheContext());
+						
 						
 					}
 				}

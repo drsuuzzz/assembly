@@ -53,6 +53,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 	public CytoNuc() {
 		super("CytoNuc");
 		
+		AgentProbabilities.SetAgentProbabilities();
 		fileTick = 0;
 		moveTick = 0;
 		addTick = 0;
@@ -451,31 +452,37 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 				AgentExtendCont aec = agents.next();
 				if (aec instanceof Genome) {
 					if (((Genome) aec).getState() == GState.RR) {
-						this.add(aec);
+						//this.add(aec);
 						//((Genome)aec).setState(GState.RR);
-						cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+						//cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+						//aec.largeStepAwayFrom(aec);
 						aec.setMove(schedule.schedule(sparams,aec,"move"));
 						aec.setTranscription(schedule.schedule(sparams,aec,"transcription"));
 						aec.setEgress(schedule.schedule(sparams,aec,"egress"));
-					} else {
-						((Genome)aec).makeBabyMRNA();
-					}
-				}/* else if (aec instanceof MRNA) {
-					this.add(aec);
-					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+					} /*else {
+						//((Genome)aec).makeBabyMRNA();
+						aec.largeStepAwayFrom(aec);
+						aec.setMove(schedule.schedule(sparams,aec,"move"));
+						aec.setExport(schedule.schedule(sparams,aec,"export"));
+						aec.setSplice(schedule.schedule(sparams,aec,"splice"));
+					}*/
+				} else if (aec instanceof MRNA) {
+					//this.add(aec);
+					//cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+					//aec.largeStepAwayFrom(aec);
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
 					aec.setExport(schedule.schedule(sparams,aec,"export"));
 					aec.setSplice(schedule.schedule(sparams,aec,"splice"));
-				} */else if (aec instanceof DNAPol) {
+				} else if (aec instanceof DNAPol) {
 					this.add(aec);
 					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.setMove(schedule.schedule(sparams,aec,"move"));
 					aec.setDeath(schedule.schedule(sparams,aec,"death"));
-				} else if (aec instanceof Ribosome) {
+				} /*else if (aec instanceof Ribosome) {
 					((Ribosome)aec).makeProtein();
-				} else {
-					this.add(aec);
-					cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
+				}*/ else {
+					//this.add(aec);
+					//cspace.moveTo(aec, AgentMove.adjustPointToSpace(aec));
 					aec.setMove(schedule.schedule(sparams, aec, "move"));
 					if (aec instanceof LgTAg || aec instanceof VP2 || aec instanceof VP3) {
 						aec.setExport(schedule.schedule(sparams, aec, "export"));

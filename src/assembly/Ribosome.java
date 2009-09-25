@@ -15,14 +15,14 @@ public class Ribosome extends AgentExtendCont {
 	
 	private double moveTick;
 	private double tranTick;
-	private MRNA boundmRNA;
+	//private MRNA boundmRNA;
 	
 	public Ribosome() {
 		super();
 		moveTick=0;
 		tranTick = 0;
 		genXYZ();
-		boundmRNA = null;
+		//boundmRNA = null;
 		setName("Ribosome");
 	}
 
@@ -45,20 +45,20 @@ public class Ribosome extends AgentExtendCont {
 		}
 	}
 	
-	public void makeProtein() {
+	public AgentExtendCont makeProtein(MRNA mrna) {
 		AgentExtendCont T=null;
-		if (boundmRNA != null) {
-			if (boundmRNA.getMType() == MType.Tag) {
+		//if (boundmRNA != null) {
+			if (mrna.getMType() == MType.Tag) {
 				T = new LgTAg();
-			} else if (boundmRNA.getMType() == MType.tag) {
+			} else if (mrna.getMType() == MType.tag) {
 				T = new SmTAg();
-			} else if (boundmRNA.getMType() == MType.vp1) {
+			} else if (mrna.getMType() == MType.vp1) {
 				//RunEnvironment.getInstance().pauseRun();
 				T = new VP1();
-			} else if (boundmRNA.getMType() == MType.vp2) {
+			} else if (mrna.getMType() == MType.vp2) {
 				//RunEnvironment.getInstance().pauseRun();
 				T = new VP2();
-			} else if (boundmRNA.getMType() == MType.vp3) {
+			} else if (mrna.getMType() == MType.vp3) {
 				//RunEnvironment.getInstance().pauseRun();
 				T = new VP3();
 			}
@@ -67,30 +67,31 @@ public class Ribosome extends AgentExtendCont {
 				T.setTheContext(getTheContext());
 				T.setLocation(Loc.cytoplasm);
 				getTheContext().add(T);
-				double[] pt = AgentMove.bounceInLocation(AgentMove.addAtRandomLocationNextTo(this),this.getLocation());
-				getSpace().moveTo(T, pt);
-				T.largeStepAwayFrom(this);
-				this.largeStepAwayFrom(boundmRNA);
-				ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-				double start = RepastEssentials.GetTickCount();
-				if ((int)start %2 == 0) {
-					start = start +1.0f;
-				}
-				ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
-				T.setMove(schedule.schedule(sparams, T, "move"));
-				if (T instanceof LgTAg || T instanceof VP2 || T instanceof VP3) {
-					T.setExport(schedule.schedule(sparams, T, "export"));
-				}
-				if (T instanceof LgTAg) {
+				//double[] pt = AgentMove.bounceInLocation(AgentMove.addAtRandomLocationNextTo(this),this.getLocation());
+				getSpace().moveTo(T, this.getSpace().getLocation(this).toDoubleArray(null));
+				//T.largeStepAwayFrom(this);
+				this.largeStepAwayFrom(mrna);
+				//ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+				//double start = RepastEssentials.GetTickCount();
+				//if ((int)start %2 == 0) {
+					//start = start +1.0f;
+				//}
+				//ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+				//T.setMove(schedule.schedule(sparams, T, "move"));
+				//if (T instanceof LgTAg || T instanceof VP2 || T instanceof VP3) {
+					//T.setExport(schedule.schedule(sparams, T, "export"));
+				//}
+				//if (T instanceof LgTAg) {
 					//T.setDeath(schedule.schedule(sparams, T, "death"));
-				}
-				if (boundmRNA.getNoBound()>0) {
-					boundmRNA.setNoBound(boundmRNA.getNoBound()-1);
-				} 
+				//}
+				//if (boundmRNA.getNoBound()>0) {
+					//boundmRNA.setNoBound(boundmRNA.getNoBound()-1);
+				//} 
 				this.setBound(false);
-				boundmRNA = null;
+				//boundmRNA = null;
 			}
-		}
+		//}
+			return T;
 	}
 	
 	public void translation() {
@@ -106,8 +107,9 @@ public class Ribosome extends AgentExtendCont {
 					if (!((MRNA)aec).isDead() && this.isBound()) {
 						double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 						if (rand < AgentProbabilities.translation) {
-							boundmRNA = (MRNA)aec;
-							((CytoNuc)getTheContext()).addToAddList(this);
+							//boundmRNA = (MRNA)aec;
+							AgentExtendCont protein = makeProtein((MRNA)aec);
+							((CytoNuc)getTheContext()).addToAddList(protein);
 						}
 						break;
 					}
