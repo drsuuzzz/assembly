@@ -28,7 +28,7 @@
   <attributes label="Probabily DNA Pol Death" ID="DNAPolDeath" pluralLabel="Probabily DNA Pol Deaths" sType="FLOAT" defaultValue="0.00005"/>
   <attributes label="Probabily Transcribe Early" ID="transcribeEarly" pluralLabel="Probabily Transcribe Earlies" sType="FLOAT" defaultValue="0.1"/>
   <attributes label="Probabily Transcribe Genome" ID="transcribeGenome" pluralLabel="Probabily Transcribe Genomes" sType="FLOAT" defaultValue="0.001"/>
-  <attributes label="Probabily Transcribe Late" ID="transcribeLate" pluralLabel="Probabily Transcribe Lates" sType="FLOAT" defaultValue="0.001"/>
+  <attributes label="Probabily Transcribe Late" ID="transcribeLate" pluralLabel="Probabily Transcribe Lates" sType="FLOAT" defaultValue="0.01"/>
   <attributes label="Probabily Transcribe DNA Pol" ID="transcribeDNAPol" pluralLabel="Probabily Transcribe DNA Pols" sType="FLOAT" defaultValue="0.001"/>
   <attributes label="Probabily BKV Egress" ID="BKVEgress" pluralLabel="Probabily BKV Egresss" sType="FLOAT" defaultValue="0.5"/>
   <attributes label="Probabily VLP Egress" ID="VLPEgress" pluralLabel="Probabily VLP Egresss" sType="FLOAT" defaultValue="0.5"/>
