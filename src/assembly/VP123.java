@@ -80,8 +80,14 @@ public class VP123 extends AgentExtendCont{
 				setBound(false);
 				setBoundTo(BoundTo.none);
 			} else {
-				AgentMove.moveByDisplacement(this, disp);
-				//getSpace().moveByDisplacement(this, disp);
+				//AgentMove.moveByDisplacement(this, disp);
+				NdPoint thispt = getSpace().getLocation(this);
+				NdPoint pt = AgentMove.moveByDisplacement(this, disp);
+				if (pt != null) {
+					this.setX(pt.getX()-thispt.getX());
+					this.setY(pt.getY()-thispt.getY());
+					this.setZ(pt.getZ()-thispt.getZ());
+				}
 			}
 			moveTick = tick;
 		}

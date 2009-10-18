@@ -4,6 +4,7 @@ import assembly.AgentExtendCont.Loc;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.space.continuous.NdPoint;
 
 public class DNAPol extends AgentExtendCont {
 	
@@ -29,7 +30,14 @@ public class DNAPol extends AgentExtendCont {
 				randomWalk();
 			} else {
 				//getSpace().moveByDisplacement(this, disp);
-				AgentMove.moveByDisplacement(this, disp);
+				//AgentMove.moveByDisplacement(this, disp);
+				NdPoint thispt = getSpace().getLocation(this);
+				NdPoint pt = AgentMove.moveByDisplacement(this, disp);
+				if (pt != null) {
+					this.setX(pt.getX()-thispt.getX());
+					this.setY(pt.getY()-thispt.getY());
+					this.setZ(pt.getZ()-thispt.getZ());
+				}
 			}
 			moveTick = tick;
 		}

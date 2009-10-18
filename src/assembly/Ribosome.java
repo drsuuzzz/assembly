@@ -10,6 +10,7 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.query.space.continuous.ContinuousWithin;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.space.continuous.NdPoint;
 
 public class Ribosome extends AgentExtendCont {
 	
@@ -38,8 +39,14 @@ public class Ribosome extends AgentExtendCont {
 			if (disp[0] == 0.0f && disp[1] == 0.0f && disp[2] == 0.0f) {
 				randomWalk();
 			} else {
-				//getSpace().moveByDisplacement(this, disp);
-				AgentMove.moveByDisplacement(this, disp);
+				//AgentMove.moveByDisplacement(this, disp);
+				NdPoint thispt = getSpace().getLocation(this);
+				NdPoint pt = AgentMove.moveByDisplacement(this, disp);
+				if (pt != null) {
+					this.setX(pt.getX()-thispt.getX());
+					this.setY(pt.getY()-thispt.getY());
+					this.setZ(pt.getZ()-thispt.getZ());
+				}
 			}
 			moveTick = tick;
 		}

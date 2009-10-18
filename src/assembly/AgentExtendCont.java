@@ -20,6 +20,7 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.ui.probe.ProbeID;
 import repast.simphony.util.ContextUtils;
+import repast.simphony.util.collections.IndexedIterable;
 
 public class AgentExtendCont {
 	
@@ -384,40 +385,47 @@ public class AgentExtendCont {
 	
 	public void makeVLP(double[] center) {
 		
-		double v[] = {0.0,0.0,0.0};
-		v[0] = center[0] - getSpace().getLocation(this).getX();
-		v[1] = center[1] - getSpace().getLocation(this).getY();
-		v[2] = center[2] - getSpace().getLocation(this).getZ();
+		int n = ((CytoNuc)getTheContext()).getNoVP123();
+		int m = n/72;
+		IndexedIterable list = this.getTheContext().getObjects(VLP.class);
+		int size = list.size();
+		if (size < m) {
+			double v[] = {0.0,0.0,0.0};
+			v[0] = center[0] - getSpace().getLocation(this).getX();
+			v[1] = center[1] - getSpace().getLocation(this).getY();
+			v[2] = center[2] - getSpace().getLocation(this).getZ();
 		
-		double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");;
-		double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+			double r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");;
+			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 		
-		AgentGeometry.scale(v, (r-rerr));
-		v[0] = getSpace().getLocation(this).getX() + v[0];
-		v[1] = getSpace().getLocation(this).getY() + v[1];
-		v[2] = getSpace().getLocation(this).getZ() + v[2];
-		VLP vlp = new VLP();
-		vlp.setTheContext(this.getTheContext());
-		vlp.setSpace(this.getSpace());
-		this.getTheContext().add(vlp);
-		getSpace().moveTo(vlp, v);
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
-		double starteven;
-		if ((int)start%2==0) {
-			start = start + 1;
-		}
+			AgentGeometry.scale(v, (r-rerr));
+			v[0] = getSpace().getLocation(this).getX() + v[0];
+			v[1] = getSpace().getLocation(this).getY() + v[1];
+			v[2] = getSpace().getLocation(this).getZ() + v[2];
+			VLP vlp = new VLP();
+			vlp.setTheContext(this.getTheContext());
+			vlp.setSpace(this.getSpace());
+			this.getTheContext().add(vlp);
+			getSpace().moveTo(vlp, v);
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+			double start = RepastEssentials.GetTickCount() <= 0 ? 1 : RepastEssentials.GetTickCount();
+			double starteven;
+			if ((int)start%2==0) {
+				start = start + 1;
+			}
 		//odd tick
-		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
-		this.setMove(schedule.schedule(sparams,vlp,"move"));
-		this.setEgress(schedule.schedule(sparams, vlp, "egress"));
+			ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
+			this.setMove(schedule.schedule(sparams,vlp,"move"));
+			this.setEgress(schedule.schedule(sparams, vlp, "egress"));
+			System.out.println("new vlp");
+		}
 	}	
 	
 	public boolean neighborCenterChk (AgentExtendCont center, ContinuousWithin list, double cdist, double ndist, double cerr, double nerr) {
 	
 		boolean retval = true;
 		
-		if (center instanceof VLP) {
+		/*if (center instanceof VLP) {
 			if (center.getNoBound() >1) {
 				retval = false;
 				Iterator l = list.query().iterator();
@@ -436,7 +444,7 @@ public class AgentExtendCont {
 					}
 				}
 			}
-		}
+		}*/
 		
 		return retval;
 	}
@@ -484,7 +492,8 @@ public class AgentExtendCont {
 								//((Genome)obj).setState(GState.late);
 							//}
 						} else if (this instanceof VP123) {
-							((Genome)obj).setState(GState.assembly);
+							if (((Genome)obj).isHasReplicated())
+								((Genome)obj).setState(GState.assembly);
 						}
 					}
 					if (((Genome)obj).getState()==GState.replicate) {
@@ -601,7 +610,7 @@ public class AgentExtendCont {
 				if (obj instanceof VP123 /*|| this instanceof VP1*/) {
 					AgentExtendCont vp = (AgentExtendCont) obj;
 					NdPoint vpt = space.getLocation(vp);
-					if (vp.getBoundTo()!= BoundTo.genome) {
+					if (vp.getBoundTo()!= BoundTo.genome && vp.getBoundTo() != BoundTo.vlp) {
 						if (coh) {
 							cohesionv[0] += vpt.getX();
 							cohesionv[1] += vpt.getY();
@@ -636,8 +645,8 @@ public class AgentExtendCont {
 					setBoundTo(BoundTo.vlp);
 				}
 			} else {
-				setBound(false);
-				setBoundTo(BoundTo.none);
+				//setBound(false);
+				//setBoundTo(BoundTo.none);
 			}
 			if (count > 0) {
 				if (coh) {

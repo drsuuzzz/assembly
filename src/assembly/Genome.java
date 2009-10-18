@@ -34,6 +34,7 @@ public class Genome extends AgentExtendCont{
 	private double xcriptTick;
 	private double repTick;
 	private double egressTick;
+	private boolean hasReplicated;
 	
 	private AgentExtendCont bind1;
 	private AgentExtendCont bind2;
@@ -53,8 +54,13 @@ public class Genome extends AgentExtendCont{
 		this.genXYZ();
 		bind1 = null;
 		bind2 = null;
+		hasReplicated=false;
 	}
 	
+	public boolean isHasReplicated() {
+		return hasReplicated;
+	}
+
 	public void setBoundProteins (AgentExtendCont agent) {
 		//routine only necessary for Tag recruitment of DNA Pol
 		if (bind1 == null) {
@@ -189,34 +195,6 @@ public class Genome extends AgentExtendCont{
 		}
 	}
 	
-/*	public void makeBabyMRNA() {
-		MRNA mrna = new MRNA();
-		if (state == GState.early) {
-			mrna.setState(mState.early);
-		} else {
-			mrna.setState(mState.late);
-		}
-		mrna.setLocation(Loc.nucleus);
-		this.getTheContext().add(mrna);
-		mrna.setTheContext(this.getTheContext());
-		mrna.setSpace(this.getSpace());
-		double[] pt = AgentMove.bounceInLocation(AgentMove.addAtRandomLocationNextTo(this),mrna.getLocation());
-		getSpace().moveTo(mrna, pt);
-		mrna.largeStepAwayFrom(this);
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double start = RepastEssentials.GetTickCount();
-		if ((int)start %2 == 0) {
-			start = start +1.0f;
-		}
-		ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
-		mrna.setMove(schedule.schedule(sparams,mrna,"move"));
-		mrna.setExport(schedule.schedule(sparams,mrna,"export"));
-		mrna.setSplice(schedule.schedule(sparams,mrna,"splice"));
-		if (state == GState.early) {
-			state = GState.RR;
-		}
-	}*/
-	
 	public void transcription() {
 		double tick = RepastEssentials.GetTickCount();
 		if (xcriptTick < tick && !isDead()) {
@@ -304,11 +282,19 @@ public class Genome extends AgentExtendCont{
 						this.clearBoundProteins();
 						//state = GState.late;
 						state = GState.RR;
+						hasReplicated = true;
 					}
-				} else if (dcount+tcount >= 6) {
+				} else if (tcount >= 1) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < AgentProbabilities.transcribeLate) {
-						((CytoNuc)getTheContext()).addToAddList(this);
+						MRNA m = new MRNA();
+						m.setState(mState.late);
+						m.setLocation(Loc.nucleus);
+						m.setSpace(this.getSpace());
+						m.setTheContext(this.getTheContext());
+						this.getTheContext().add(m);
+						this.getSpace().moveTo(m, this.getSpace().getLocation(this).toDoubleArray(null));
+						((CytoNuc)getTheContext()).addToAddList(m);
 					}
 				}
 			} else if (state == GState.late) {
@@ -346,7 +332,7 @@ public class Genome extends AgentExtendCont{
 			if (getNoBound() == 72) {
 				//RunEnvironment.getInstance().pauseRun();
 				if (RunEnvironment.getInstance().isBatch()) {
-					RunEnvironment.getInstance().endRun();
+					//RunEnvironment.getInstance().endRun();
 				}
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				//if (rand < AgentProbabilities.BKVEgress) {

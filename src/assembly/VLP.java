@@ -36,7 +36,7 @@ public class VLP extends AgentExtendCont {
 			if (this.getNoBound() <=1 && !prev) {
 				double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				if (rand < AgentProbabilities.VLPDeath) {
-					this.die();
+					//this.die();
 				} 
 			} 
 			if (!isDead()){
@@ -51,12 +51,6 @@ public class VLP extends AgentExtendCont {
 					tmp[0] = disp[0]+thispt.getX();
 					tmp[1] = disp[1]+thispt.getY();
 					tmp[2] = disp[2]+thispt.getZ();
-				//NdPoint pt = getSpace().moveByDisplacement(this, disp);
-				//if (pt != null) {
-					//this.setX(pt.getX()-thispt.getX());
-					//this.setY(pt.getY()-thispt.getY());
-					//this.setZ(pt.getZ() - thispt.getZ());
-				//}
 					this.normPositionToBorder(tmp, r);
 					getSpace().moveTo(this, tmp);
 					this.setX(tmp[0]-thispt.getX());
@@ -72,7 +66,7 @@ public class VLP extends AgentExtendCont {
 		double tick = (double)RepastEssentials.GetTickCount();
 		if (tick > egressTick) {
 			if (getNoBound() == 72) {
-				RunEnvironment.getInstance().pauseRun();
+				//RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 				//if (rand < AgentProbabilities.VLPEgress) {
 				double dist = (Double) RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
