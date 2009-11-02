@@ -5,7 +5,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 public class AgentProbabilities {
 	
 	public static double makeVLP;
-	public static double replicate;
+	//public static double replicate;
 	public static double DNAPolDeath;
 	public static double transcribeEarly;
 	public static double transcribeGenome;
@@ -28,7 +28,7 @@ public class AgentProbabilities {
 	
 	public  static void SetAgentProbabilities() {
 		makeVLP = (Double) RunEnvironment.getInstance().getParameters().getValue("makeVLP");
-		replicate = (Double) RunEnvironment.getInstance().getParameters().getValue("replicate");
+		//replicate = (Double) RunEnvironment.getInstance().getParameters().getValue("replicate");
 		DNAPolDeath = (Double) RunEnvironment.getInstance().getParameters().getValue("DNAPolDeath");
 		transcribeEarly = (Double) RunEnvironment.getInstance().getParameters().getValue("transcribeEarly");
 		transcribeGenome = (Double) RunEnvironment.getInstance().getParameters().getValue("transcribeGenome");

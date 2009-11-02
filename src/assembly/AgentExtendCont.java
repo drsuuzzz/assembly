@@ -32,9 +32,6 @@ public class AgentExtendCont {
 	private Context theContext;
 	private Boolean stop;
 	private ContinuousSpace space;
-	private double theta;
-	private double phi;
-	private double distance;
 	private double X;
 	private double Y;
 	private double Z;
@@ -387,9 +384,10 @@ public class AgentExtendCont {
 		
 		int n = ((CytoNuc)getTheContext()).getNoVP123();
 		int m = n/72;
+		//int l = ((CytoNuc)getTheContext()).getRepGenome();
 		IndexedIterable list = this.getTheContext().getObjects(VLP.class);
 		int size = list.size();
-		if (size < m) {
+		if (size < m-1) {
 			double v[] = {0.0,0.0,0.0};
 			v[0] = center[0] - getSpace().getLocation(this).getX();
 			v[1] = center[1] - getSpace().getLocation(this).getY();
@@ -497,7 +495,8 @@ public class AgentExtendCont {
 						}
 					}
 					if (((Genome)obj).getState()==GState.replicate) {
-						max = 7;
+						//max = 7;
+						max = 13;
 						if (!((Genome)obj).needAgent(this)) {
 							break;
 						} else {
@@ -713,7 +712,8 @@ public class AgentExtendCont {
 			max = 20;
 		} else if (this instanceof Genome) {
 			if (((Genome)this).getState()==GState.replicate) {
-				max = 7;
+				//max = 7;
+				max = 13;
 			} else if (((Genome)this).getState() == GState.assembly) {
 				max = 72;
 			} else {

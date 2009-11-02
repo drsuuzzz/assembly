@@ -229,6 +229,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			this.add(lt);
 			cspace.moveTo(lt, AgentMove.adjustPointToSpace(lt));
 			lt.setMove(schedule.schedule(sparamsodd,lt,"move"));
+			//lt.setDeath(schedule.schedule(sparamsodd, lt,"death"));
 		}
 		int numdna = 0;//10;
 		for (int i = 0; i < numdna; i++) {
@@ -343,7 +344,18 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 		}
 		return ret;
 	}
-	
+	public int getRepGenome() {
+		IndexedIterable<AgentExtendCont> i = this.getObjects(Genome.class);
+		int ret = 0;
+		if (i != null) {
+			for (int j = 0; j < i.size(); j++) {
+				if (((Genome) i.get(j)).isHasReplicated()){
+					ret++;
+				}
+			}
+		}
+		return ret;
+	}
 	public int getNoDNAPol() {
 		IndexedIterable<AgentExtendCont> i = this.getObjects(DNAPol.class);
 		int ret = 0;
@@ -384,7 +396,7 @@ public class CytoNuc extends DefaultContext<AgentExtendCont> {
 			fileTick = tick;
 			if (virions >= 1) {
 				if (RunEnvironment.getInstance().isBatch()) {
-					RunEnvironment.getInstance().endRun();
+					//RunEnvironment.getInstance().endRun();
 				}
 			}
 		}
