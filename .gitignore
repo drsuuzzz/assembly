@@ -1,0 +1,4 @@
+bin/*
+logs/*
+velocity.log
+Repast.settings
