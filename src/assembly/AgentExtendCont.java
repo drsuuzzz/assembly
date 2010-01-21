@@ -413,8 +413,8 @@ public class AgentExtendCont {
 			}
 		//odd tick
 			ScheduleParameters sparams = ScheduleParameters.createRepeating(start, 2);
-			this.setMove(schedule.schedule(sparams,vlp,"move"));
-			this.setEgress(schedule.schedule(sparams, vlp, "egress"));
+			vlp.setMove(schedule.schedule(sparams,vlp,"move"));
+			vlp.setEgress(schedule.schedule(sparams, vlp, "egress"));
 			System.out.println("new vlp");
 		}
 	}	
@@ -495,8 +495,8 @@ public class AgentExtendCont {
 						}
 					}
 					if (((Genome)obj).getState()==GState.replicate) {
-						//max = 7;
-						max = 13;
+						max = 7;
+						//max = 13;
 						if (!((Genome)obj).needAgent(this)) {
 							break;
 						} else {
@@ -712,8 +712,8 @@ public class AgentExtendCont {
 			max = 20;
 		} else if (this instanceof Genome) {
 			if (((Genome)this).getState()==GState.replicate) {
-				//max = 7;
-				max = 13;
+				max = 7;
+				//max = 13;
 			} else if (((Genome)this).getState() == GState.assembly) {
 				max = 72;
 			} else {

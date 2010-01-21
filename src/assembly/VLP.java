@@ -64,7 +64,7 @@ public class VLP extends AgentExtendCont {
 	
 	public void egress() {
 		double tick = (double)RepastEssentials.GetTickCount();
-		if (tick > egressTick) {
+		if (tick > egressTick && !isDead()) {
 			if (getNoBound() == 72) {
 				//RunEnvironment.getInstance().pauseRun();
 				//double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
@@ -77,13 +77,15 @@ public class VLP extends AgentExtendCont {
 					while (l.hasNext()) {
 						AgentExtendCont aec = l.next();
 						if (aec instanceof VP123 && aec.isBound()) {
-							((CytoNuc)getTheContext()).addToRemList(aec);
-							aec.setMoving(true);
+							aec.die();
+							//((CytoNuc)getTheContext()).addToRemList(aec);
+							//aec.setMoving(true);
 						}
 					}
-					this.setMoving(true);
-					((CytoNuc)getTheContext()).addToRemList(this);
 					((CytoNuc)getTheContext()).addVLP();
+					this.die();
+					//this.setMoving(true);
+					//((CytoNuc)getTheContext()).addToRemList(this);
 				}
 				//}
 			}

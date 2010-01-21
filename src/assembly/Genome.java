@@ -55,6 +55,7 @@ public class Genome extends AgentExtendCont{
 		bind1 = null;
 		bind2 = null;
 		hasReplicated=false;
+		//hasReplicated=true;
 	}
 	
 	public boolean isHasReplicated() {
@@ -155,8 +156,10 @@ public class Genome extends AgentExtendCont{
 
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
 				rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+				//r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+				//rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
 				disp = this.calcDispIfCenter(LgTAg.class, DNAPol.class, Genome.class, HostGenome.class,r,rerr);
-				
+
 			} else if (state == GState.late) {
 
 				r = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
@@ -253,7 +256,7 @@ public class Genome extends AgentExtendCont{
 						tcount++;
 					}
 				}
-				if (/*dfound*/dcount+tcount == 7) {
+				if (/*dfound*/dcount+tcount == 7/*13*/) {
 					double rand = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 					if (rand < AgentProbabilities.transcribeGenome) {
 						Genome g = new Genome();
@@ -328,7 +331,7 @@ public class Genome extends AgentExtendCont{
 	
 	public void egress() {
 		double tick = (double)RepastEssentials.GetTickCount();
-		if (tick > egressTick) {
+		if (tick > egressTick && !isDead()) {
 			if (getNoBound() == 72) {
 				//RunEnvironment.getInstance().pauseRun();
 				if (RunEnvironment.getInstance().isBatch()) {
@@ -344,13 +347,15 @@ public class Genome extends AgentExtendCont{
 					while (l.hasNext()) {
 						AgentExtendCont aec = l.next();
 						if (aec instanceof VP123 && aec.isBound()) {
-							((CytoNuc)getTheContext()).addToRemList(aec);
-							aec.setMoving(true);
+							aec.die();
+							//((CytoNuc)getTheContext()).addToRemList(aec);
+							//aec.setMoving(true);
 						}
 					}
-					((CytoNuc)getTheContext()).addToRemList(this);
-					this.setMoving(true);
 					((CytoNuc)getTheContext()).addVirions();
+					this.die();
+					//((CytoNuc)getTheContext()).addToRemList(this);
+					//this.setMoving(true);
 				}
 				//}
 			}

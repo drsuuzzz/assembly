@@ -68,7 +68,7 @@ public class VP123 extends AgentExtendCont{
 	
 	public void move() {
 		double tick = RepastEssentials.GetTickCount();
-		if (tick > moveTick && !isMoving()) {
+		if (tick > moveTick && !isMoving() && !isDead()) {
 			double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
 			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceCapsid");
 			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");

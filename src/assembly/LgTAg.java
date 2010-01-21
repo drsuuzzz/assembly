@@ -25,8 +25,12 @@ public class LgTAg extends AgentExtendCont {
 		double tick = RepastEssentials.GetTickCount();
 		if (tick > moveTick && !isDead()) {
 			double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBind");
+			//double radius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadius");
+
 			double vpradius = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceVP1");
 			double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceBindError");
+			//double rerr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceRadiusError");
+
 			double vperr = (Double)RunEnvironment.getInstance().getParameters().getValue("distanceVP1Error");
 
 			if (getLocation() == Loc.cytoplasm) {
