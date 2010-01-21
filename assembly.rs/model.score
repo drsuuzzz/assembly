@@ -16,7 +16,7 @@
   <attributes label="Distance VP1" ID="distanceVP1" pluralLabel="Distance VP1s" sType="FLOAT" defaultValue="1.25"/>
   <attributes label="Distance VP1 Error" ID="distanceVP1Error" pluralLabel="Distance VP1 Errors" sType="FLOAT" defaultValue=".2"/>
   <attributes label="File Path" ID="filePath" pluralLabel="File Paths" sType="STRING" defaultValue="/Users/svasa/repast2/assembly/logs"/>
-  <attributes label="Cell Radius" ID="cellRadius" pluralLabel="Cell Radiuss" sType="INTEGER" defaultValue="40"/>
+  <attributes label="Cell Radius" ID="cellRadius" pluralLabel="Cell Radiuss" sType="INTEGER" defaultValue="35"/>
   <attributes label="Nucleus Radius" ID="nucleusRadius" pluralLabel="Nucleus Radiuss" sType="INTEGER" defaultValue="20"/>
   <attributes label="Number of VP123" ID="numberofVP123" pluralLabel="Number of VP123s" sType="INTEGER" defaultValue="0"/>
   <attributes label="Number of VP1" ID="numberofVP1" pluralLabel="Number of VP1s" sType="INTEGER" defaultValue="0"/>
@@ -24,18 +24,17 @@
   <attributes label="Number of VP3" ID="numberofVP3" pluralLabel="Number of VP3s" sType="INTEGER" defaultValue="0"/>
   <attributes label="View Cytoplasm" ID="viewCytoplasm" pluralLabel="View Cytoplasms" defaultValue="true"/>
   <attributes label="Probabily Make VLP" ID="makeVLP" pluralLabel="Probabily Make VLPs" sType="FLOAT" defaultValue="0.1"/>
-  <attributes label="Probabily Replicate" ID="replicate" pluralLabel="Probabily Replicates" sType="FLOAT" defaultValue="0.1"/>
   <attributes label="Probabily DNA Pol Death" ID="DNAPolDeath" pluralLabel="Probabily DNA Pol Deaths" sType="FLOAT" defaultValue="0.00005"/>
-  <attributes label="Probabily Transcribe Early" ID="transcribeEarly" pluralLabel="Probabily Transcribe Earlies" sType="FLOAT" defaultValue="0.1"/>
+  <attributes label="Probabily Transcribe Early" ID="transcribeEarly" pluralLabel="Probabily Transcribe Earlies" sType="FLOAT" defaultValue="0.2"/>
   <attributes label="Probabily Transcribe Genome" ID="transcribeGenome" pluralLabel="Probabily Transcribe Genomes" sType="FLOAT" defaultValue="0.001"/>
-  <attributes label="Probabily Transcribe Late" ID="transcribeLate" pluralLabel="Probabily Transcribe Lates" sType="FLOAT" defaultValue="0.01"/>
+  <attributes label="Probabily Transcribe Late" ID="transcribeLate" pluralLabel="Probabily Transcribe Lates" sType="FLOAT" defaultValue="0.002"/>
   <attributes label="Probabily Transcribe DNA Pol" ID="transcribeDNAPol" pluralLabel="Probabily Transcribe DNA Pols" sType="FLOAT" defaultValue="0.001"/>
   <attributes label="Probabily BKV Egress" ID="BKVEgress" pluralLabel="Probabily BKV Egresss" sType="FLOAT" defaultValue="0.5"/>
   <attributes label="Probabily VLP Egress" ID="VLPEgress" pluralLabel="Probabily VLP Egresss" sType="FLOAT" defaultValue="0.5"/>
   <attributes label="Probabily Import Tag" ID="importTag" pluralLabel="Probabily Import Tags" sType="FLOAT" defaultValue="0.4"/>
   <attributes label="Probabily Import VP2" ID="importVP2" pluralLabel="Probabily Import VP2s" sType="FLOAT" defaultValue="0.8"/>
   <attributes label="Probabily Import VP3" ID="importVP3" pluralLabel="Probabily Import VP3s" description="" sType="FLOAT" defaultValue="0.8"/>
-  <attributes label="Probabily Tag Death" ID="tagDeath" pluralLabel="Probabily Tag Deaths" description="" sType="FLOAT" defaultValue="0.0001"/>
+  <attributes label="Probabily Tag Death" ID="tagDeath" pluralLabel="Probabily Tag Deaths" description="" sType="FLOAT" defaultValue="0.00005"/>
   <attributes label="Probabily Splice Tag" ID="spliceTag" pluralLabel="Probabily Splice Tags" sType="FLOAT" defaultValue="0.8"/>
   <attributes label="Probabily Splice tag" ID="splicetag" pluralLabel="Probabily Splice tags" sType="FLOAT" defaultValue="0.2"/>
   <attributes label="Probabily Splice VP1" ID="spliceVP1" pluralLabel="Probabily Splice VP1s" sType="FLOAT" defaultValue="0.7"/>

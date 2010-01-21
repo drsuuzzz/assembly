@@ -16,19 +16,18 @@
   <parameter constant_type="number" name="distanceVP1" type="constant" value="1.25d"/>
   <parameter constant_type="number" name="distanceVP1Error" type="constant" value="0.2d"/>
   <parameter constant_type="string" name="filePath" type="constant" value="/Users/svasa/repast2/assembly/logs"/>
-  <parameter constant_type="number" name="cellRadius" type="constant" value="45"/>
-  <parameter constant_type="number" name="nucleusRadius" type="constant" value="30"/>
+  <parameter constant_type="number" name="cellRadius" type="constant" value="35"/>
+  <parameter constant_type="number" name="nucleusRadius" type="constant" value="20"/>
   <parameter constant_type="number" name="numberofVP123" type="constant" value="0"/>
   <parameter constant_type="number" name="numberofVP1" type="constant" value="0"/>
   <parameter constant_type="number" name="numberofVP2" type="constant" value="0"/>
   <parameter constant_type="number" name="numberofVP3" type="constant" value="0"/>
   <parameter constant_type="boolean" name="viewCytoplasm" type="constant" value="true"/>
   <parameter constant_type="number" name="makeVLP"  type="constant" value="0.1d"/>
-  <parameter constant_type="number" name="replicate" type="constant" value="0.1d"/>
   <parameter constant_type="number" name="DNAPolDeath" type="constant" value="0.00005d"/>
   <parameter constant_type="number" name="transcribeEarly" type="constant" value="0.2d"/>
   <parameter constant_type="number" name="transcribeGenome" type="constant" value="0.001d"/>
-  <parameter constant_type="number" name="transcribeLate" type="constant" value="0.001d"/>
+  <parameter constant_type="number" name="transcribeLate" type="constant" value="0.002d"/>
   <parameter constant_type="number" name="transcribeDNAPol" type="constant" value="0.001d"/>
   <parameter constant_type="number" name="BKVEgress" type="constant" value="0.5d"/>
   <parameter constant_type="number" name="VLPEgress" type="constant" value="0.5d"/>
