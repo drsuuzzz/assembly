@@ -58,7 +58,8 @@ public class Ribosome extends AgentExtendCont {
 			if (mrna.getMType() == MType.Tag) {
 				T = new LgTAg();
 			} else if (mrna.getMType() == MType.tag) {
-				T = new SmTAg();
+				//T = new SmTAg();  // don't create right now to save computation
+				T = null;
 			} else if (mrna.getMType() == MType.vp1) {
 				//RunEnvironment.getInstance().pauseRun();
 				T = new VP1();
