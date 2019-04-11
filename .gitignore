@@ -5,6 +5,7 @@ velocity.log.*
 terracotta/*
 images/*
 movies/*
+=======
 *.class
 
 # Mobile Tools for Java (J2ME)
